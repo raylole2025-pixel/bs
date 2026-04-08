@@ -160,8 +160,9 @@ class Stage1Config:
     rho: float
     t_pre: float
     d_min: float
-    theta_c: float = 0.95
-    theta_sr: float = 0.90
+    # Deprecated compatibility alias; Stage1 feasibility now uses full_success_rate via theta_sr.
+    theta_c: float = 1.0
+    theta_sr: float = 1.0
     theta_cap: float = 0.08
     theta_hot: float = 0.80
     hot_hop_limit: int = 4
@@ -253,7 +254,8 @@ class Stage1Candidate:
     plan: list[ScheduledWindow]
     feasible: bool
     violation: float
-    sr_theta_c: float
+    mean_completion_ratio: float
+    full_success_rate: float
     eta_cap: float
     eta_0: float
     avg_hot_coverage: float
@@ -267,8 +269,12 @@ class Stage1Candidate:
     fitness: tuple[float, ...]
 
     @property
+    def sr_theta_c(self) -> float:
+        return self.full_success_rate
+
+    @property
     def sr_near(self) -> float:
-        return self.sr_theta_c
+        return self.full_success_rate
 
     @property
     def hotspot_coverage(self) -> float:

@@ -238,9 +238,9 @@ def load_scenario(path: str | Path) -> Scenario:
             else _float(ga_cfg.get("max_runtime_seconds"), "ga.max_runtime_seconds")
         ),
     )
-    theta_sr_default = stage1_cfg.get("theta_sr", stage1_cfg.get("theta", 0.90))
+    theta_sr_default = stage1_cfg.get("theta_sr", stage1_cfg.get("theta", 1.0))
     theta_cap_default = stage1_cfg.get("theta_cap", stage1_cfg.get("theta_eta0", 0.08))
-    theta_c_default = stage1_cfg.get("theta_c", stage1_cfg.get("near_completion_ratio", 0.95))
+    theta_c_default = stage1_cfg.get("theta_c", stage1_cfg.get("near_completion_ratio", 1.0))
     omega_sr, omega_cap, omega_hot = _normalized_stage1_weights(
         stage1_cfg.get("omega_sr", stage1_cfg.get("viol_weight_sr", 4.0 / 9.0)),
         stage1_cfg.get("omega_cap", stage1_cfg.get("viol_weight_cap", 3.0 / 9.0)),

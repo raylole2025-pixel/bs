@@ -112,9 +112,9 @@ def build_stage1_scenario_template(
         "X": float((capacities or {}).get("X", 1000.0)),
     }
     stage1_payload = {
-        "theta_sr": float((stage1_config or {}).get("theta_sr", (stage1_config or {}).get("theta", 0.90))),
+        "theta_sr": float((stage1_config or {}).get("theta_sr", (stage1_config or {}).get("theta", 1.0))),
         "theta_cap": float((stage1_config or {}).get("theta_cap", (stage1_config or {}).get("theta_eta0", 0.08))),
-        "theta_c": float((stage1_config or {}).get("theta_c", (stage1_config or {}).get("near_completion_ratio", 0.95))),
+        "theta_c": float((stage1_config or {}).get("theta_c", (stage1_config or {}).get("near_completion_ratio", 1.0))),
         "theta_hot": float((stage1_config or {}).get("theta_hot", 0.80)),
         "rho": float((stage1_config or {}).get("rho", 0.20)),
         "t_pre": float((stage1_config or {}).get("t_pre", 1800.0)),

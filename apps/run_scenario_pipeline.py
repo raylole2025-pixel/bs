@@ -19,9 +19,9 @@ import sys
 from dataclasses import asdict
 from pathlib import Path
 
-# 允许直接以 `python apps/run_scenario_pipeline.py ...` 的方式运行。
+# 允许直接以 `python apps/run_scenario_pipeline.py ...` 的方式运行。这种方式运行会导致__package__为None
 # 当脚本不是以模块方式启动时，手动把项目根目录加入 `sys.path`，
-# 这样下面的 `from bs3...` 才能被正确解析。
+# 这样下面的 `from bs3...` 才能被找到，否则程序会找不到bs3模块。
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -34,9 +34,34 @@ def _candidate_to_dict(candidate):
     """把阶段 1 候选解展开成适合写入 JSON 的普通字典。"""
 
     data = asdict(candidate)
+    data["full_success_rate"] = candidate.full_success_rate
+    data["mean_completion_ratio"] = candidate.mean_completion_ratio
+    data["sr_theta_c"] = candidate.full_success_rate
+    data["sr_near"] = candidate.full_success_rate
     data["plan"] = [asdict(window) for window in candidate.plan]
     return data
+"""
+# 转换前Python 对象
+candidate = Stage1Candidate(
+    chromosome=("cw1", "cw3"),
+    plan=[ScheduledWindow(window_id="cw1", a="A1", b="B1", start=0, end=10, on=5, off=10, ...)],
+    fitness=(0.44, 0.33, 0.22),
+    ...
+)
 
+# 转换后（普通字典）
+data = {
+    "chromosome": ("cw1", "cw3"),
+    "plan": [                          ← 嵌套对象也变成了字典
+        {"window_id": "cw1", "a": "A1", "b": "B1", "start": 0, "end": 10, "on": 5, "off": 10, ...}
+    ],
+    "fitness": (0.44, 0.33, 0.22),
+    "full_success_rate": 0.92,         ← 新增的别名
+    "mean_completion_ratio": 0.88,     ← 新增的别名
+    "sr_theta_c": 0.92,               ← 新增的别名
+    "sr_near": 0.92,                  ← 新增的别名
+    ...
+}"""
 
 def _stage2_to_dict(result, t_pre: float):
     """把阶段 2 结果补充派生指标后展开为字典。"""
@@ -52,7 +77,7 @@ def _stage2_to_dict(result, t_pre: float):
 
 def main() -> None:
     """解析命令行并执行单场景两阶段求解。"""
-
+    # parser是一个对象名
     parser = argparse.ArgumentParser(description="Run the BS3 two-stage scheduler.")
     parser.add_argument("scenario", help="Path to the scenario JSON file")
     parser.add_argument("--seed", type=int, default=None, help="Random seed for stage1 GA")

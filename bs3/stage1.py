@@ -141,9 +141,18 @@ def max_cross_gap(plan: list[ScheduledWindow], planning_end: float) -> float:
 
 @dataclass(frozen=True)
 class EvaluationMetrics:
-    sr_theta_c: float
+    mean_completion_ratio: float
+    full_success_rate: float
     eta_cap: float
     eta_0: float
+
+    @property
+    def sr_theta_c(self) -> float:
+        return self.full_success_rate
+
+    @property
+    def sr_near(self) -> float:
+        return self.full_success_rate
 
 
 @dataclass(frozen=True)
@@ -209,6 +218,9 @@ class RegularEvaluator:
         self.total_weight = sum(task.weight for task in self.regular_tasks)
         self._trace_cache: dict[tuple[tuple[tuple[str, float, float], ...], float], SimulationTrace] = {}
         self._domain_path_cache: dict[tuple[str, float, str, str, str | None], DomainPath | None] = {}
+
+    def _completion_tolerance(self, task: Task) -> float:
+        return max(float(self.scenario.stage2.completion_tolerance) * float(task.data), EPS)
 
     def _trace_key(self, plan: list[ScheduledWindow], rho: float) -> tuple[tuple[tuple[str, float, float], ...], float]:
         return (plan_signature(plan), round(rho, 9))
@@ -450,7 +462,7 @@ class RegularEvaluator:
     def _simulate(self, plan: list[ScheduledWindow], rho: float) -> SimulationTrace:
         if not self.regular_tasks:
             return SimulationTrace(
-                metrics=EvaluationMetrics(sr_theta_c=1.0, eta_cap=0.0, eta_0=0.0),
+                metrics=EvaluationMetrics(mean_completion_ratio=1.0, full_success_rate=1.0, eta_cap=0.0, eta_0=0.0),
                 segment_rows=[],
                 task_rows=[],
                 window_rows=[],
@@ -461,7 +473,6 @@ class RegularEvaluator:
         remaining = {task.task_id: task.data for task in self.regular_tasks}
         prev_path_keys: dict[str, tuple[str, ...] | None] = {task.task_id: None for task in self.regular_tasks}
         cross_reg_capacity = max((1.0 - rho) * self.scenario.capacities.cross, EPS)
-        theta_c = self.scenario.stage1.theta_c
 
         demand_weighted_total = 0.0
         eta_cap_numerator = 0.0
@@ -567,13 +578,17 @@ class RegularEvaluator:
                 }
             )
 
-        weighted_near = 0.0
+        weighted_completion = 0.0
+        weighted_completed = 0.0
         task_rows: list[dict] = []
         for task in self.regular_tasks:
-            phi = 1.0 - remaining[task.task_id] / task.data
-            near_complete = 1 if phi + EPS >= theta_c else 0
-            if near_complete:
-                weighted_near += task.weight
+            remaining_end = max(0.0, remaining[task.task_id])
+            phi = min(max(1.0 - remaining_end / max(task.data, EPS), 0.0), 1.0)
+            completion_tolerance = self._completion_tolerance(task)
+            completed = 1 if remaining_end <= completion_tolerance else 0
+            weighted_completion += task.weight * phi
+            if completed:
+                weighted_completed += task.weight
             task_rows.append(
                 {
                     "task_id": task.task_id,
@@ -584,10 +599,12 @@ class RegularEvaluator:
                     "data": task.data,
                     "weight": task.weight,
                     "max_rate": task.max_rate,
-                    "remaining_end": remaining[task.task_id],
+                    "remaining_end": remaining_end,
                     "completion_ratio": phi,
-                    "near_complete": near_complete,
-                    "completed": 1 if remaining[task.task_id] <= EPS else 0,
+                    "completion_tolerance": completion_tolerance,
+                    "full_success": completed,
+                    "near_complete": completed,
+                    "completed": completed,
                 }
             )
 
@@ -603,7 +620,8 @@ class RegularEvaluator:
             for window in sorted(plan, key=lambda item: (item.on, item.off, item.window_id))
         ]
         metrics = EvaluationMetrics(
-            sr_theta_c=(weighted_near / self.total_weight) if self.total_weight > EPS else 1.0,
+            mean_completion_ratio=(weighted_completion / self.total_weight) if self.total_weight > EPS else 1.0,
+            full_success_rate=(weighted_completed / self.total_weight) if self.total_weight > EPS else 1.0,
             eta_cap=(eta_cap_numerator / (demand_weighted_total + EPS)) if demand_weighted_total > EPS else 0.0,
             eta_0=(eta0_numerator / (demand_weighted_total + EPS)) if demand_weighted_total > EPS else 0.0,
         )
@@ -624,8 +642,10 @@ class RegularEvaluator:
         trace = self._trace_cache[cache_key]
         return {
             "metrics": {
-                "sr_theta_c": trace.metrics.sr_theta_c,
-                "sr_near": trace.metrics.sr_theta_c,
+                "mean_completion_ratio": trace.metrics.mean_completion_ratio,
+                "full_success_rate": trace.metrics.full_success_rate,
+                "sr_theta_c": trace.metrics.full_success_rate,
+                "sr_near": trace.metrics.full_success_rate,
                 "eta_cap": trace.metrics.eta_cap,
                 "eta_0": trace.metrics.eta_0,
                 "cross_capacity_gap": trace.metrics.eta_cap,
@@ -803,7 +823,7 @@ class Stage1GA:
         theta_sr = max(self.scenario.stage1.theta_sr, EPS)
         theta_cap = max(self.scenario.stage1.theta_cap, EPS)
         theta_hot = max(self.scenario.stage1.theta_hot, EPS)
-        v_sr = max(0.0, self.scenario.stage1.theta_sr - metrics.sr_theta_c)
+        v_sr = max(0.0, self.scenario.stage1.theta_sr - metrics.full_success_rate)
         v_cap = max(0.0, metrics.eta_cap - self.scenario.stage1.theta_cap)
         v_hot = max(0.0, self.scenario.stage1.theta_hot - structural.avg_hot_coverage)
         return (
@@ -814,7 +834,7 @@ class Stage1GA:
 
     def _feasible(self, metrics: EvaluationMetrics, structural: StructuralMetrics) -> bool:
         return (
-            metrics.sr_theta_c + EPS >= self.scenario.stage1.theta_sr
+            metrics.full_success_rate + EPS >= self.scenario.stage1.theta_sr
             and metrics.eta_cap <= self.scenario.stage1.theta_cap + EPS
             and structural.avg_hot_coverage + EPS >= self.scenario.stage1.theta_hot
         )
@@ -824,14 +844,13 @@ class Stage1GA:
             return (
                 0.0,
                 float(structural.activation_count),
-                -float(metrics.sr_theta_c),
                 float(metrics.eta_cap),
                 -float(structural.avg_hot_coverage),
             )
         return (
             1.0,
             float(violation),
-            -float(metrics.sr_theta_c),
+            -float(metrics.mean_completion_ratio),
             float(metrics.eta_cap),
             -float(structural.avg_hot_coverage),
             float(structural.activation_count),
@@ -918,7 +937,8 @@ class Stage1GA:
             plan=state.plan,
             feasible=state.feasible,
             violation=state.violation,
-            sr_theta_c=state.metrics.sr_theta_c,
+            mean_completion_ratio=state.metrics.mean_completion_ratio,
+            full_success_rate=state.metrics.full_success_rate,
             eta_cap=state.metrics.eta_cap,
             eta_0=state.metrics.eta_0,
             avg_hot_coverage=state.structural.avg_hot_coverage,
@@ -1118,13 +1138,25 @@ class Stage1GA:
                     "stall_count": stall_value,
                     "population_best_feasible": (population_best.feasible if population_best is not None else False),
                     "population_best_violation": (population_best.violation if population_best is not None else None),
-                    "population_best_sr_theta_c": (population_best.sr_theta_c if population_best is not None else None),
+                    "population_best_mean_completion_ratio": (
+                        population_best.mean_completion_ratio if population_best is not None else None
+                    ),
+                    "population_best_full_success_rate": (
+                        population_best.full_success_rate if population_best is not None else None
+                    ),
+                    "population_best_sr_theta_c": (population_best.full_success_rate if population_best is not None else None),
                     "population_best_eta_cap": (population_best.eta_cap if population_best is not None else None),
                     "population_best_avg_hot_coverage": (population_best.avg_hot_coverage if population_best is not None else None),
                     "population_best_activation_count": (population_best.activation_count if population_best is not None else None),
                     "population_best_window_count": (population_best.window_count if population_best is not None else None),
                     "best_feasible_violation": (best_feasible.violation if best_feasible is not None else None),
-                    "best_feasible_sr_theta_c": (best_feasible.sr_theta_c if best_feasible is not None else None),
+                    "best_feasible_mean_completion_ratio": (
+                        best_feasible.mean_completion_ratio if best_feasible is not None else None
+                    ),
+                    "best_feasible_full_success_rate": (
+                        best_feasible.full_success_rate if best_feasible is not None else None
+                    ),
+                    "best_feasible_sr_theta_c": (best_feasible.full_success_rate if best_feasible is not None else None),
                     "best_feasible_eta_cap": (best_feasible.eta_cap if best_feasible is not None else None),
                     "best_feasible_avg_hot_coverage": (best_feasible.avg_hot_coverage if best_feasible is not None else None),
                     "best_feasible_activation_count": (best_feasible.activation_count if best_feasible is not None else None),

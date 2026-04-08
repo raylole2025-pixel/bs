@@ -93,7 +93,7 @@ def _plot_candidate_tradeoff(candidates: list[Stage1Candidate], output_path: Pat
     fig, ax = plt.subplots(figsize=(8.8, 5.6))
 
     gateway_counts = [item.gateway_count for item in candidates]
-    sr_values = [item.sr_near for item in candidates]
+    sr_values = [item.full_success_rate for item in candidates]
     cross_active = [item.cross_active_fraction for item in candidates]
 
     scatter = ax.scatter(
@@ -108,15 +108,15 @@ def _plot_candidate_tradeoff(candidates: list[Stage1Candidate], output_path: Pat
     for idx, item in enumerate(candidates, start=1):
         ax.annotate(
             f"R{idx}",
-            (item.gateway_count, item.sr_near),
+            (item.gateway_count, item.full_success_rate),
             textcoords="offset points",
             xytext=(5, 4),
         )
 
     ax.set_xlabel("Gateway Count G(S)")
-    ax.set_ylabel("SR_0.95")
+    ax.set_ylabel("Full Success Rate")
     ax.set_ylim(-0.02, 1.05)
-    ax.set_title("Candidate Tradeoff: Gateway Count vs SR_0.95")
+    ax.set_title("Candidate Tradeoff: Gateway Count vs Full Success Rate")
     ax.grid(True, linestyle="--", alpha=0.35)
     fig.colorbar(scatter, ax=ax, label="cross_active_fraction")
 
@@ -132,13 +132,20 @@ def _plot_task_completion(task_rows: list[dict], output_path: Path) -> None:
     ordered = sorted(task_rows, key=lambda row: (row.get("completion_ratio", 0.0), row.get("task_id", "")), reverse=True)
     labels = [row["task_id"] for row in ordered]
     values = [row.get("completion_ratio", 0.0) for row in ordered]
-    colors = ["#2ca02c" if value + 1e-9 >= 0.95 else "#ff7f0e" if value + 1e-9 >= 0.8 else "#d62728" for value in values]
+    colors = [
+        "#2ca02c"
+        if bool(row.get("completed", row.get("full_success", 0)))
+        else "#ff7f0e"
+        if value + 1e-9 >= 0.8
+        else "#d62728"
+        for row, value in zip(ordered, values)
+    ]
 
     fig_height = max(4.5, 0.26 * len(labels) + 1.8)
     fig, ax = plt.subplots(figsize=(12.5, fig_height))
     y = list(range(len(labels)))
     ax.barh(y, values, color=colors, edgecolor="black", alpha=0.9)
-    ax.axvline(0.95, color="#2ca02c", linestyle="--", linewidth=1.5, label="0.95 Threshold")
+    ax.axvline(1.0, color="#2ca02c", linestyle="--", linewidth=1.5, label="Full-Completion Threshold")
     ax.axvline(0.80, color="#ff7f0e", linestyle=":", linewidth=1.5, label="0.80 Reference")
     ax.set_yticks(y)
     ax.set_yticklabels(labels)
@@ -348,13 +355,14 @@ def _plot_hotspot_region_breakdown(region_rows: list[dict], output_path: Path) -
 
 
 def _plot_solution_scorecard(candidate: Stage1Candidate, output_path: Path) -> None:
-    metric_labels = ["SR_0.95", "Hotspot Cov.", "1 - Eta_cap"]
+    metric_labels = ["FR", "MR", "Hotspot Cov.", "1 - Eta_cap"]
     metric_values = [
-        100.0 * candidate.sr_theta_c,
+        100.0 * candidate.full_success_rate,
+        100.0 * candidate.mean_completion_ratio,
         100.0 * candidate.avg_hot_coverage,
         100.0 * (1.0 - candidate.eta_cap),
     ]
-    metric_colors = ["#2a9d8f", "#1f77b4", "#e9c46a"]
+    metric_colors = ["#2a9d8f", "#5e60ce", "#1f77b4", "#e9c46a"]
 
     fig, (ax_bar, ax_text) = plt.subplots(
         1,
@@ -492,7 +500,10 @@ def export_stage1_run_artifacts(
             "window_count": candidate.window_count,
             "activation_count": candidate.activation_count,
             "activation_time": candidate.activation_time,
-            "sr_theta_c": candidate.sr_theta_c,
+            "mean_completion_ratio": candidate.mean_completion_ratio,
+            "full_success_rate": candidate.full_success_rate,
+            "sr_theta_c": candidate.full_success_rate,
+            "sr_near": candidate.full_success_rate,
             "eta_cap": candidate.eta_cap,
             "eta_0": candidate.eta_0,
             "hotspot_coverage": candidate.hotspot_coverage,

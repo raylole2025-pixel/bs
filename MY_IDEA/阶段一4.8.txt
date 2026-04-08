@@ -54,8 +54,8 @@ $$m = \big(src_m, dst_m, a_m, ddl_m, D_m, w_m, b_m^{\max}, type_m\big)$$
 3. **所有边容量受限**：包括域内边与跨域边。
 阶段1中常态任务只使用 $(1-\rho)C_X$ 的跨域容量，其中 $\rho \in [0,1)$ 为给临机任务预留的跨域容量比例。
 任务最终完成比例定义为：
-$$\phi_m = 1 - \frac{R_{m,\text{end}}}{D_m}$$
-其中 $R_{m,\text{end}}$ 为规划结束时任务剩余未传输数据量。
+$$\phi_m = 1 - \frac{R_{m,{r_m^{ddl}+1}}}{D_m}$$
+其中 $R_{m,{r_m^{ddl}+1}}$ 为任务 $m$ 截止时剩余未传输数据量，$D_m$ 为任务 $m$ 全部需要传输的数据量
 ### 1.4 事件驱动分段
 给定跨域链路配置方案 $S$，事件集合定义为：
 $$\mathcal{E}(S) = \{a_m, ddl_m, \forall m\} \cup \{t_l^{on}, t_l^{off}, \forall l \in S\} \cup \{\xi_1, \xi_2, \dots\}$$
@@ -112,11 +112,11 @@ $\mu(·)$ 表示计算重叠时长
 ## 二、阶段1：基于排列编码遗传算法的跨域链路配置优化
 阶段1的目标是：在常态任务基准场景下，寻找满足常态业务承载基线的低成本跨域链路配置方案 $S$。
 阶段1的可行性由以下三类条件共同约束：
-$$SR_{\theta_c}^{(1)}(S) \ge \Theta_{SR}$$
+$$FR(S) = 1$$
 $$\bar C^{A\text{-}hot}(S)\ge \Theta_{hot}$$
 $$\eta_{cap}(S)\le \Theta_{cap}$$
 其中：
-- $SR_{\theta_c}^{(1)}(S)$：常态任务近硬完成率，$\theta_c$ 通常取 $0.95$（完成95%）
+- $FR(S)$：方案 $S$ 的常态任务完成率
 - $\bar C^{A\text{-}hot}(S)$：规划时间平均热点区域覆盖度
 - $\eta_{cap}(S)$：跨域能力缺口
 ### 2.1 染色体编码
@@ -152,7 +152,7 @@ $$c_e^{reg} = (1-\rho)C_X$$
 对域内边：
 $$c_e^{reg} = \begin{cases} C_A, & e \in E_r^A \\ C_B, & e \in E_r^B \end{cases}$$
 #### 2.3.1 状态变量
-对常态任务 $m \in \mathcal{K}^{reg}$，维护剩余数据量 $R_{m,0} = D_m$，在分段 $r$ 结束后更新为 $R_{m,r+1}$。
+对常态任务 $m \in \mathcal{K}^{reg}$，维护剩余数据量 $R_{m,r_m^a} = D_m$，在分段 $r$ 结束后更新为 $R_{m,r_m^a+1}$。
 #### 2.3.2 任务排序
 在每个分段 $r$，活跃常态任务集合定义为：
 $$\mathcal{Q}_r^{reg} = \{m \in \mathcal{K}^{reg} \mid a_m \le \tau_r < ddl_m,\ R_{m,r} > 0\}$$
@@ -203,10 +203,13 @@ $$x_{m,r} = 0, \qquad R_{m,r+1} = R_{m,r}$$
 $$x_{m,r} = x_{m,p_{m,r}^\star,r}^{cand}, \qquad R_{m,r+1} = R_{m,r} - X_{m,p_{m,r}^\star,r}^{cand}$$
 并同步更新路径 $p_{m,r}^\star$ 上各边的剩余容量，以及对应跨域链路的 $U_{l(p),r}^{used}$。
 ### 2.4 阶段1可行性指标
-#### 2.4.1 常态任务近硬完成率
-为避免“部分服务很多任务但真正接近完成的任务较少”这一问题，引入近硬完成率。给定近完成阈值 $\theta_c$（建议取 $0.95$），定义：
-$$SR_{\theta_c}^{(1)}(S) = \frac{\sum\limits_{m \in \mathcal{K}^{reg}} w_m \mathbf{1}\{\phi_m^{(1)} \ge \theta_c\}}{\sum\limits_{m \in \mathcal{K}^{reg}} w_m}$$
-该指标用来衡量方案对常态任务“接近完整交付”的保障能力。
+#### 2.4.1 常态任务完成率
+定义加权平均常态任务完成率 $MR(S)$：
+$$MR(S)=\frac{\sum\limits_{m \in \mathcal{K}^{reg}} w_m \phi_{m} }{\sum\limits_{m \in \mathcal{K}^{reg}} w_m}$$
+定义常态任务完成率 $FR(S)$：
+$$FR(S) = \frac{\sum\limits_{m \in \mathcal{K}^{reg}} w_m \mathbf{1}\{R_{m,ddl} \le \epsilon \}}{\sum\limits_{m \in \mathcal{K}^{reg}} w_m}$$
+其中，$R_{m,ddl}$ 为任务 $m$ 截止时刻剩余数据量，$\epsilon$ 为极小的数，以防止程序浮点数误差。
+该指标用来衡量方案对常态任务的保障能力。
 #### 2.4.2 常态跨域能力缺口
 对分段 $r$，定义常态任务的聚合需求为：
 $$D_r^{req} = \sum_{m \in \mathcal{Q}_r^{reg}} \min\left(b_m^{\max}, \frac{R_{m,r}}{ddl_m - \tau_r}\right)$$
@@ -253,33 +256,32 @@ $$N_{\text{act}}(S)=2 |S|$$
 不在每次插入后都计算全部评估指标，而是每累计接受 $q_{\text{eval}}$ 条窗口再评估一次，定义前缀方案：
 $$S_j = \{l_1, \dots, l_j\}$$
 仅在 $j = q_{\text{eval}},\, 2q_{\text{eval}},\, 3q_{\text{eval}}, \dots$ 这些位置计算：
-$$SR_{\theta_c}^{(1)}(S_j),\ \eta_{cap}(S_j),\ \bar C^{A\text{-}hot}(S_j)$$
+$$FR(S_j),\ \eta_{cap}(S_j),\ \bar C^{A\text{-}hot}(S_j)$$
 只有当以下条件同时满足时，才停止继续插入窗口：
-$$SR_{\theta_c}^{(1)}(S_j) \ge \Theta_{SR}$$
+$$FR(S_j) =1$$
 $$\eta_{cap}(S_j) \le \Theta_{cap}$$
 $$\bar C^{A\text{-}hot}(S_j)\ge \Theta_{hot}$$
 一旦首次达标，停止插入窗口，计算方案的 fitness。
 ### 2.7 染色体适应度与可行解排序
 #### 2.7.1 违反量定义
 定义三个单项违反量：
-$$V_{SR}(S) = \big[\Theta_{SR} - SR_{\theta_c}^{(1)}(S)\big]_+$$
+$$V_{FR}(S) = \big[1 - FR(S)\big]_+$$
 $$V_{cap}(S) = \big[\eta_{cap}(S) - \Theta_{cap}\big]_+$$
 $$V_{hot}(S) = \big[\Theta_{hot} - \bar C^{A\text{-}hot}(S)]_+$$
 其中 $[x]_+ = \max(x, 0)$。
 将其归一化后合成为总违反量：
-$$Viol(S) = \omega_{SR} \frac{V_{SR}(S)}{\Theta_{SR}} + \omega_{cap} \frac{V_{cap}(S)}{\Theta_{cap}} + \omega_{hot} \frac{V_{hot}(S)}{\Theta_{hot}}$$
-其中，$ω_{SR}​+ω_{cap}​+ω_{hot}​=1$
+$$Viol(S) = \omega_{FR} \frac{V_{FR}(S)}{1} + \omega_{cap} \frac{V_{cap}(S)}{\Theta_{cap}} + \omega_{hot} \frac{V_{hot}(S)}{\Theta_{hot}}$$
+其中，$ω_{FR}​+ω_{cap}​+ω_{hot}​=1$
 #### 2.7.2 可行方案适应度
 若方案可行，则定义适应度为：
-$$Fit(S) = \big(0,\ N_{act}(S),\ -SR_{\theta_c}^{(1)}(S),\ \eta_{cap}(S),\ -\bar C^{A\text{-}hot}(S))$$
+$$Fit(S) = \big(0,\ N_{act}(S),\ \eta_{cap}(S),\ -\bar C^{A\text{-}hot}(S))$$
 在所有可行方案中：
 1. 优先选激活次数更少的
-2. 再比较近硬完成率
-3. 再选常态供需短缺更小的
-4. 再选A域热点平均覆盖更高的
+2. 再选常态供需短缺更小的
+3. 再选A域热点平均覆盖更高的
 #### 2.7.3 不可行方案适应度
 若方案不可行，则定义：
-$$Fit(S) = \big(1,\ Viol(S),-SR_{\theta_c}^{(1)}(S),\eta_{cap}(S),-\bar C^{A\text{-}hot}(S),N_{act}(S))$$
+$$Fit(S) = \big(1,\ Viol(S),-MR(S),\eta_{cap}(S),-\bar C^{A\text{-}hot}(S),N_{act}(S))$$
 其中：可行方案优于不可行方案；在不可行方案中，优先选择总违反量更小者。
 ### 2.8 剪枝规则
 注：所有个体都解码并计算 fitness，不可行个体只计算 $Viol$，不做剪枝。只对每代 top-K 可行精英做剪枝，比如前 5 个或前 10%。
@@ -320,7 +322,7 @@ $$\big(Y_l,\ \Delta \hat\eta_{cap}(l),\ \Delta C_{hot}(l)\big)$$
 ##### 2.8.4 精确验证
 
 对排序靠前的候选窗口，再完整跑一次阶段1评估器，检查最关键的常态任务成功约束和$\eta_{cap}$：
-$$SR_{\theta_c}^{(1)}(S^{-l}) \ge \Theta_{SR}$$
+$$FR(S^{-l}) =1$$
 $$\eta_{cap}(S^{-l}) \le \Theta_{cap}$$
 热点覆盖度在前面已经验证过。
 若满足，则接受删除：

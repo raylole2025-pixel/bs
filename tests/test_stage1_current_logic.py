@@ -70,7 +70,6 @@ class Stage1CurrentLogicTests(unittest.TestCase):
                 rho=0.0,
                 t_pre=0.0,
                 d_min=0.0,
-                theta_c=0.95,
                 theta_sr=1.0,
                 theta_cap=0.0,
                 theta_hot=0.0,
@@ -90,9 +89,11 @@ class Stage1CurrentLogicTests(unittest.TestCase):
         self.assertTrue(best.feasible)
         self.assertEqual(best.window_count, 1)
         self.assertEqual(best.activation_count, 2)
+        self.assertAlmostEqual(best.mean_completion_ratio, 1.0)
+        self.assertAlmostEqual(best.full_success_rate, 1.0)
         self.assertAlmostEqual(best.sr_theta_c, 1.0)
         self.assertAlmostEqual(best.hotspot_coverage, 1.0)
-        self.assertEqual(len(best.fitness), 5)
+        self.assertEqual(len(best.fitness), 4)
         self.assertFalse(hasattr(best, "f_reg"))
 
     def test_stage1_hotspot_coverage_remains_formal_feasibility_constraint(self) -> None:
@@ -122,7 +123,6 @@ class Stage1CurrentLogicTests(unittest.TestCase):
                 rho=0.0,
                 t_pre=0.0,
                 d_min=0.0,
-                theta_c=0.95,
                 theta_sr=1.0,
                 theta_cap=0.0,
                 theta_hot=1.0,
@@ -144,6 +144,51 @@ class Stage1CurrentLogicTests(unittest.TestCase):
         self.assertAlmostEqual(result.population_best.hotspot_coverage, 0.0)
         self.assertGreater(result.population_best.violation, 0.0)
         self.assertEqual(len(result.population_best.fitness), 6)
+
+    def test_stage1_requires_true_full_completion_for_feasibility(self) -> None:
+        scenario = Scenario(
+            node_domain={"A1": "A", "B1": "B"},
+            intra_links=[],
+            candidate_windows=[
+                CandidateWindow(window_id="W1", a="A1", b="B1", start=0.0, end=9.5),
+            ],
+            tasks=[
+                Task(
+                    task_id="T1",
+                    src="A1",
+                    dst="B1",
+                    arrival=0.0,
+                    deadline=10.0,
+                    data=100.0,
+                    weight=1.0,
+                    max_rate=10.0,
+                    task_type="reg",
+                )
+            ],
+            capacities=CapacityConfig(domain_a=10.0, domain_b=10.0, cross=10.0),
+            stage1=Stage1Config(
+                rho=0.0,
+                t_pre=0.0,
+                d_min=0.0,
+                theta_sr=1.0,
+                theta_cap=0.0,
+                theta_hot=0.0,
+                q_eval=1,
+                elite_prune_count=0,
+                ga=GAConfig(population_size=4, max_generations=3, stall_generations=1, top_m=1),
+            ),
+            stage2=Stage2Config(),
+            planning_end=10.0,
+            metadata={},
+        )
+
+        result = run_stage1(scenario, seed=1)
+
+        self.assertFalse(result.best_feasible)
+        self.assertIsNotNone(result.population_best)
+        self.assertAlmostEqual(result.population_best.mean_completion_ratio, 0.95)
+        self.assertAlmostEqual(result.population_best.full_success_rate, 0.0)
+        self.assertGreater(result.population_best.violation, 0.0)
 
 
 if __name__ == "__main__":
