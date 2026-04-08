@@ -270,9 +270,36 @@ def load_scenario(path: str | Path) -> Scenario:
     )
     stage2_k_paths = int(stage2_cfg.get("k_paths", 2))
     raw_label_keep_limit = stage2_cfg.get("label_keep_limit")
+    raw_milp_mode = str(stage2_cfg.get("milp_mode", "rolling")).strip().lower()
+    raw_milp_time_limit = stage2_cfg.get("milp_time_limit_seconds")
+    raw_milp_relative_gap = stage2_cfg.get("milp_relative_gap")
+    raw_milp_high_weight_threshold = stage2_cfg.get("milp_rolling_high_weight_threshold")
     stage2 = Stage2Config(
         k_paths=stage2_k_paths,
         completion_tolerance=_float(stage2_cfg.get("completion_tolerance", 1e-6), "stage2.completion_tolerance"),
+        prefer_milp=bool(stage2_cfg.get("prefer_milp", True)),
+        milp_mode=raw_milp_mode if raw_milp_mode in {"full", "rolling"} else "rolling",
+        milp_horizon_segments=max(int(stage2_cfg.get("milp_horizon_segments", 16)), 1),
+        milp_commit_segments=max(int(stage2_cfg.get("milp_commit_segments", 8)), 1),
+        milp_rolling_path_limit=max(int(stage2_cfg.get("milp_rolling_path_limit", 1)), 1),
+        milp_rolling_high_path_limit=max(int(stage2_cfg.get("milp_rolling_high_path_limit", 2)), 1),
+        milp_rolling_high_weight_threshold=(
+            None
+            if raw_milp_high_weight_threshold in {None, ""}
+            else _float(raw_milp_high_weight_threshold, "stage2.milp_rolling_high_weight_threshold")
+        ),
+        milp_rolling_high_competition_task_threshold=max(int(stage2_cfg.get("milp_rolling_high_competition_task_threshold", 8)), 1),
+        milp_rolling_promoted_tasks_per_segment=max(int(stage2_cfg.get("milp_rolling_promoted_tasks_per_segment", 2)), 0),
+        milp_time_limit_seconds=(
+            None
+            if raw_milp_time_limit in {None, "", 0, 0.0}
+            else _float(raw_milp_time_limit, "stage2.milp_time_limit_seconds")
+        ),
+        milp_relative_gap=(
+            None
+            if raw_milp_relative_gap in {None, ""}
+            else _float(raw_milp_relative_gap, "stage2.milp_relative_gap")
+        ),
         label_keep_limit=(int(raw_label_keep_limit) if raw_label_keep_limit not in {None, ""} else None),
     )
 
@@ -739,6 +766,18 @@ def scenario_to_dict(scenario: Scenario) -> dict:
         "stage2": {
             "k_paths": scenario.stage2.k_paths,
             "completion_tolerance": scenario.stage2.completion_tolerance,
+            "prefer_milp": scenario.stage2.prefer_milp,
+            "milp_mode": scenario.stage2.milp_mode,
+            "milp_horizon_segments": scenario.stage2.milp_horizon_segments,
+            "milp_commit_segments": scenario.stage2.milp_commit_segments,
+            "milp_rolling_path_limit": scenario.stage2.milp_rolling_path_limit,
+            "milp_rolling_high_path_limit": scenario.stage2.milp_rolling_high_path_limit,
+            "milp_rolling_high_weight_threshold": scenario.stage2.milp_rolling_high_weight_threshold,
+            "milp_rolling_high_competition_task_threshold": scenario.stage2.milp_rolling_high_competition_task_threshold,
+            "milp_rolling_promoted_tasks_per_segment": scenario.stage2.milp_rolling_promoted_tasks_per_segment,
+            "milp_time_limit_seconds": scenario.stage2.milp_time_limit_seconds,
+            "milp_relative_gap": scenario.stage2.milp_relative_gap,
+            "label_keep_limit": scenario.stage2.label_keep_limit,
         },
         "hotspots": {
             "A": [
@@ -802,6 +841,8 @@ def scenario_to_dict(scenario: Scenario) -> dict:
         ],
     }
     return payload
+
+
 
 
 

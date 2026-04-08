@@ -14,8 +14,9 @@ from bs3.models import (
     Task,
     TemporalLink,
 )
-from bs3.scenario import validate_scenario
+from bs3.scenario import build_segments, validate_scenario
 from bs3.stage2 import run_stage2
+from bs3.stage2_regular_joint_milp import _build_task_segments, _select_rolling_path_limits
 
 
 BASE_PAYLOAD = {
@@ -34,6 +35,7 @@ BASE_PAYLOAD = {
     "stage2": {
         "k_paths": 2,
         "completion_tolerance": 1e-6,
+        "prefer_milp": True,
     },
     "intra_domain_links": [
         {"id": "A12", "u": "A1", "v": "A2", "domain": "A", "start": 0.0, "end": 6.0, "delay": 0.1},
@@ -112,6 +114,17 @@ def _load_payload(payload: dict) -> Scenario:
         stage2=Stage2Config(
             k_paths=int(payload["stage2"]["k_paths"]),
             completion_tolerance=float(payload["stage2"]["completion_tolerance"]),
+            prefer_milp=bool(payload["stage2"].get("prefer_milp", True)),
+            milp_mode=str(payload["stage2"].get("milp_mode", "rolling")),
+            milp_horizon_segments=int(payload["stage2"].get("milp_horizon_segments", 16)),
+            milp_commit_segments=int(payload["stage2"].get("milp_commit_segments", 8)),
+            milp_rolling_path_limit=int(payload["stage2"].get("milp_rolling_path_limit", 1)),
+            milp_rolling_high_path_limit=int(payload["stage2"].get("milp_rolling_high_path_limit", 2)),
+            milp_rolling_high_weight_threshold=(
+                None if payload["stage2"].get("milp_rolling_high_weight_threshold") is None else float(payload["stage2"]["milp_rolling_high_weight_threshold"])
+            ),
+            milp_rolling_high_competition_task_threshold=int(payload["stage2"].get("milp_rolling_high_competition_task_threshold", 8)),
+            milp_rolling_promoted_tasks_per_segment=int(payload["stage2"].get("milp_rolling_promoted_tasks_per_segment", 2)),
         ),
         planning_end=float(payload["planning_end"]),
         metadata=copy.deepcopy(payload.get("metadata", {})),
@@ -153,6 +166,17 @@ class Stage2BaselineInsertTests(unittest.TestCase):
                 "dst": "B1",
                 "arrival": 0.0,
                 "deadline": 2.0,
+                "data": 10.0,
+                "weight": 3.0,
+                "max_rate": 10.0,
+                "type": "reg",
+            },
+            {
+                "id": "R2",
+                "src": "A1",
+                "dst": "B1",
+                "arrival": 0.0,
+                "deadline": 2.0,
                 "data": 20.0,
                 "weight": 3.0,
                 "max_rate": 10.0,
@@ -161,11 +185,202 @@ class Stage2BaselineInsertTests(unittest.TestCase):
         ]
         scenario = _load_payload(payload)
         result = run_stage2(scenario, PLAN)
-        allocations = _task_allocation(result, "R1")
+        allocations = result.allocations
         self.assertTrue(allocations)
         reserved_cross = (1.0 - scenario.stage1.rho) * scenario.capacities.cross
         self.assertTrue(all(alloc.rate <= reserved_cross + 1e-9 for alloc in allocations))
         self.assertLess(result.cr_reg, 1.0)
+
+    def test_rolling_path_limit_requires_high_competition_segment(self) -> None:
+        payload = copy.deepcopy(BASE_PAYLOAD)
+        payload["planning_end"] = 1.0
+        payload["stage1"]["rho"] = 0.0
+        payload["stage2"].update(
+            {
+                "milp_rolling_path_limit": 1,
+                "milp_rolling_high_path_limit": 2,
+                "milp_rolling_high_competition_task_threshold": 4,
+                "milp_rolling_promoted_tasks_per_segment": 2,
+            }
+        )
+        payload["candidate_windows"] = [
+            {"id": "X1", "a": "A1", "b": "B1", "start": 0.0, "end": 1.0, "delay": 0.0},
+            {"id": "X2", "a": "A2", "b": "B2", "start": 0.0, "end": 1.0, "delay": 0.0},
+        ]
+        payload["tasks"] = [
+            {
+                "id": "R_hi",
+                "src": "A1",
+                "dst": "B1",
+                "arrival": 0.0,
+                "deadline": 1.0,
+                "data": 4.0,
+                "weight": 3.0,
+                "max_rate": 10.0,
+                "type": "reg",
+            },
+            {
+                "id": "R_mid",
+                "src": "A2",
+                "dst": "B2",
+                "arrival": 0.0,
+                "deadline": 1.0,
+                "data": 4.0,
+                "weight": 2.0,
+                "max_rate": 10.0,
+                "type": "reg",
+            },
+            {
+                "id": "R_lo",
+                "src": "A1",
+                "dst": "B1",
+                "arrival": 0.0,
+                "deadline": 1.0,
+                "data": 4.0,
+                "weight": 1.0,
+                "max_rate": 10.0,
+                "type": "reg",
+            },
+        ]
+        scenario = _load_payload(payload)
+        local_plan = [
+            ScheduledWindow(window_id="X1", a="A1", b="B1", start=0.0, end=1.0, on=0.0, off=1.0, delay=0.0),
+            ScheduledWindow(window_id="X2", a="A2", b="B2", start=0.0, end=1.0, on=0.0, off=1.0, delay=0.0),
+        ]
+        tasks = [task for task in scenario.tasks if task.task_type == "reg"]
+        segments = build_segments(scenario, local_plan, tasks)
+        task_segments = _build_task_segments(tasks, segments)
+        limits = _select_rolling_path_limits(
+            scenario,
+            tasks,
+            task_segments,
+            {task.task_id: float(task.data) for task in tasks},
+        )
+        self.assertEqual(limits, {})
+
+    def test_rolling_path_limit_only_promotes_budgeted_top_tasks(self) -> None:
+        payload = copy.deepcopy(BASE_PAYLOAD)
+        payload["planning_end"] = 1.0
+        payload["capacities"] = {"A": 10.0, "B": 10.0, "X": 10.0}
+        payload["stage1"]["rho"] = 0.0
+        payload["stage2"].update(
+            {
+                "milp_rolling_path_limit": 1,
+                "milp_rolling_high_path_limit": 2,
+                "milp_rolling_high_competition_task_threshold": 3,
+                "milp_rolling_promoted_tasks_per_segment": 2,
+            }
+        )
+        payload["candidate_windows"] = [
+            {"id": "X1", "a": "A1", "b": "B1", "start": 0.0, "end": 1.0, "delay": 0.0},
+            {"id": "X2", "a": "A2", "b": "B2", "start": 0.0, "end": 1.0, "delay": 0.0},
+        ]
+        payload["tasks"] = [
+            {
+                "id": "R_hi",
+                "src": "A1",
+                "dst": "B1",
+                "arrival": 0.0,
+                "deadline": 1.0,
+                "data": 4.0,
+                "weight": 3.0,
+                "max_rate": 10.0,
+                "type": "reg",
+            },
+            {
+                "id": "R_mid_early",
+                "src": "A2",
+                "dst": "B2",
+                "arrival": 0.0,
+                "deadline": 1.0,
+                "data": 4.0,
+                "weight": 2.0,
+                "max_rate": 10.0,
+                "type": "reg",
+            },
+            {
+                "id": "R_mid_late",
+                "src": "A1",
+                "dst": "B1",
+                "arrival": 0.0,
+                "deadline": 1.0,
+                "data": 1.0,
+                "weight": 2.0,
+                "max_rate": 1.0,
+                "type": "reg",
+            },
+        ]
+        scenario = _load_payload(payload)
+        local_plan = [
+            ScheduledWindow(window_id="X1", a="A1", b="B1", start=0.0, end=1.0, on=0.0, off=1.0, delay=0.0),
+            ScheduledWindow(window_id="X2", a="A2", b="B2", start=0.0, end=1.0, on=0.0, off=1.0, delay=0.0),
+        ]
+        tasks = [task for task in scenario.tasks if task.task_type == "reg"]
+        segments = build_segments(scenario, local_plan, tasks)
+        task_segments = _build_task_segments(tasks, segments)
+        limits = _select_rolling_path_limits(
+            scenario,
+            tasks,
+            task_segments,
+            {task.task_id: float(task.data) for task in tasks},
+        )
+        self.assertEqual(limits[("R_hi", 0)], 2)
+        self.assertEqual(limits[("R_mid_early", 0)], 2)
+        self.assertNotIn(("R_mid_late", 0), limits)
+
+    def test_joint_milp_baseline_prefers_more_completions_over_large_single_task(self) -> None:
+        payload = copy.deepcopy(BASE_PAYLOAD)
+        payload["planning_end"] = 1.0
+        payload["capacities"] = {"A": 10.0, "B": 10.0, "X": 10.0}
+        payload["stage1"]["rho"] = 0.0
+        payload["candidate_windows"] = [
+            {"id": "X1", "a": "A1", "b": "B1", "start": 0.0, "end": 1.0, "delay": 0.0}
+        ]
+        payload["tasks"] = [
+            {
+                "id": "R_big",
+                "src": "A1",
+                "dst": "B1",
+                "arrival": 0.0,
+                "deadline": 1.0,
+                "data": 8.0,
+                "weight": 1.0,
+                "max_rate": 10.0,
+                "type": "reg",
+            },
+            {
+                "id": "R_s1",
+                "src": "A1",
+                "dst": "B1",
+                "arrival": 0.0,
+                "deadline": 1.0,
+                "data": 5.0,
+                "weight": 1.0,
+                "max_rate": 10.0,
+                "type": "reg",
+            },
+            {
+                "id": "R_s2",
+                "src": "A1",
+                "dst": "B1",
+                "arrival": 0.0,
+                "deadline": 1.0,
+                "data": 5.0,
+                "weight": 1.0,
+                "max_rate": 10.0,
+                "type": "reg",
+            },
+        ]
+        scenario = _load_payload(payload)
+        local_plan = [
+            ScheduledWindow(window_id="X1", a="A1", b="B1", start=0.0, end=1.0, on=0.0, off=1.0, delay=0.0)
+        ]
+        result = run_stage2(scenario, local_plan)
+        delivered = {task_id: sum(alloc.delivered for alloc in _task_allocation(result, task_id)) for task_id in ("R_big", "R_s1", "R_s2")}
+        self.assertAlmostEqual(delivered["R_s1"], 5.0, delta=1e-5)
+        self.assertAlmostEqual(delivered["R_s2"], 5.0, delta=1e-5)
+        self.assertLess(delivered["R_big"], 1e-6)
+        self.assertAlmostEqual(result.cr_reg, 2.0 / 3.0, delta=1e-6)
 
     def test_direct_insert_uses_reserved_capacity_without_preemption(self) -> None:
         payload = copy.deepcopy(BASE_PAYLOAD)
@@ -176,7 +391,7 @@ class Stage2BaselineInsertTests(unittest.TestCase):
                 "dst": "B1",
                 "arrival": 0.0,
                 "deadline": 3.0,
-                "data": 15.0,
+                "data": 14.0,
                 "weight": 1.0,
                 "max_rate": 5.0,
                 "type": "reg",

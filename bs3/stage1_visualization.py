@@ -118,7 +118,7 @@ def _plot_candidate_tradeoff(candidates: list[Stage1Candidate], output_path: Pat
     ax.set_ylim(-0.02, 1.05)
     ax.set_title("Candidate Tradeoff: Gateway Count vs SR_0.95")
     ax.grid(True, linestyle="--", alpha=0.35)
-    fig.colorbar(scatter, ax=ax, label="A_cross")
+    fig.colorbar(scatter, ax=ax, label="cross_active_fraction")
 
     fig.tight_layout()
     fig.savefig(output_path, dpi=180, bbox_inches="tight")

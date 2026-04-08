@@ -182,10 +182,35 @@ class Stage1Config:
 @dataclass(frozen=True)
 class Stage2Config:
     k_paths: int = 2
+    # 当任务传输量小于这个值，就认为任务完成
     completion_tolerance: float = 1e-6
+    # 阶段2-1是否优先使用联合 MILP 进行常态任务基线规划
+    prefer_milp: bool = True
+    # 阶段2-1 联合 MILP 的求解模式：full 或 rolling
+    milp_mode: str = "rolling"
+    # rolling 模式下的展望窗口长度（按事件分段数计）
+    milp_horizon_segments: int = 16
+    # rolling 模式下每轮正式提交的分段数
+    milp_commit_segments: int = 8
+    # rolling 模式下每个 task-segment 保留的候选路径数量
+    milp_rolling_path_limit: int = 1
+    # rolling 模式下高优先级 task-segment 放宽后的候选路径数量
+    milp_rolling_high_path_limit: int = 2
+    # rolling 模式下高权重任务阈值；None 表示按常态任务权重上四分位自动估计
+    milp_rolling_high_weight_threshold: float | None = None
+    # rolling 模式下判定“高竞争”的活跃任务数阈值（按分段）
+    milp_rolling_high_competition_task_threshold: int = 8
+    # rolling 模式下每个分段最多放宽到高路径数的任务数
+    milp_rolling_promoted_tasks_per_segment: int = 2
+    # CBC 求解时间上限（秒）；None 表示不设限
+    milp_time_limit_seconds: float | None = None
+    # CBC 相对 gap；None 表示使用求解器默认值
+    milp_relative_gap: float | None = None
+    # 控制每个时间段的 路径候选集大小（因为阶段2要选出每个时间段内的最优路径，所以要控制候选集大小，只保留支配解）
     label_keep_limit: int | None = None
 
     @property
+    # 用于计算 有效的非支配解保留数量
     def effective_label_keep_limit(self) -> int:
         if self.label_keep_limit not in {None, 0}:
             return max(int(self.label_keep_limit), 1)
@@ -202,9 +227,15 @@ class Scenario:
     stage1: Stage1Config
     stage2: Stage2Config
     planning_end: float
-    hotspots_a: list[HotspotRegion] = field(default_factory=list)
+    hotspots_a: list[HotspotRegion] = field(default_factory=list)   # A域热点
     metadata: dict[str, Any] = field(default_factory=dict)
 
+    # 返回每个域内的节点
+    # 返回:
+    # {
+    #     "A": ["A1", "A2"],  # A域的节点，按字母排序
+    #     "B": ["B1", "B2"]    # B域的节点，按字母排序
+    # }
     @property
     def domain_nodes(self) -> dict[Domain, list[str]]:
         grouped: dict[Domain, list[str]] = {"A": [], "B": []}
@@ -310,5 +341,6 @@ class PipelineResult:
     stage1: Stage1Result
     stage2_results: list[Stage2Result]
     recommended: Stage2Result | None
+
 
 

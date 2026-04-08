@@ -162,7 +162,7 @@ def run_case(scenario_path: Path, ga_result_path: Path, output_dir: Path, seed: 
             f"N_act={item['activation_count']} | SR={item['sr_theta_c']:.6f} | "
             f"eta_cap={item['eta_cap']:.3f} | Hot={item['hotspot_coverage']:.6f} | "
             f"HotGap={item['hotspot_max_gap']:.1f} | eta0={item['eta_0']:.6f} | "
-            f"A_cross={item['cross_active_fraction']:.6f}"
+            f"cross_active_fraction={item['cross_active_fraction']:.6f}"
         )
     md_lines.extend(["", "## Baseline deltas vs GA", ""])
     for item in baseline_rows:
@@ -172,7 +172,7 @@ def run_case(scenario_path: Path, ga_result_path: Path, output_dir: Path, seed: 
             f"dN_act={delta['activation_count_delta_vs_ga']}, dSR={delta['sr_theta_c_delta_vs_ga']:.6f}, "
             f"deta_cap={delta['eta_cap_delta_vs_ga']:.3f}, dHot={delta['hotspot_coverage_delta_vs_ga']:.6f}, "
             f"dHotGap={delta['hotspot_max_gap_delta_vs_ga']:.1f}, deta0={delta['eta0_delta_vs_ga']:.6f}, "
-            f"dA_cross={delta['across_delta_vs_ga']:.6f}"
+            f"dcross_active_fraction={delta['across_delta_vs_ga']:.6f}"
         )
     (case_dir / "greedy_baseline_summary.md").write_text("\n".join(md_lines), encoding="utf-8")
     return summary

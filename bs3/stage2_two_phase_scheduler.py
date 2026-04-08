@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from .models import Allocation, PathCandidate, ScheduledWindow, Scenario, Segment, Stage2Result, Task
 from .scenario import active_cross_links, active_intra_links, build_segments, generate_candidate_paths
+from .stage2_regular_joint_milp import build_regular_baseline_joint_milp
 
 EPS = 1e-9
 
@@ -306,6 +307,15 @@ class BaselineInsertScheduler:
         return result
 
     def _build_regular_baseline(
+        self,
+        plan: list[ScheduledWindow],
+        segments: list[Segment],
+    ) -> tuple[dict[tuple[str, int], Allocation], dict[str, bool]]:
+        if self.scenario.stage2.prefer_milp:
+            return build_regular_baseline_joint_milp(self.scenario, plan, segments)
+        return self._build_regular_baseline_sequential(plan, segments)
+
+    def _build_regular_baseline_sequential(
         self,
         plan: list[ScheduledWindow],
         segments: list[Segment],
