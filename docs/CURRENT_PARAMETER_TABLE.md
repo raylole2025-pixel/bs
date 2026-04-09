@@ -3,13 +3,14 @@
 > This file is kept for quick reference.  
 > The canonical parameter document is `docs/PARAMETER_SETTINGS.md`.
 
-This document summarizes the parameters used by the current codebase after the Stage1 4.8 alignment on 2026-04-08.
+This document summarizes the parameters used by the current codebase after the Stage1 4.9 candidate-pool alignment on 2026-04-09.
 
 The current Stage1 metric set is aligned to the "阶段一4.8" note:
 
 - formal Stage1 feasibility uses only `FR`, `eta_cap`, and weighted hotspot coverage `bar C^{A-hot}`
 - feasible-solution ranking uses only `N_act`, `eta_cap`, and hotspot coverage
 - `MR` remains an evaluation and recovery metric for infeasible solutions, but is not a hard feasibility constraint
+- candidate screening now uses a 4.9-style candidate pool: `V_reg`/`V_hot` global base pool plus coarse-segment guarantee additions
 
 ## 1. Scenario Input Fields
 
@@ -30,7 +31,7 @@ The current Stage1 metric set is aligned to the "阶段一4.8" note:
 | `candidate_windows[].start` / `end` | scenario JSON root | Physical visibility interval of the candidate window. |
 | `candidate_windows[].delay` | scenario JSON root | Cross-link propagation plus processing delay. |
 | `candidate_windows[].distance_km` | scenario JSON root | Cross-link distance, used when available. |
-| `candidate_windows[].value` | scenario JSON root | Static potential value `V_k^(0)` written back after preprocessing. |
+| `candidate_windows[].value` | scenario JSON root | Regular-task static value `V_k^{reg}` written back after preprocessing; hotspot-channel values are kept in runtime metadata. |
 | `tasks[].id` | scenario JSON root | Task id. |
 | `tasks[].src` / `dst` | scenario JSON root | Source node and destination node. |
 | `tasks[].arrival` / `deadline` | scenario JSON root | Arrival time and deadline. |
@@ -59,6 +60,10 @@ Stored under `stage1` in the scenario JSON and parsed by [scenario.py](/D:/Codex
 | `bottleneck_factor_alpha` | `0.85` | Threshold for deciding whether the primary path is bottlenecked on one domain side and needs a backup path. |
 | `eta_x` | `0.90` | Near-best transmitted-volume threshold for final path selection within one segment. |
 | `static_value_snapshot_seconds` | `600` | Coarse time slice length used when computing static potential value `V_k^(0)`. |
+| `candidate_pool_base_size` | `400` | Base pool size selected by the global `V_reg` / `V_hot` channels before coarse-segment补充. |
+| `candidate_pool_hot_fraction` | `0.30` | Share of the base pool allocated to the hotspot-value channel; the remainder uses the regular-task value channel. |
+| `candidate_pool_min_per_coarse_segment` | `3` | Minimum number of representative windows each positive-demand coarse segment should keep after screening. |
+| `candidate_pool_max_additional` | `150` | Upper bound on the coarse-segment guarantee additions. |
 | `q_eval` | `4` | Decoder evaluates feasibility every `q_eval` accepted windows. |
 | `omega_fr` | `4/9` | Violation aggregation weight for `1 - FR`. |
 | `omega_cap` | `3/9` | Violation aggregation weight for capacity shortfall. |
@@ -68,7 +73,7 @@ Stored under `stage1` in the scenario JSON and parsed by [scenario.py](/D:/Codex
 Notes:
 
 - `FR` is a hard feasibility condition fixed at `1.0`; it is no longer configured by `theta_sr` or `theta_c`.
-- Old fields `theta`, `theta_sr`, `theta_c`, and `near_completion_ratio` are ignored by the Stage1 4.8 implementation.
+- Old fields `theta`, `theta_sr`, `theta_c`, and `near_completion_ratio` are ignored by the current Stage1 implementation.
 
 ## 3. Stage1 GA Parameters
 
@@ -116,8 +121,10 @@ These come from [run_stage1_workbook_batch.py](/D:/Codex_Project/bs3/apps/run_st
 | --- | --- | --- |
 | `cap_a` / `cap_b` / `cap_x` | `600 / 2000 / 1000` | Capacity defaults injected into generated scenarios. |
 | `seed` | `7` | Random seed for Stage1 GA. |
-| `screen_pool_size` | `450` | Candidate-window screening pool size before GA. |
-| `screen_block_seconds` | `900` | Time block length used by candidate screening. |
+| `candidate_pool_base_size` | `400` | CLI override for the global candidate-pool base size. |
+| `candidate_pool_hot_fraction` | `0.30` | CLI override for the hotspot-value channel ratio in the base pool. |
+| `candidate_pool_min_per_coarse_segment` | `3` | CLI override for the minimum coarse-segment representative count. |
+| `candidate_pool_max_additional` | `150` | CLI override for the guarantee-addition cap. |
 | `run_stage2` | `False` | Whether to continue into Stage2 after Stage1. |
 | `stage2_k_paths` | `2` | Stage2 path count written into generated scenario payload. |
 | `disable_distance_enrichment` | `False` | Whether to skip distance and delay enrichment. |
@@ -132,6 +139,8 @@ Deprecated but still accepted by some CLI wrappers:
 - `--theta-sr`
 - `--theta-c`
 - `--omega-sr` as an alias of `--omega-fr`
+- `--screen-pool-size`
+- `--screen-block-seconds`
 
 ## 7. Fixed Internal Constants
 

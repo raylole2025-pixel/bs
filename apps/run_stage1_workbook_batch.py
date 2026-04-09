@@ -366,6 +366,10 @@ def build_scenario_payload(
         "bottleneck_factor_alpha": args.alpha,
         "eta_x": args.eta_x,
         "static_value_snapshot_seconds": args.snapshot_seconds,
+        "candidate_pool_base_size": args.candidate_pool_base_size,
+        "candidate_pool_hot_fraction": args.candidate_pool_hot_fraction,
+        "candidate_pool_min_per_coarse_segment": args.candidate_pool_min_per_coarse_segment,
+        "candidate_pool_max_additional": args.candidate_pool_max_additional,
         "q_eval": args.q_eval,
         "omega_fr": args.omega_fr,
         "omega_cap": args.omega_cap,
@@ -477,6 +481,10 @@ def main() -> None:
     parser.add_argument("--alpha", type=float, default=0.85)
     parser.add_argument("--eta-x", type=float, default=0.90)
     parser.add_argument("--snapshot-seconds", type=int, default=600)
+    parser.add_argument("--candidate-pool-base-size", type=int, default=400)
+    parser.add_argument("--candidate-pool-hot-fraction", type=float, default=0.30)
+    parser.add_argument("--candidate-pool-min-per-coarse-segment", type=int, default=3)
+    parser.add_argument("--candidate-pool-max-additional", type=int, default=150)
     parser.add_argument("--q-eval", type=int, default=4)
     parser.add_argument("--omega-fr", "--omega-sr", dest="omega_fr", type=float, default=4.0 / 9.0)
     parser.add_argument("--omega-cap", type=float, default=3.0 / 9.0)
@@ -489,8 +497,8 @@ def main() -> None:
     parser.add_argument("--stall-generations", type=int, default=20)
     parser.add_argument("--top-m", type=int, default=5)
     parser.add_argument("--max-runtime-seconds", type=float, default=None)
-    parser.add_argument("--screen-pool-size", type=int, default=450)
-    parser.add_argument("--screen-block-seconds", type=float, default=900.0)
+    parser.add_argument("--screen-pool-size", type=int, default=None, help="Deprecated; Stage1 4.9 uses candidate-pool parameters instead.")
+    parser.add_argument("--screen-block-seconds", type=float, default=None, help="Deprecated; Stage1 4.9 no longer uses block screening.")
     parser.add_argument("--run-stage2", action="store_true", help="Run the full pipeline and export stage2 metrics.")
     parser.add_argument("--stage2-k-paths", type=int, default=2)
     parser.add_argument("--skip-artifacts", action="store_true")
@@ -559,6 +567,10 @@ def main() -> None:
             "eta_x": args.eta_x,
             "q_eval": args.q_eval,
             "snapshot_seconds": args.snapshot_seconds,
+            "candidate_pool_base_size": args.candidate_pool_base_size,
+            "candidate_pool_hot_fraction": args.candidate_pool_hot_fraction,
+            "candidate_pool_min_per_coarse_segment": args.candidate_pool_min_per_coarse_segment,
+            "candidate_pool_max_additional": args.candidate_pool_max_additional,
             "omega_fr": args.omega_fr,
             "omega_cap": args.omega_cap,
             "omega_hot": args.omega_hot,
@@ -624,11 +636,7 @@ def main() -> None:
         # 共享运行时缓存可以减少重复的图构建和热点可达性计算。
         scenario.metadata["_runtime_cache"] = shared_runtime_cache
         annotate_scenario_candidate_values(scenario, force=True)
-        screen_candidate_windows(
-            scenario,
-            pool_size=args.screen_pool_size,
-            block_seconds=args.screen_block_seconds,
-        )
+        screen_candidate_windows(scenario)
 
         annotated_scenario_path = set_dir / f"{sheet_name}_scenario_annotated.json"
         write_json(annotated_scenario_path, json_ready_scenario_payload(scenario))

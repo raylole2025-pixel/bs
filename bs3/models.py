@@ -169,6 +169,14 @@ class Stage1Config:
     eta_x: float = 0.90
     # 将整个规划时间轴 按 600 秒为一个快照窗口 划分成多个时间段，然后在每个时间段内评估候选窗口的价值
     static_value_snapshot_seconds: int = 600
+    # candidate pool 主池规模
+    candidate_pool_base_size: int = 400
+    # 主池中热点价值通道的占比；剩余部分走常态任务价值通道
+    candidate_pool_hot_fraction: float = 0.30
+    # 每个有需求粗分段至少保留的代表窗口数量
+    candidate_pool_min_per_coarse_segment: int = 3
+    # 分段保底补充窗口的总上限
+    candidate_pool_max_additional: int = 150
     q_eval: int = 4
     omega_fr: float = 4.0 / 9.0
     omega_cap: float = 3.0 / 9.0
