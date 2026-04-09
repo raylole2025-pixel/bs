@@ -165,8 +165,6 @@ def summarize_result(scenario, result) -> dict[str, Any]:
         "solver_metrics": {
             "cr_reg": result.cr_reg,
             "cr_emg": result.cr_emg,
-            "sr_reg": result.sr_reg,
-            "sr_emg": result.sr_emg,
             "n_preemptions": result.n_preemptions,
             "u_cross": result.u_cross,
             "u_all": result.u_all,

@@ -34,11 +34,11 @@ def main() -> None:
     parser.add_argument("--cap-a", type=float, default=600.0, help="Default A-domain link capacity in Mbps")
     parser.add_argument("--cap-b", type=float, default=2000.0, help="Default B-domain link capacity in Mbps")
     parser.add_argument("--cap-x", type=float, default=1000.0, help="Default cross-domain link capacity in Mbps")
-    parser.add_argument("--theta", type=float, default=1.0, help="Deprecated alias for --theta-sr")
-    parser.add_argument("--theta-sr", type=float, default=None, help="Stage1 strict full-success-rate threshold")
+    parser.add_argument("--theta", type=float, default=None, help="Deprecated and ignored in Stage1 4.8; feasibility now uses FR=1")
+    parser.add_argument("--theta-sr", type=float, default=None, help="Deprecated and ignored in Stage1 4.8; feasibility now uses FR=1")
     parser.add_argument("--theta-cap", type=float, default=0.08, help="Stage1 cross-capacity shortfall threshold")
     parser.add_argument("--theta-hot", type=float, default=0.80, help="Stage1 hotspot coverage threshold")
-    parser.add_argument("--theta-c", type=float, default=1.0, help="Deprecated compatibility field; Stage1 now uses strict completion tolerance")
+    parser.add_argument("--theta-c", type=float, default=None, help="Deprecated and ignored in Stage1 4.8; feasibility now uses FR=1")
     parser.add_argument("--rho", type=float, default=0.20, help="Reserved cross-domain capacity ratio")
     parser.add_argument("--t-pre", type=float, default=1800.0, help="Cross-link preheat time in seconds")
     parser.add_argument("--d-min", type=float, default=600.0, help="Minimum effective cross-link duration in seconds")
@@ -47,7 +47,7 @@ def main() -> None:
     parser.add_argument("--eta-x", type=float, default=0.90, help="Near-best transmitted-data threshold for final path selection")
     parser.add_argument("--snapshot-seconds", type=int, default=600, help="Static-value coarse preprocessing step in seconds")
     parser.add_argument("--q-eval", type=int, default=4, help="Evaluate regular satisfaction every q accepted windows")
-    parser.add_argument("--omega-sr", type=float, default=4.0 / 9.0, help="Violation aggregation weight for SR shortfall")
+    parser.add_argument("--omega-fr", "--omega-sr", dest="omega_fr", type=float, default=4.0 / 9.0, help="Violation aggregation weight for FR shortfall")
     parser.add_argument("--omega-cap", type=float, default=3.0 / 9.0, help="Violation aggregation weight for capacity shortfall")
     parser.add_argument("--omega-hot", type=float, default=2.0 / 9.0, help="Violation aggregation weight for hotspot shortfall")
     parser.add_argument("--elite-prune-count", type=int, default=6, help="Number of elite feasible candidates to prune each round")
@@ -74,10 +74,8 @@ def main() -> None:
         tasks_path=args.tasks_json,
         capacities={"A": args.cap_a, "B": args.cap_b, "X": args.cap_x},
         stage1_config={
-            "theta_sr": args.theta_sr if args.theta_sr is not None else args.theta,
             "theta_cap": args.theta_cap,
             "theta_hot": args.theta_hot,
-            "theta_c": args.theta_c,
             "rho": args.rho,
             "t_pre": args.t_pre,
             "d_min": args.d_min,
@@ -86,7 +84,7 @@ def main() -> None:
             "eta_x": args.eta_x,
             "static_value_snapshot_seconds": args.snapshot_seconds,
             "q_eval": args.q_eval,
-            "omega_sr": args.omega_sr,
+            "omega_fr": args.omega_fr,
             "omega_cap": args.omega_cap,
             "omega_hot": args.omega_hot,
             "elite_prune_count": args.elite_prune_count,

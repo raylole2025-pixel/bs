@@ -160,9 +160,6 @@ class Stage1Config:
     rho: float
     t_pre: float
     d_min: float
-    # Deprecated compatibility alias; Stage1 feasibility now uses full_success_rate via theta_sr.
-    theta_c: float = 1.0
-    theta_sr: float = 1.0
     theta_cap: float = 0.08
     theta_hot: float = 0.80
     hot_hop_limit: int = 4
@@ -173,7 +170,7 @@ class Stage1Config:
     # 将整个规划时间轴 按 600 秒为一个快照窗口 划分成多个时间段，然后在每个时间段内评估候选窗口的价值
     static_value_snapshot_seconds: int = 600
     q_eval: int = 4
-    omega_sr: float = 4.0 / 9.0
+    omega_fr: float = 4.0 / 9.0
     omega_cap: float = 3.0 / 9.0
     omega_hot: float = 2.0 / 9.0
     elite_prune_count: int = 6
@@ -255,7 +252,7 @@ class Stage1Candidate:
     feasible: bool
     violation: float
     mean_completion_ratio: float
-    full_success_rate: float
+    fr: float
     eta_cap: float
     eta_0: float
     avg_hot_coverage: float
@@ -267,14 +264,6 @@ class Stage1Candidate:
     cross_active_fraction: float
     max_cross_gap: float
     fitness: tuple[float, ...]
-
-    @property
-    def sr_theta_c(self) -> float:
-        return self.full_success_rate
-
-    @property
-    def sr_near(self) -> float:
-        return self.full_success_rate
 
     @property
     def hotspot_coverage(self) -> float:
@@ -333,8 +322,6 @@ class Stage2Result:
     plan: list[ScheduledWindow]
     cr_reg: float
     cr_emg: float
-    sr_reg: float
-    sr_emg: float
     n_preemptions: int
     u_cross: float
     u_all: float

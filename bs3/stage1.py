@@ -67,11 +67,11 @@ def plan_signature(plan: list[ScheduledWindow]) -> tuple[tuple[str, float, float
     signature.sort()
     return tuple(signature)
 
-
+# 这里的网关数量指的是不重复的网关数量
 def gateway_count(plan: list[ScheduledWindow]) -> int:
     return len({node for window in plan for node in (window.a, window.b)})
 
-
+# 用于合并重叠的时间间隔（本质上是为了计算一颗网关的激活时间，但这个指标已删掉）
 def _merge_intervals(intervals: list[tuple[float, float]]) -> list[tuple[float, float]]:
     if not intervals:
         return []
@@ -117,7 +117,7 @@ def occupation_time(plan: list[ScheduledWindow], t_pre: float) -> float:
 def merged_cross_intervals(plan: list[ScheduledWindow]) -> list[tuple[float, float]]:
     return _merge_intervals(sorted((window.on, window.off) for window in plan))
 
-
+# 计算跨域链路的激活时间占比
 def cross_active_fraction(plan: list[ScheduledWindow], planning_end: float) -> float:
     if planning_end <= EPS:
         return 0.0
@@ -142,17 +142,9 @@ def max_cross_gap(plan: list[ScheduledWindow], planning_end: float) -> float:
 @dataclass(frozen=True)
 class EvaluationMetrics:
     mean_completion_ratio: float
-    full_success_rate: float
+    fr: float
     eta_cap: float
     eta_0: float
-
-    @property
-    def sr_theta_c(self) -> float:
-        return self.full_success_rate
-
-    @property
-    def sr_near(self) -> float:
-        return self.full_success_rate
 
 
 @dataclass(frozen=True)
@@ -166,7 +158,7 @@ class StructuralMetrics:
     max_cross_gap: float
     proxy_eta_cap: float
 
-
+# 仿真追踪记录 ——把一次完整仿真的所有结果打包在一起
 @dataclass
 class SimulationTrace:
     metrics: EvaluationMetrics
@@ -175,10 +167,10 @@ class SimulationTrace:
     window_rows: list[dict]
     window_flow: dict[str, float]
 
-
+# 把"一条排列（染色体）解码后的完整状态"打包在一起
 @dataclass
 class OrderState:
-    order: tuple[str, ...]
+    order: tuple[str, ...]      # 排列（窗口ID的有序元组）
     plan: list[ScheduledWindow]
     metrics: EvaluationMetrics
     structural: StructuralMetrics
@@ -193,7 +185,7 @@ class DomainPath:
     edge_ids: tuple[str, ...]
     delay: float
 
-
+# 完整路径，还包括候选速率、候选交付量、有效持续时间、预测跨域负载、跳数
 @dataclass(frozen=True)
 class PathOption:
     path_key: tuple[str, ...]
@@ -462,7 +454,7 @@ class RegularEvaluator:
     def _simulate(self, plan: list[ScheduledWindow], rho: float) -> SimulationTrace:
         if not self.regular_tasks:
             return SimulationTrace(
-                metrics=EvaluationMetrics(mean_completion_ratio=1.0, full_success_rate=1.0, eta_cap=0.0, eta_0=0.0),
+                metrics=EvaluationMetrics(mean_completion_ratio=1.0, fr=1.0, eta_cap=0.0, eta_0=0.0),
                 segment_rows=[],
                 task_rows=[],
                 window_rows=[],
@@ -602,8 +594,6 @@ class RegularEvaluator:
                     "remaining_end": remaining_end,
                     "completion_ratio": phi,
                     "completion_tolerance": completion_tolerance,
-                    "full_success": completed,
-                    "near_complete": completed,
                     "completed": completed,
                 }
             )
@@ -621,7 +611,7 @@ class RegularEvaluator:
         ]
         metrics = EvaluationMetrics(
             mean_completion_ratio=(weighted_completion / self.total_weight) if self.total_weight > EPS else 1.0,
-            full_success_rate=(weighted_completed / self.total_weight) if self.total_weight > EPS else 1.0,
+            fr=(weighted_completed / self.total_weight) if self.total_weight > EPS else 1.0,
             eta_cap=(eta_cap_numerator / (demand_weighted_total + EPS)) if demand_weighted_total > EPS else 0.0,
             eta_0=(eta0_numerator / (demand_weighted_total + EPS)) if demand_weighted_total > EPS else 0.0,
         )
@@ -643,9 +633,7 @@ class RegularEvaluator:
         return {
             "metrics": {
                 "mean_completion_ratio": trace.metrics.mean_completion_ratio,
-                "full_success_rate": trace.metrics.full_success_rate,
-                "sr_theta_c": trace.metrics.full_success_rate,
-                "sr_near": trace.metrics.full_success_rate,
+                "fr": trace.metrics.fr,
                 "eta_cap": trace.metrics.eta_cap,
                 "eta_0": trace.metrics.eta_0,
                 "cross_capacity_gap": trace.metrics.eta_cap,
@@ -820,21 +808,20 @@ class Stage1GA:
         return limit is not None and limit > 0 and (time.perf_counter() - started_at) >= limit - EPS
 
     def _violation(self, metrics: EvaluationMetrics, structural: StructuralMetrics) -> float:
-        theta_sr = max(self.scenario.stage1.theta_sr, EPS)
         theta_cap = max(self.scenario.stage1.theta_cap, EPS)
         theta_hot = max(self.scenario.stage1.theta_hot, EPS)
-        v_sr = max(0.0, self.scenario.stage1.theta_sr - metrics.full_success_rate)
+        v_fr = max(0.0, 1.0 - metrics.fr)
         v_cap = max(0.0, metrics.eta_cap - self.scenario.stage1.theta_cap)
         v_hot = max(0.0, self.scenario.stage1.theta_hot - structural.avg_hot_coverage)
         return (
-            self.scenario.stage1.omega_sr * v_sr / theta_sr
+            self.scenario.stage1.omega_fr * v_fr
             + self.scenario.stage1.omega_cap * v_cap / theta_cap
             + self.scenario.stage1.omega_hot * v_hot / theta_hot
         )
 
     def _feasible(self, metrics: EvaluationMetrics, structural: StructuralMetrics) -> bool:
         return (
-            metrics.full_success_rate + EPS >= self.scenario.stage1.theta_sr
+            metrics.fr + EPS >= 1.0
             and metrics.eta_cap <= self.scenario.stage1.theta_cap + EPS
             and structural.avg_hot_coverage + EPS >= self.scenario.stage1.theta_hot
         )
@@ -938,7 +925,7 @@ class Stage1GA:
             feasible=state.feasible,
             violation=state.violation,
             mean_completion_ratio=state.metrics.mean_completion_ratio,
-            full_success_rate=state.metrics.full_success_rate,
+            fr=state.metrics.fr,
             eta_cap=state.metrics.eta_cap,
             eta_0=state.metrics.eta_0,
             avg_hot_coverage=state.structural.avg_hot_coverage,
@@ -1141,10 +1128,7 @@ class Stage1GA:
                     "population_best_mean_completion_ratio": (
                         population_best.mean_completion_ratio if population_best is not None else None
                     ),
-                    "population_best_full_success_rate": (
-                        population_best.full_success_rate if population_best is not None else None
-                    ),
-                    "population_best_sr_theta_c": (population_best.full_success_rate if population_best is not None else None),
+                    "population_best_fr": (population_best.fr if population_best is not None else None),
                     "population_best_eta_cap": (population_best.eta_cap if population_best is not None else None),
                     "population_best_avg_hot_coverage": (population_best.avg_hot_coverage if population_best is not None else None),
                     "population_best_activation_count": (population_best.activation_count if population_best is not None else None),
@@ -1153,10 +1137,7 @@ class Stage1GA:
                     "best_feasible_mean_completion_ratio": (
                         best_feasible.mean_completion_ratio if best_feasible is not None else None
                     ),
-                    "best_feasible_full_success_rate": (
-                        best_feasible.full_success_rate if best_feasible is not None else None
-                    ),
-                    "best_feasible_sr_theta_c": (best_feasible.full_success_rate if best_feasible is not None else None),
+                    "best_feasible_fr": (best_feasible.fr if best_feasible is not None else None),
                     "best_feasible_eta_cap": (best_feasible.eta_cap if best_feasible is not None else None),
                     "best_feasible_avg_hot_coverage": (best_feasible.avg_hot_coverage if best_feasible is not None else None),
                     "best_feasible_activation_count": (best_feasible.activation_count if best_feasible is not None else None),

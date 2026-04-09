@@ -184,8 +184,6 @@ class BaselineInsertScheduler:
 
         cr_reg = self._weighted_true_completion("reg", actual_remaining)
         cr_emg = self._weighted_true_completion("emg", actual_remaining)
-        sr_reg = self._success_rate("reg", actual_remaining)
-        sr_emg = self._success_rate("emg", actual_remaining)
         u_cross = sum(usage for edge_id, usage in edge_usage.items() if edge_id in cross_edge_ids) / cross_denominator if cross_denominator > self.numeric_tolerance else 0.0
         u_all = sum(edge_usage.values()) / all_denominator if all_denominator > self.numeric_tolerance else 0.0
 
@@ -193,8 +191,6 @@ class BaselineInsertScheduler:
             plan=plan,
             cr_reg=cr_reg,
             cr_emg=cr_emg,
-            sr_reg=sr_reg,
-            sr_emg=sr_emg,
             n_preemptions=n_preemptions,
             u_cross=u_cross,
             u_all=u_all,
@@ -908,12 +904,6 @@ class BaselineInsertScheduler:
         if total_weight <= self.numeric_tolerance:
             return 1.0
         return sum(task.weight * float(self._is_task_complete(task, remaining.get(task.task_id, 0.0))) for task in tasks) / total_weight
-
-    def _success_rate(self, task_type: str, remaining: dict[str, float]) -> float:
-        tasks = [task for task in self.scenario.tasks if task.task_type == task_type]
-        if not tasks:
-            return 1.0
-        return sum(1 for task in tasks if self._is_task_complete(task, remaining.get(task.task_id, 0.0))) / len(tasks)
 
     def _cross_link_from_edges(self, edge_ids: tuple[str, ...], cross_edge_ids: set[str]) -> str | None:
         if not cross_edge_ids:

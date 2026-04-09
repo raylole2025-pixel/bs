@@ -70,7 +70,6 @@ class Stage1CurrentLogicTests(unittest.TestCase):
                 rho=0.0,
                 t_pre=0.0,
                 d_min=0.0,
-                theta_sr=1.0,
                 theta_cap=0.0,
                 theta_hot=0.0,
                 q_eval=1,
@@ -90,8 +89,7 @@ class Stage1CurrentLogicTests(unittest.TestCase):
         self.assertEqual(best.window_count, 1)
         self.assertEqual(best.activation_count, 2)
         self.assertAlmostEqual(best.mean_completion_ratio, 1.0)
-        self.assertAlmostEqual(best.full_success_rate, 1.0)
-        self.assertAlmostEqual(best.sr_theta_c, 1.0)
+        self.assertAlmostEqual(best.fr, 1.0)
         self.assertAlmostEqual(best.hotspot_coverage, 1.0)
         self.assertEqual(len(best.fitness), 4)
         self.assertFalse(hasattr(best, "f_reg"))
@@ -123,7 +121,6 @@ class Stage1CurrentLogicTests(unittest.TestCase):
                 rho=0.0,
                 t_pre=0.0,
                 d_min=0.0,
-                theta_sr=1.0,
                 theta_cap=0.0,
                 theta_hot=1.0,
                 hot_hop_limit=0,
@@ -170,7 +167,6 @@ class Stage1CurrentLogicTests(unittest.TestCase):
                 rho=0.0,
                 t_pre=0.0,
                 d_min=0.0,
-                theta_sr=1.0,
                 theta_cap=0.0,
                 theta_hot=0.0,
                 q_eval=1,
@@ -187,7 +183,7 @@ class Stage1CurrentLogicTests(unittest.TestCase):
         self.assertFalse(result.best_feasible)
         self.assertIsNotNone(result.population_best)
         self.assertAlmostEqual(result.population_best.mean_completion_ratio, 0.95)
-        self.assertAlmostEqual(result.population_best.full_success_rate, 0.0)
+        self.assertAlmostEqual(result.population_best.fr, 0.0)
         self.assertGreater(result.population_best.violation, 0.0)
 
 

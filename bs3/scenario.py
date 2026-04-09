@@ -51,12 +51,12 @@ def _runtime_cache(scenario: Scenario) -> dict:
 
 
 def _normalized_stage1_weights(
-    omega_sr: object,
+    omega_fr: object,
     omega_cap: object,
     omega_hot: object,
 ) -> tuple[float, float, float]:
     values = [
-        max(_float(omega_sr, "stage1.omega_sr"), 0.0),
+        max(_float(omega_fr, "stage1.omega_fr"), 0.0),
         max(_float(omega_cap, "stage1.omega_cap"), 0.0),
         max(_float(omega_hot, "stage1.omega_hot"), 0.0),
     ]
@@ -238,11 +238,9 @@ def load_scenario(path: str | Path) -> Scenario:
             else _float(ga_cfg.get("max_runtime_seconds"), "ga.max_runtime_seconds")
         ),
     )
-    theta_sr_default = stage1_cfg.get("theta_sr", stage1_cfg.get("theta", 1.0))
     theta_cap_default = stage1_cfg.get("theta_cap", stage1_cfg.get("theta_eta0", 0.08))
-    theta_c_default = stage1_cfg.get("theta_c", stage1_cfg.get("near_completion_ratio", 1.0))
-    omega_sr, omega_cap, omega_hot = _normalized_stage1_weights(
-        stage1_cfg.get("omega_sr", stage1_cfg.get("viol_weight_sr", 4.0 / 9.0)),
+    omega_fr, omega_cap, omega_hot = _normalized_stage1_weights(
+        stage1_cfg.get("omega_fr", stage1_cfg.get("omega_sr", stage1_cfg.get("viol_weight_sr", 4.0 / 9.0))),
         stage1_cfg.get("omega_cap", stage1_cfg.get("viol_weight_cap", 3.0 / 9.0)),
         stage1_cfg.get("omega_hot", stage1_cfg.get("viol_weight_hot", 2.0 / 9.0)),
     )
@@ -250,8 +248,6 @@ def load_scenario(path: str | Path) -> Scenario:
         rho=_float(_required(stage1_cfg, "rho"), "stage1.rho"),
         t_pre=_float(_required(stage1_cfg, "t_pre"), "stage1.t_pre"),
         d_min=_float(_required(stage1_cfg, "d_min"), "stage1.d_min"),
-        theta_c=_float(theta_c_default, "stage1.theta_c"),
-        theta_sr=_float(theta_sr_default, "stage1.theta_sr"),
         theta_cap=_float(theta_cap_default, "stage1.theta_cap"),
         theta_hot=_float(stage1_cfg.get("theta_hot", 0.80), "stage1.theta_hot"),
         hot_hop_limit=int(stage1_cfg.get("hot_hop_limit", stage1_cfg.get("H_A", 4))),
@@ -262,7 +258,7 @@ def load_scenario(path: str | Path) -> Scenario:
         eta_x=_float(stage1_cfg.get("eta_x", 0.90), "stage1.eta_x"),
         static_value_snapshot_seconds=int(stage1_cfg.get("static_value_snapshot_seconds", 600)),
         q_eval=int(stage1_cfg.get("q_eval", 4)),
-        omega_sr=omega_sr,
+        omega_fr=omega_fr,
         omega_cap=omega_cap,
         omega_hot=omega_hot,
         elite_prune_count=int(stage1_cfg.get("elite_prune_count", ga.elite_count)),
@@ -363,7 +359,7 @@ def validate_scenario(scenario: Scenario) -> None:
     total_hot_weight = sum(region.weight for region in scenario.hotspots_a)
     if scenario.hotspots_a and abs(total_hot_weight - 1.0) > 1e-6:
         raise ValueError("A-domain hotspot weights must sum to 1")
-    total_stage1_weight = scenario.stage1.omega_sr + scenario.stage1.omega_cap + scenario.stage1.omega_hot
+    total_stage1_weight = scenario.stage1.omega_fr + scenario.stage1.omega_cap + scenario.stage1.omega_hot
     if abs(total_stage1_weight - 1.0) > 1e-6:
         raise ValueError("Stage1 omega weights must sum to 1")
 
@@ -748,8 +744,6 @@ def scenario_to_dict(scenario: Scenario) -> dict:
             "rho": scenario.stage1.rho,
             "t_pre": scenario.stage1.t_pre,
             "d_min": scenario.stage1.d_min,
-            "theta_c": scenario.stage1.theta_c,
-            "theta_sr": scenario.stage1.theta_sr,
             "theta_cap": scenario.stage1.theta_cap,
             "theta_hot": scenario.stage1.theta_hot,
             "hot_hop_limit": scenario.stage1.hot_hop_limit,
@@ -757,7 +751,7 @@ def scenario_to_dict(scenario: Scenario) -> dict:
             "eta_x": scenario.stage1.eta_x,
             "static_value_snapshot_seconds": scenario.stage1.static_value_snapshot_seconds,
             "q_eval": scenario.stage1.q_eval,
-            "omega_sr": scenario.stage1.omega_sr,
+            "omega_fr": scenario.stage1.omega_fr,
             "omega_cap": scenario.stage1.omega_cap,
             "omega_hot": scenario.stage1.omega_hot,
             "elite_prune_count": scenario.stage1.elite_prune_count,

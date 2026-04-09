@@ -34,10 +34,8 @@ def _candidate_to_dict(candidate):
     """把阶段 1 候选解展开成适合写入 JSON 的普通字典。"""
 
     data = asdict(candidate)
-    data["full_success_rate"] = candidate.full_success_rate
+    data["fr"] = candidate.fr
     data["mean_completion_ratio"] = candidate.mean_completion_ratio
-    data["sr_theta_c"] = candidate.full_success_rate
-    data["sr_near"] = candidate.full_success_rate
     data["plan"] = [asdict(window) for window in candidate.plan]
     return data
 """
@@ -56,10 +54,8 @@ data = {
         {"window_id": "cw1", "a": "A1", "b": "B1", "start": 0, "end": 10, "on": 5, "off": 10, ...}
     ],
     "fitness": (0.44, 0.33, 0.22),
-    "full_success_rate": 0.92,         ← 新增的别名
+    "fr": 0.92,                        ← 新增的别名
     "mean_completion_ratio": 0.88,     ← 新增的别名
-    "sr_theta_c": 0.92,               ← 新增的别名
-    "sr_near": 0.92,                  ← 新增的别名
     ...
 }"""
 

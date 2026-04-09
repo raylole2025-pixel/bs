@@ -7,7 +7,6 @@ from .stage2 import run_stage2
 
 def _stage2_sort_key(result, t_pre: float) -> tuple[float, ...]:
     return (
-        -result.sr_emg,
         -result.cr_emg,
         float(result.n_preemptions),
         -result.cr_reg,

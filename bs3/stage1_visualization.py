@@ -93,12 +93,12 @@ def _plot_candidate_tradeoff(candidates: list[Stage1Candidate], output_path: Pat
     fig, ax = plt.subplots(figsize=(8.8, 5.6))
 
     gateway_counts = [item.gateway_count for item in candidates]
-    sr_values = [item.full_success_rate for item in candidates]
+    fr_values = [item.fr for item in candidates]
     cross_active = [item.cross_active_fraction for item in candidates]
 
     scatter = ax.scatter(
         gateway_counts,
-        sr_values,
+        fr_values,
         c=cross_active,
         s=180,
         cmap="viridis",
@@ -108,15 +108,15 @@ def _plot_candidate_tradeoff(candidates: list[Stage1Candidate], output_path: Pat
     for idx, item in enumerate(candidates, start=1):
         ax.annotate(
             f"R{idx}",
-            (item.gateway_count, item.full_success_rate),
+            (item.gateway_count, item.fr),
             textcoords="offset points",
             xytext=(5, 4),
         )
 
     ax.set_xlabel("Gateway Count G(S)")
-    ax.set_ylabel("Full Success Rate")
+    ax.set_ylabel("FR")
     ax.set_ylim(-0.02, 1.05)
-    ax.set_title("Candidate Tradeoff: Gateway Count vs Full Success Rate")
+    ax.set_title("Candidate Tradeoff: Gateway Count vs FR")
     ax.grid(True, linestyle="--", alpha=0.35)
     fig.colorbar(scatter, ax=ax, label="cross_active_fraction")
 
@@ -134,7 +134,7 @@ def _plot_task_completion(task_rows: list[dict], output_path: Path) -> None:
     values = [row.get("completion_ratio", 0.0) for row in ordered]
     colors = [
         "#2ca02c"
-        if bool(row.get("completed", row.get("full_success", 0)))
+        if bool(row.get("completed", 0))
         else "#ff7f0e"
         if value + 1e-9 >= 0.8
         else "#d62728"
@@ -357,7 +357,7 @@ def _plot_hotspot_region_breakdown(region_rows: list[dict], output_path: Path) -
 def _plot_solution_scorecard(candidate: Stage1Candidate, output_path: Path) -> None:
     metric_labels = ["FR", "MR", "Hotspot Cov.", "1 - Eta_cap"]
     metric_values = [
-        100.0 * candidate.full_success_rate,
+        100.0 * candidate.fr,
         100.0 * candidate.mean_completion_ratio,
         100.0 * candidate.avg_hot_coverage,
         100.0 * (1.0 - candidate.eta_cap),
@@ -501,9 +501,7 @@ def export_stage1_run_artifacts(
             "activation_count": candidate.activation_count,
             "activation_time": candidate.activation_time,
             "mean_completion_ratio": candidate.mean_completion_ratio,
-            "full_success_rate": candidate.full_success_rate,
-            "sr_theta_c": candidate.full_success_rate,
-            "sr_near": candidate.full_success_rate,
+            "fr": candidate.fr,
             "eta_cap": candidate.eta_cap,
             "eta_0": candidate.eta_0,
             "hotspot_coverage": candidate.hotspot_coverage,

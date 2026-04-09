@@ -235,10 +235,8 @@ def candidate_to_dict(candidate) -> dict[str, Any]:
     """把阶段 1 候选解展开成可直接写入 JSON 的字典。"""
 
     data = asdict(candidate)
-    data["full_success_rate"] = candidate.full_success_rate
+    data["fr"] = candidate.fr
     data["mean_completion_ratio"] = candidate.mean_completion_ratio
-    data["sr_theta_c"] = candidate.full_success_rate
-    data["sr_near"] = candidate.full_success_rate
     data["hotspot_coverage"] = data.get("avg_hot_coverage")
     data["hotspot_max_gap"] = data.get("max_hot_gap")
     data["plan"] = [asdict(window) for window in candidate.plan]
@@ -343,7 +341,6 @@ def build_scenario_payload(
 ) -> dict[str, Any]:
     """基于基础模板和任务集构造一次独立实验场景。"""
 
-    effective_theta_sr = args.theta_sr if args.theta_sr is not None else args.theta
     payload = deepcopy(base_payload)
     payload.setdefault("metadata", {})
     payload["metadata"].update(
@@ -360,10 +357,8 @@ def build_scenario_payload(
     # 把这次实验使用的参数完整写回场景文件，
     # 这样未来回看结果时，不需要再去猜当时依赖了哪些默认值。
     payload["stage1"] = {
-        "theta_sr": effective_theta_sr,
         "theta_cap": args.theta_cap,
         "theta_hot": args.theta_hot,
-        "theta_c": args.theta_c,
         "rho": args.rho,
         "t_pre": args.t_pre,
         "d_min": args.d_min,
@@ -372,7 +367,7 @@ def build_scenario_payload(
         "eta_x": args.eta_x,
         "static_value_snapshot_seconds": args.snapshot_seconds,
         "q_eval": args.q_eval,
-        "omega_sr": args.omega_sr,
+        "omega_fr": args.omega_fr,
         "omega_cap": args.omega_cap,
         "omega_hot": args.omega_hot,
         "elite_prune_count": args.elite_prune_count,
@@ -470,20 +465,20 @@ def main() -> None:
     parser.add_argument("--cap-a", type=float, default=600.0)
     parser.add_argument("--cap-b", type=float, default=2000.0)
     parser.add_argument("--cap-x", type=float, default=1000.0)
-    parser.add_argument("--theta", type=float, default=1.0)
+    parser.add_argument("--theta", type=float, default=None, help="Deprecated and ignored in Stage1 4.8; feasibility now uses FR=1")
     parser.add_argument("--rho", type=float, default=0.20)
     parser.add_argument("--t-pre", type=float, default=1800.0)
     parser.add_argument("--d-min", type=float, default=600.0)
-    parser.add_argument("--theta-sr", type=float, default=None)
+    parser.add_argument("--theta-sr", type=float, default=None, help="Deprecated and ignored in Stage1 4.8; feasibility now uses FR=1")
     parser.add_argument("--theta-cap", "--theta-eta0", dest="theta_cap", type=float, default=0.08)
     parser.add_argument("--theta-hot", type=float, default=0.80)
-    parser.add_argument("--theta-c", type=float, default=1.0)
+    parser.add_argument("--theta-c", type=float, default=None, help="Deprecated and ignored in Stage1 4.8; feasibility now uses FR=1")
     parser.add_argument("--hot-hop-limit", type=int, default=4)
     parser.add_argument("--alpha", type=float, default=0.85)
     parser.add_argument("--eta-x", type=float, default=0.90)
     parser.add_argument("--snapshot-seconds", type=int, default=600)
     parser.add_argument("--q-eval", type=int, default=4)
-    parser.add_argument("--omega-sr", type=float, default=4.0 / 9.0)
+    parser.add_argument("--omega-fr", "--omega-sr", dest="omega_fr", type=float, default=4.0 / 9.0)
     parser.add_argument("--omega-cap", type=float, default=3.0 / 9.0)
     parser.add_argument("--omega-hot", type=float, default=2.0 / 9.0)
     parser.add_argument("--elite-prune-count", type=int, default=6)
@@ -546,7 +541,6 @@ def main() -> None:
     readme_path.write_text(readme_text, encoding="utf-8")
 
     requested_sheets = [name for name in args.sheets if name in task_sets]
-    effective_theta_sr = args.theta_sr if args.theta_sr is not None else args.theta
     summary: dict[str, Any] = {
         "workbook": str(workbook_path),
         "base_scenario": str(base_scenario_path),
@@ -554,10 +548,9 @@ def main() -> None:
         "seed": args.seed,
         "capacities_Mbps": {"A": args.cap_a, "B": args.cap_b, "X": args.cap_x},
         "stage1_params": {
-            "theta_sr": effective_theta_sr,
+            "fr_required": 1.0,
             "theta_cap": args.theta_cap,
             "theta_hot": args.theta_hot,
-            "theta_c": args.theta_c,
             "rho": args.rho,
             "t_pre": args.t_pre,
             "d_min": args.d_min,
@@ -566,7 +559,7 @@ def main() -> None:
             "eta_x": args.eta_x,
             "q_eval": args.q_eval,
             "snapshot_seconds": args.snapshot_seconds,
-            "omega_sr": args.omega_sr,
+            "omega_fr": args.omega_fr,
             "omega_cap": args.omega_cap,
             "omega_hot": args.omega_hot,
             "elite_prune_count": args.elite_prune_count,
@@ -721,8 +714,7 @@ def main() -> None:
             best = result.best_feasible[0]
             run_record["best_summary"] = {
                 "mean_completion_ratio": best.mean_completion_ratio,
-                "full_success_rate": best.full_success_rate,
-                "sr_theta_c": best.full_success_rate,
+                "fr": best.fr,
                 "eta_cap": best.eta_cap,
                 "eta_0": best.eta_0,
                 "hotspot_coverage": best.hotspot_coverage,
@@ -743,8 +735,6 @@ def main() -> None:
             recommended_outcomes = recommended["task_outcomes"]
             run_record["recommended_stage2"] = {
                 "solver_mode": recommended["solver_mode"],
-                "sr_reg": recommended["sr_reg"],
-                "sr_emg": recommended["sr_emg"],
                 "cr_reg": recommended["cr_reg"],
                 "cr_emg": recommended["cr_emg"],
                 "success_rate_overall": recommended_outcomes["overall"]["success_rate"],

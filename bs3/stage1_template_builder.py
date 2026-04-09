@@ -112,9 +112,7 @@ def build_stage1_scenario_template(
         "X": float((capacities or {}).get("X", 1000.0)),
     }
     stage1_payload = {
-        "theta_sr": float((stage1_config or {}).get("theta_sr", (stage1_config or {}).get("theta", 1.0))),
         "theta_cap": float((stage1_config or {}).get("theta_cap", (stage1_config or {}).get("theta_eta0", 0.08))),
-        "theta_c": float((stage1_config or {}).get("theta_c", (stage1_config or {}).get("near_completion_ratio", 1.0))),
         "theta_hot": float((stage1_config or {}).get("theta_hot", 0.80)),
         "rho": float((stage1_config or {}).get("rho", 0.20)),
         "t_pre": float((stage1_config or {}).get("t_pre", 1800.0)),
@@ -124,7 +122,7 @@ def build_stage1_scenario_template(
         "eta_x": float((stage1_config or {}).get("eta_x", 0.90)),
         "static_value_snapshot_seconds": int((stage1_config or {}).get("static_value_snapshot_seconds", 600)),
         "q_eval": int((stage1_config or {}).get("q_eval", 4)),
-        "omega_sr": float((stage1_config or {}).get("omega_sr", 4.0 / 9.0)),
+        "omega_fr": float((stage1_config or {}).get("omega_fr", (stage1_config or {}).get("omega_sr", 4.0 / 9.0))),
         "omega_cap": float((stage1_config or {}).get("omega_cap", 3.0 / 9.0)),
         "omega_hot": float((stage1_config or {}).get("omega_hot", 2.0 / 9.0)),
         "elite_prune_count": int((stage1_config or {}).get("elite_prune_count", 6)),
