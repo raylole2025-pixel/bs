@@ -1,0 +1,26 @@
+{
+  "status": "completed",
+  "seed": 7,
+  "runtime_limit_seconds": 5400.0,
+  "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\normal\\normal_stage1_result.json",
+  "scenario_annotated_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\normal\\normal_scenario_annotated.json",
+  "scenario_runtime_limited_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\normal\\normal_scenario_annotated.json",
+  "runtime_seconds": 4077.9365549,
+  "timed_out": false,
+  "generations": 54,
+  "feasible_count": 5,
+  "best_summary": {
+    "mean_completion_ratio": 1.0,
+    "fr": 1.0,
+    "eta_cap": 0.005865498850549789,
+    "eta_0": 0.005438195803617558,
+    "hotspot_coverage": 0.8742561429295008,
+    "hotspot_max_gap": 385.9449999999997,
+    "gateway_count": 24,
+    "window_count": 12,
+    "activation_count": 24,
+    "max_cross_gap": 1432.198,
+    "cross_active_fraction": 0.9537466898148149
+  },
+  "baseline_trace_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\normal\\normal_baseline_trace.json"
+}
