@@ -1,0 +1,5 @@
+﻿label,stage1_method,variant,population_size,max_generations,stall_generations,max_runtime_seconds,fr,mean_completion_ratio,window_count,activation_count,avg_hot_coverage,eta_cap,runtime_seconds,timed_out,result_file
+grasp_50_0.10,grasp_multi_start,baseline_compare,,,,,1.0,1.0,12,24,0.9249095894343957,0.0,459.5430128000007,False,D:\Codex_Project\bs_1.0_4.22\results\stage1\grasp_sensitivity\normal_grasp_it50_rcl0p10_result.json
+ga_default_rerun,ga,baseline_compare,60,100,20,,1.0,1.0,12,24,0.8742561429295008,0.005865498850549789,6892.0670176,False,D:\Codex_Project\bs_1.0_4.22\results\stage1\ga_vs_grasp_normal\normal_ga_default_rerun_result.json
+ga_deeper_same_pop,ga,small_tuning,60,150,40,7200.0,1.0,1.0,12,24,0.8742561429295008,0.005865498850549789,7202.851996700001,True,D:\Codex_Project\bs_1.0_4.22\results\stage1\ga_vs_grasp_normal\normal_ga_deeper_same_pop_result.json
+ga_broader_pop100,ga,small_tuning,100,120,25,7200.0,1.0,1.0,12,24,0.8912112517880696,0.0,7202.263550299998,True,D:\Codex_Project\bs_1.0_4.22\results\stage1\ga_vs_grasp_normal\normal_ga_broader_pop100_result.json

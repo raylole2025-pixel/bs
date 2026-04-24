@@ -1,0 +1,131 @@
+{
+  "light": {
+    "static_greedy_stop_when_feasible": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\grasp_multi_start_compare\\light_static_greedy_stop_when_feasible_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 11,
+      "activation_count": 22,
+      "avg_hot_coverage": 0.8897911675466119,
+      "hotspot_coverage": 0.8897911675466119,
+      "eta_cap": 0.06516959741319976,
+      "runtime_seconds": 9.546098200000415,
+      "wall_clock_seconds": 11.741121400002157,
+      "feasible": true,
+      "generations": 0
+    },
+    "grasp_multi_start": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\grasp_multi_start_compare\\light_grasp_multi_start_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 10,
+      "activation_count": 20,
+      "avg_hot_coverage": 0.8122455223921333,
+      "hotspot_coverage": 0.8122455223921333,
+      "eta_cap": 0.010970774450146291,
+      "runtime_seconds": 205.68483040000137,
+      "wall_clock_seconds": 208.1716346999965,
+      "feasible": true,
+      "generations": 30
+    },
+    "ga_existing": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\light\\Light60_stage1_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 9,
+      "activation_count": 18,
+      "avg_hot_coverage": 0.8456341153083321,
+      "hotspot_coverage": 0.8456341153083321,
+      "eta_cap": 0.011375843445844077,
+      "runtime_seconds": 4619.3708825,
+      "feasible": true,
+      "generations": 69
+    }
+  },
+  "normal": {
+    "static_greedy_stop_when_feasible": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\grasp_multi_start_compare\\normal_static_greedy_stop_when_feasible_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 12,
+      "activation_count": 24,
+      "avg_hot_coverage": 0.8144932601205858,
+      "hotspot_coverage": 0.8144932601205858,
+      "eta_cap": 0.018327747800167604,
+      "runtime_seconds": 16.765158299996983,
+      "wall_clock_seconds": 19.34197950000089,
+      "feasible": true,
+      "generations": 0
+    },
+    "grasp_multi_start": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\grasp_multi_start_compare\\normal_grasp_multi_start_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 12,
+      "activation_count": 24,
+      "avg_hot_coverage": 0.8646192800574818,
+      "hotspot_coverage": 0.8646192800574818,
+      "eta_cap": 0.008672106533284905,
+      "runtime_seconds": 285.04013159999886,
+      "wall_clock_seconds": 287.6788241000031,
+      "feasible": true,
+      "generations": 30
+    },
+    "ga_existing": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\normal\\normal_stage1_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 12,
+      "activation_count": 24,
+      "avg_hot_coverage": 0.8742561429295008,
+      "hotspot_coverage": 0.8742561429295008,
+      "eta_cap": 0.005865498850549789,
+      "runtime_seconds": 4059.3214158,
+      "feasible": true,
+      "generations": 54
+    }
+  },
+  "heavy": {
+    "static_greedy_stop_when_feasible": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\grasp_multi_start_compare\\heavy_static_greedy_stop_when_feasible_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 16,
+      "activation_count": 32,
+      "avg_hot_coverage": 0.8098126256101061,
+      "hotspot_coverage": 0.8098126256101061,
+      "eta_cap": 0.011019350738322616,
+      "runtime_seconds": 35.75225230000069,
+      "wall_clock_seconds": 38.92289449999953,
+      "feasible": true,
+      "generations": 0
+    },
+    "grasp_multi_start": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\grasp_multi_start_compare\\heavy_grasp_multi_start_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 15,
+      "activation_count": 30,
+      "avg_hot_coverage": 0.832616862915033,
+      "hotspot_coverage": 0.832616862915033,
+      "eta_cap": 0.0010750942355022346,
+      "runtime_seconds": 663.067893200001,
+      "wall_clock_seconds": 666.2744472999984,
+      "feasible": true,
+      "generations": 30
+    },
+    "ga_existing": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\heavy\\Heavy84_stage1_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 14,
+      "activation_count": 28,
+      "avg_hot_coverage": 0.8417596386253491,
+      "hotspot_coverage": 0.8417596386253491,
+      "eta_cap": 0.003914922875763473,
+      "runtime_seconds": 11620.281689200001,
+      "feasible": true,
+      "generations": 27
+    }
+  }
+}

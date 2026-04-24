@@ -1,0 +1,10 @@
+﻿grasp_iterations,grasp_rcl_ratio,grasp_seed,fr,mean_completion_ratio,window_count,activation_count,avg_hot_coverage,eta_cap,runtime_seconds,wall_clock_seconds,timed_out,result_file
+10,0.05,7,1.0,1.0,12,24,0.90049930992415,0.0165236320552432,109.01902100000007,111.39104170000064,False,D:\Codex_Project\bs_1.0_4.22\results\stage1\grasp_sensitivity\normal_grasp_it10_rcl0p05_result.json
+10,0.1,7,1.0,1.0,12,24,0.846322846683893,0.012463944893655179,121.80506890000106,124.43484519999765,False,D:\Codex_Project\bs_1.0_4.22\results\stage1\grasp_sensitivity\normal_grasp_it10_rcl0p10_result.json
+10,0.2,7,1.0,1.0,12,24,0.8144932601205858,0.018327747800167604,88.06864240000141,90.83186489999935,False,D:\Codex_Project\bs_1.0_4.22\results\stage1\grasp_sensitivity\normal_grasp_it10_rcl0p20_result.json
+30,0.05,7,1.0,1.0,12,24,0.8656946146879865,0.006219823250228314,306.4122600000046,309.1992981999938,False,D:\Codex_Project\bs_1.0_4.22\results\stage1\grasp_sensitivity\normal_grasp_it30_rcl0p05_result.json
+30,0.1,7,1.0,1.0,12,24,0.8646192800574818,0.008672106533284905,267.9138246000002,270.76407689999905,False,D:\Codex_Project\bs_1.0_4.22\results\stage1\grasp_sensitivity\normal_grasp_it30_rcl0p10_result.json
+30,0.2,7,1.0,1.0,12,24,0.8111386957658172,0.009872160605669906,283.0423097000021,285.8089899999977,False,D:\Codex_Project\bs_1.0_4.22\results\stage1\grasp_sensitivity\normal_grasp_it30_rcl0p20_result.json
+50,0.05,7,1.0,1.0,12,24,0.8656946146879865,0.006219823250228314,487.15954700000293,489.8013155000008,False,D:\Codex_Project\bs_1.0_4.22\results\stage1\grasp_sensitivity\normal_grasp_it50_rcl0p05_result.json
+50,0.1,7,1.0,1.0,12,24,0.9249095894343957,0.0,459.5430128000007,462.4055825000032,False,D:\Codex_Project\bs_1.0_4.22\results\stage1\grasp_sensitivity\normal_grasp_it50_rcl0p10_result.json
+50,0.2,7,1.0,1.0,12,24,0.8567554191788689,0.0003527510921355648,422.26529600000504,425.02549259999796,False,D:\Codex_Project\bs_1.0_4.22\results\stage1\grasp_sensitivity\normal_grasp_it50_rcl0p20_result.json

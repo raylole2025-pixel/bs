@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import asdict
 import json
 import re
 import sys
@@ -149,6 +150,7 @@ def workbook_task_to_payload(row: dict[str, str]) -> dict[str, Any]:
 def _config_from_args(args: argparse.Namespace) -> Stage1TasksetRunConfig:
     return Stage1TasksetRunConfig(
         seed=args.seed,
+        stage1_method=args.stage1_method,
         cap_a=args.cap_a,
         cap_b=args.cap_b,
         cap_x=args.cap_x,
@@ -170,6 +172,10 @@ def _config_from_args(args: argparse.Namespace) -> Stage1TasksetRunConfig:
         omega_cap=args.omega_cap,
         omega_hot=args.omega_hot,
         elite_prune_count=args.elite_prune_count,
+        grasp_iterations=args.grasp_iterations,
+        grasp_rcl_ratio=args.grasp_rcl_ratio,
+        grasp_seed=args.grasp_seed,
+        grasp_rcl_min_size=args.grasp_rcl_min_size,
         population_size=args.population_size,
         crossover_probability=args.crossover_probability,
         mutation_probability=args.mutation_probability,
@@ -200,6 +206,11 @@ def main() -> None:
     parser.add_argument("--base-scenario", default=str(DEFAULT_BASE_SCENARIO), help="Base scenario template JSON")
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT), help="Root folder for workbook Stage1 outputs")
     parser.add_argument("--seed", type=int, default=7)
+    parser.add_argument(
+        "--stage1-method",
+        choices=("ga", "static_greedy", "static_greedy_stop_when_feasible", "grasp_multi_start"),
+        default="ga",
+    )
     parser.add_argument("--sheets", nargs="*", default=["medium48", "stress96"])
     parser.add_argument("--cap-a", type=float, default=600.0)
     parser.add_argument("--cap-b", type=float, default=2000.0)
@@ -222,6 +233,10 @@ def main() -> None:
     parser.add_argument("--omega-cap", type=float, default=3.0 / 9.0)
     parser.add_argument("--omega-hot", type=float, default=2.0 / 9.0)
     parser.add_argument("--elite-prune-count", type=int, default=6)
+    parser.add_argument("--grasp-iterations", type=int, default=30)
+    parser.add_argument("--grasp-rcl-ratio", type=float, default=0.10)
+    parser.add_argument("--grasp-seed", type=int, default=None)
+    parser.add_argument("--grasp-rcl-min-size", type=int, default=None)
     parser.add_argument("--population-size", type=int, default=60)
     parser.add_argument("--crossover-probability", type=float, default=0.90)
     parser.add_argument("--mutation-probability", type=float, default=0.20)
@@ -263,6 +278,7 @@ def main() -> None:
         "base_scenario": str(base_scenario_path),
         "output_root": str(output_root),
         "seed": config.seed,
+        "stage1_method": config.stage1_method,
         "readme_file": str(readme_path),
         "runs": [],
     }
@@ -313,7 +329,7 @@ def main() -> None:
         write_json(annotated_scenario_path, json_ready_scenario_payload(scenario))
 
         started = time.perf_counter()
-        result = run_stage1(scenario, seed=config.seed)
+        result = run_stage1(scenario, seed=config.seed, method=config.stage1_method)
         elapsed = time.perf_counter() - started
 
         artifacts = {}
@@ -329,10 +345,13 @@ def main() -> None:
         result_payload = {
             "sheet": sheet_name,
             "seed": config.seed,
+            "stage1_method": result.stage1_method,
             "runtime_seconds": elapsed,
             "generations": result.generations,
             "selected_plan": [asdict(window) for window in result.selected_plan],
             "selected_solution": candidate_to_dict(result.selected_solution) if result.selected_solution else None,
+            "best_feasible": [candidate_to_dict(candidate) for candidate in result.best_feasible],
+            "population_best": candidate_to_dict(result.population_best) if result.population_best else None,
             "baseline_summary": dict(result.baseline_summary),
             "baseline_trace_file": (baseline_trace_file.name if baseline_trace_file is not None else None),
             "baseline_trace": baseline_trace_payload,
@@ -350,6 +369,7 @@ def main() -> None:
         best = result.selected_solution
         run_record = {
             "sheet": sheet_name,
+            "stage1_method": result.stage1_method,
             "result_file": str(result_path),
             "baseline_trace_file": str(baseline_trace_file) if baseline_trace_file is not None else None,
             "task_stats": stats,

@@ -28,6 +28,11 @@ def main() -> None:
     parser.add_argument("--base-scenario", default=str(DEFAULT_BASE_SCENARIO), help="Base scenario template JSON")
     parser.add_argument("--output-root", default=str(DEFAULT_JSON_OUTPUT_ROOT), help="Root folder for Stage1 outputs")
     parser.add_argument("--seed", type=int, default=7)
+    parser.add_argument(
+        "--stage1-method",
+        choices=("ga", "static_greedy", "static_greedy_stop_when_feasible", "grasp_multi_start"),
+        default="ga",
+    )
     parser.add_argument("--cap-a", type=float, default=600.0)
     parser.add_argument("--cap-b", type=float, default=2000.0)
     parser.add_argument("--cap-x", type=float, default=1000.0)
@@ -49,6 +54,10 @@ def main() -> None:
     parser.add_argument("--omega-cap", type=float, default=3.0 / 9.0)
     parser.add_argument("--omega-hot", type=float, default=2.0 / 9.0)
     parser.add_argument("--elite-prune-count", type=int, default=6)
+    parser.add_argument("--grasp-iterations", type=int, default=30)
+    parser.add_argument("--grasp-rcl-ratio", type=float, default=0.10)
+    parser.add_argument("--grasp-seed", type=int, default=None)
+    parser.add_argument("--grasp-rcl-min-size", type=int, default=None)
     parser.add_argument("--population-size", type=int, default=60)
     parser.add_argument("--crossover-probability", type=float, default=0.90)
     parser.add_argument("--mutation-probability", type=float, default=0.20)
@@ -75,6 +84,7 @@ def main() -> None:
 
     config = Stage1TasksetRunConfig(
         seed=args.seed,
+        stage1_method=args.stage1_method,
         cap_a=args.cap_a,
         cap_b=args.cap_b,
         cap_x=args.cap_x,
@@ -96,6 +106,10 @@ def main() -> None:
         omega_cap=args.omega_cap,
         omega_hot=args.omega_hot,
         elite_prune_count=args.elite_prune_count,
+        grasp_iterations=args.grasp_iterations,
+        grasp_rcl_ratio=args.grasp_rcl_ratio,
+        grasp_seed=args.grasp_seed,
+        grasp_rcl_min_size=args.grasp_rcl_min_size,
         population_size=args.population_size,
         crossover_probability=args.crossover_probability,
         mutation_probability=args.mutation_probability,

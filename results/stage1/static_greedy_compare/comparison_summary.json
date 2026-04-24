@@ -1,0 +1,107 @@
+[
+  {
+    "case": "light",
+    "ga": {
+      "elapsed_seconds": 4619.3708825,
+      "runtime_seconds": 4620.2357301,
+      "generations": 69,
+      "window_count": 9,
+      "activation_count": 18,
+      "gateway_count": 17,
+      "mean_completion_ratio": 1.0,
+      "fr": 1.0,
+      "eta_cap": 0.011375843445844077,
+      "eta_0": 0.011375843445844077,
+      "hotspot_coverage": 0.8456341153083321,
+      "hotspot_max_gap": 420.0,
+      "cross_active_fraction": 0.9803144907407408,
+      "max_cross_gap": 430.1899999999987
+    },
+    "static_greedy": {
+      "elapsed_seconds": 15.865721699999995,
+      "runtime_seconds": 15.865721699999995,
+      "generations": 0,
+      "window_count": 176,
+      "activation_count": 352,
+      "gateway_count": 76,
+      "mean_completion_ratio": 1.0,
+      "fr": 1.0,
+      "eta_cap": 0.0,
+      "eta_0": 0.0,
+      "hotspot_coverage": 1.0,
+      "hotspot_max_gap": 0.0,
+      "cross_active_fraction": 0.9961800925925927,
+      "max_cross_gap": 165.02
+    }
+  },
+  {
+    "case": "normal",
+    "ga": {
+      "elapsed_seconds": 4059.3214158,
+      "runtime_seconds": 4077.9365549,
+      "generations": 54,
+      "window_count": 12,
+      "activation_count": 24,
+      "gateway_count": 24,
+      "mean_completion_ratio": 1.0,
+      "fr": 1.0,
+      "eta_cap": 0.005865498850549789,
+      "eta_0": 0.005438195803617558,
+      "hotspot_coverage": 0.8742561429295008,
+      "hotspot_max_gap": 385.9449999999997,
+      "cross_active_fraction": 0.9537466898148149,
+      "max_cross_gap": 1432.198
+    },
+    "static_greedy": {
+      "elapsed_seconds": 16.97346209999523,
+      "runtime_seconds": 16.97346209999523,
+      "generations": 0,
+      "window_count": 173,
+      "activation_count": 346,
+      "gateway_count": 78,
+      "mean_completion_ratio": 1.0,
+      "fr": 1.0,
+      "eta_cap": 0.0,
+      "eta_0": 0.0,
+      "hotspot_coverage": 1.0,
+      "hotspot_max_gap": 0.0,
+      "cross_active_fraction": 1.0,
+      "max_cross_gap": 0.0
+    }
+  },
+  {
+    "case": "heavy",
+    "ga": {
+      "elapsed_seconds": 11620.281689200001,
+      "runtime_seconds": 11621.813922099998,
+      "generations": 27,
+      "window_count": 14,
+      "activation_count": 28,
+      "gateway_count": 27,
+      "mean_completion_ratio": 1.0,
+      "fr": 1.0,
+      "eta_cap": 0.003914922875763473,
+      "eta_0": 0.003914651049345702,
+      "hotspot_coverage": 0.8417596386253491,
+      "hotspot_max_gap": 385.9449999999997,
+      "cross_active_fraction": 0.9419356250000002,
+      "max_cross_gap": 1016.1339999999982
+    },
+    "static_greedy": {
+      "elapsed_seconds": 18.241438999997627,
+      "runtime_seconds": 18.241438999997627,
+      "generations": 0,
+      "window_count": 179,
+      "activation_count": 358,
+      "gateway_count": 78,
+      "mean_completion_ratio": 1.0,
+      "fr": 1.0,
+      "eta_cap": 0.0,
+      "eta_0": 0.0,
+      "hotspot_coverage": 1.0,
+      "hotspot_max_gap": 0.0,
+      "cross_active_fraction": 1.0,
+      "max_cross_gap": 0.0
+    }
+  }
+]

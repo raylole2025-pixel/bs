@@ -269,6 +269,18 @@ def load_scenario(path: str | Path) -> Scenario:
         omega_cap=omega_cap,
         omega_hot=omega_hot,
         elite_prune_count=int(stage1_cfg.get("elite_prune_count", ga.elite_count)),
+        grasp_iterations=max(int(stage1_cfg.get("grasp_iterations", 30)), 1),
+        grasp_rcl_ratio=_float(stage1_cfg.get("grasp_rcl_ratio", 0.10), "stage1.grasp_rcl_ratio"),
+        grasp_seed=(
+            None
+            if stage1_cfg.get("grasp_seed") in {None, ""}
+            else int(stage1_cfg.get("grasp_seed"))
+        ),
+        grasp_rcl_min_size=(
+            None
+            if stage1_cfg.get("grasp_rcl_min_size") in {None, ""}
+            else max(int(stage1_cfg.get("grasp_rcl_min_size")), 1)
+        ),
         completion_tolerance=_float(
             stage1_cfg.get("completion_tolerance", stage2_cfg.get("completion_tolerance", 1e-6)),
             "stage1.completion_tolerance",
@@ -746,6 +758,10 @@ def scenario_to_dict(scenario: Scenario) -> dict:
             "omega_cap": scenario.stage1.omega_cap,
             "omega_hot": scenario.stage1.omega_hot,
             "elite_prune_count": scenario.stage1.elite_prune_count,
+            "grasp_iterations": scenario.stage1.grasp_iterations,
+            "grasp_rcl_ratio": scenario.stage1.grasp_rcl_ratio,
+            "grasp_seed": scenario.stage1.grasp_seed,
+            "grasp_rcl_min_size": scenario.stage1.grasp_rcl_min_size,
             "completion_tolerance": scenario.stage1.completion_tolerance,
             "ga": asdict(scenario.stage1.ga),
         },

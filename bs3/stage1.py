@@ -24,7 +24,7 @@ from .models import (
 )
 from .regular_routing_common import regular_priority_key, stage1_style_path_options
 from .scenario import active_cross_links, active_intra_links, build_domain_graph, build_segments, generate_candidate_paths
-from .stage1_screening import screen_candidate_windows
+from .stage1_screening import _rank_by_channel, screen_candidate_windows
 from .stage1_static_value import annotate_scenario_candidate_values
 
 EPS = 1e-9
@@ -1556,8 +1556,9 @@ class Stage1GA:
         state: OrderState,
         *,
         apply_feedback: bool = False,
+        accepted_order: tuple[str, ...] | None = None,
     ) -> Stage1Candidate:
-        accepted = tuple(state.order)
+        accepted = tuple(state.order) if accepted_order is None else tuple(accepted_order)
         chromosome = self._apply_feedback(original_chromosome, accepted) if apply_feedback else original_chromosome
         return Stage1Candidate(
             chromosome=chromosome,
@@ -2144,6 +2145,7 @@ class Stage1GA:
             selected_solution=selected_candidate,
             baseline_summary=(dict(baseline_trace.summary) if baseline_trace is not None else {}),
             baseline_trace=baseline_trace,
+            stage1_method="ga",
             used_feedback=True,
             timed_out=timed_out,
             elapsed_seconds=time.perf_counter() - started_at,
@@ -2151,5 +2153,237 @@ class Stage1GA:
         )
 
 
-def run_stage1(scenario: Scenario, seed: int | None = None, diagnostics: bool = False) -> Stage1Result:
-    return Stage1GA(scenario, seed=seed, diagnostics=diagnostics).run()
+class Stage1StaticGreedy(Stage1GA):
+    def __init__(self, scenario: Scenario, seed: int | None = None, diagnostics: bool = False) -> None:
+        annotate_scenario_candidate_values(scenario, force=True)
+        screen_candidate_windows(scenario)
+        super().__init__(scenario, seed=seed, diagnostics=diagnostics)
+
+    def _sorted_windows_static_greedy(self) -> tuple[str, ...]:
+        runtime_cache = self.scenario.metadata.setdefault("_runtime_cache", {}).get("stage1_static_value", {})
+        reg_values = {
+            str(window_id): float(value)
+            for window_id, value in dict(runtime_cache.get("reg_values", {})).items()
+        }
+        hot_values = {
+            str(window_id): float(value)
+            for window_id, value in dict(runtime_cache.get("hot_values", {})).items()
+        }
+        ranked = _rank_by_channel(self.scenario.candidate_windows, reg_values, hot_values)
+        return tuple(window.window_id for window in ranked)
+
+    def _single_candidate_result(
+        self,
+        candidate: Stage1Candidate | None,
+        *,
+        stage1_method: str,
+        started_at: float,
+        best_feasible: list[Stage1Candidate] | None = None,
+        population_best: Stage1Candidate | None = None,
+        generations: int = 0,
+        timed_out: bool = False,
+        history: list[dict[str, Any]] | None = None,
+    ) -> Stage1Result:
+        baseline_trace = (
+            self.evaluator.baseline_trace(candidate.plan, rho=self.scenario.stage1.rho)
+            if candidate is not None
+            else None
+        )
+        final_best_feasible = best_feasible if best_feasible is not None else ([candidate] if candidate is not None and candidate.feasible else [])
+        return Stage1Result(
+            best_feasible=final_best_feasible,
+            population_best=(population_best if population_best is not None else candidate),
+            generations=generations,
+            selected_plan=(list(candidate.plan) if candidate is not None else []),
+            selected_solution=candidate,
+            baseline_summary=(dict(baseline_trace.summary) if baseline_trace is not None else {}),
+            baseline_trace=baseline_trace,
+            stage1_method=stage1_method,
+            used_feedback=False,
+            timed_out=timed_out,
+            elapsed_seconds=time.perf_counter() - started_at,
+            history=(history if history is not None else []),
+        )
+
+    def _evaluate_stop_when_feasible_candidate(self, chromosome: Iterable[str]) -> Stage1Candidate:
+        candidate = self._evaluate_chromosome(chromosome, apply_feedback=False)
+        if candidate.feasible and (self._started_at is None or not self._time_exceeded(self._started_at)):
+            candidate = self._prune_candidate(candidate)
+        return candidate
+
+    def _rcl_chromosome_from_ranked(
+        self,
+        ranked_window_ids: Iterable[str],
+        *,
+        ratio: float,
+        rng: random.Random,
+        min_size: int | None = None,
+    ) -> tuple[str, ...]:
+        remaining = list(ranked_window_ids)
+        chromosome: list[str] = []
+        alpha = min(max(float(ratio), 0.0), 1.0)
+        base_min_size = 1 if min_size in {None, 0} else max(int(min_size), 1)
+        while remaining:
+            rcl_size = max(base_min_size, math.ceil(alpha * len(remaining)))
+            rcl_size = min(len(remaining), max(rcl_size, 1))
+            chromosome.append(remaining.pop(rng.randrange(rcl_size)))
+        return tuple(chromosome)
+
+    def run(self) -> Stage1Result:
+        started_at = time.perf_counter()
+        self._started_at = started_at
+        self._log_screening_summary()
+
+        chromosome = self._sorted_windows_static_greedy()
+        state = self._analyze_order(chromosome)
+        accepted_order = tuple(window.window_id for window in state.plan)
+        candidate = self._candidate_from_state(
+            chromosome,
+            state,
+            apply_feedback=False,
+            accepted_order=accepted_order,
+        )
+        self._log_best_candidate_detail(0, candidate)
+        return self._single_candidate_result(candidate, stage1_method="static_greedy", started_at=started_at)
+
+
+class Stage1StaticGreedyStopWhenFeasible(Stage1StaticGreedy):
+    def run(self) -> Stage1Result:
+        started_at = time.perf_counter()
+        self._started_at = started_at
+        self._log_screening_summary()
+
+        chromosome = self._sorted_windows_static_greedy()
+        candidate = self._evaluate_stop_when_feasible_candidate(chromosome)
+        self._log_best_candidate_detail(0, candidate)
+        return self._single_candidate_result(
+            candidate,
+            stage1_method="static_greedy_stop_when_feasible",
+            started_at=started_at,
+            timed_out=self._time_exceeded(started_at),
+        )
+
+
+class Stage1GraspMultiStart(Stage1StaticGreedy):
+    def __init__(self, scenario: Scenario, seed: int | None = None, diagnostics: bool = False) -> None:
+        super().__init__(scenario, seed=seed, diagnostics=diagnostics)
+        grasp_seed = self.scenario.stage1.grasp_seed if self.scenario.stage1.grasp_seed is not None else seed
+        self.grasp_seed = grasp_seed
+        self.grasp_random = random.Random(grasp_seed)
+
+    def run(self) -> Stage1Result:
+        started_at = time.perf_counter()
+        self._started_at = started_at
+        timed_out = False
+        self._log_screening_summary()
+
+        ranked = self._sorted_windows_static_greedy()
+        iterations_target = max(int(self.scenario.stage1.grasp_iterations), 1)
+        rcl_ratio = self.scenario.stage1.grasp_rcl_ratio
+        rcl_min_size = self.scenario.stage1.grasp_rcl_min_size
+        population: list[Stage1Candidate] = []
+        feasible_archive: list[Stage1Candidate] = []
+        history: list[dict[str, Any]] = []
+
+        self._log_block(
+            "grasp",
+            [
+                ("iterations_target", iterations_target),
+                ("grasp_rcl_ratio", rcl_ratio),
+                ("grasp_rcl_min_size", rcl_min_size),
+                ("grasp_seed", self.grasp_seed),
+            ],
+        )
+
+        for iteration in range(iterations_target):
+            if self._time_exceeded(started_at):
+                timed_out = True
+                break
+            if iteration == 0:
+                chromosome = ranked
+                source = "deterministic"
+            else:
+                chromosome = self._rcl_chromosome_from_ranked(
+                    ranked,
+                    ratio=rcl_ratio,
+                    rng=self.grasp_random,
+                    min_size=rcl_min_size,
+                )
+                source = "rcl"
+            candidate = self._evaluate_stop_when_feasible_candidate(chromosome)
+            population.append(candidate)
+            feasible_archive = self._update_archive(feasible_archive, [candidate])
+            history.append(
+                {
+                    "iteration": iteration,
+                    "source": source,
+                    "feasible": candidate.feasible,
+                    "violation": candidate.violation,
+                    "mean_completion_ratio": candidate.mean_completion_ratio,
+                    "fr": candidate.fr,
+                    "eta_cap": candidate.eta_cap,
+                    "avg_hot_coverage": candidate.avg_hot_coverage,
+                    "activation_count": candidate.activation_count,
+                    "window_count": candidate.window_count,
+                }
+            )
+
+        population.sort(key=lambda item: item.fitness)
+        selected_candidate = feasible_archive[0] if feasible_archive else (population[0] if population else None)
+        self._log_best_candidate_detail(len(history), selected_candidate)
+        return self._single_candidate_result(
+            selected_candidate,
+            stage1_method="grasp_multi_start",
+            started_at=started_at,
+            best_feasible=feasible_archive,
+            population_best=(population[0] if population else None),
+            generations=len(history),
+            timed_out=timed_out,
+            history=history,
+        )
+
+
+def run_stage1_static_greedy(
+    scenario: Scenario,
+    seed: int | None = None,
+    diagnostics: bool = False,
+) -> Stage1Result:
+    scenario.metadata["stage1_method"] = "static_greedy"
+    return Stage1StaticGreedy(scenario, seed=seed, diagnostics=diagnostics).run()
+
+
+def run_stage1_static_greedy_stop_when_feasible(
+    scenario: Scenario,
+    seed: int | None = None,
+    diagnostics: bool = False,
+) -> Stage1Result:
+    scenario.metadata["stage1_method"] = "static_greedy_stop_when_feasible"
+    return Stage1StaticGreedyStopWhenFeasible(scenario, seed=seed, diagnostics=diagnostics).run()
+
+
+def run_stage1_grasp_multi_start(
+    scenario: Scenario,
+    seed: int | None = None,
+    diagnostics: bool = False,
+) -> Stage1Result:
+    scenario.metadata["stage1_method"] = "grasp_multi_start"
+    return Stage1GraspMultiStart(scenario, seed=seed, diagnostics=diagnostics).run()
+
+
+def run_stage1(
+    scenario: Scenario,
+    seed: int | None = None,
+    diagnostics: bool = False,
+    method: str = "ga",
+) -> Stage1Result:
+    normalized_method = str(method).strip().lower()
+    scenario.metadata["stage1_method"] = normalized_method
+    if normalized_method == "ga":
+        return Stage1GA(scenario, seed=seed, diagnostics=diagnostics).run()
+    if normalized_method == "static_greedy":
+        return run_stage1_static_greedy(scenario, seed=seed, diagnostics=diagnostics)
+    if normalized_method == "static_greedy_stop_when_feasible":
+        return run_stage1_static_greedy_stop_when_feasible(scenario, seed=seed, diagnostics=diagnostics)
+    if normalized_method == "grasp_multi_start":
+        return run_stage1_grasp_multi_start(scenario, seed=seed, diagnostics=diagnostics)
+    raise ValueError(f"Unsupported Stage1 method: {method}")

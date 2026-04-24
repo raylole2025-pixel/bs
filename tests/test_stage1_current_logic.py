@@ -189,6 +189,173 @@ class Stage1CurrentLogicTests(unittest.TestCase):
         self.assertEqual(len(best.fitness), 4)
         self.assertFalse(hasattr(best, "f_reg"))
 
+    def test_stage1_static_greedy_returns_feasible_single_window_plan(self) -> None:
+        scenario = Scenario(
+            node_domain={"A1": "A", "B1": "B"},
+            intra_links=[],
+            candidate_windows=[
+                CandidateWindow(window_id="W1", a="A1", b="B1", start=0.0, end=10.0),
+            ],
+            tasks=[
+                Task(
+                    task_id="T1",
+                    src="A1",
+                    dst="B1",
+                    arrival=0.0,
+                    deadline=10.0,
+                    data=50.0,
+                    weight=1.0,
+                    max_rate=10.0,
+                    task_type="reg",
+                )
+            ],
+            capacities=CapacityConfig(domain_a=10.0, domain_b=10.0, cross=10.0),
+            stage1=Stage1Config(
+                rho=0.0,
+                t_pre=0.0,
+                d_min=0.0,
+                theta_cap=0.0,
+                theta_hot=0.0,
+                q_eval=1,
+                elite_prune_count=0,
+                ga=GAConfig(population_size=4, max_generations=3, stall_generations=1, top_m=1),
+            ),
+            planning_end=10.0,
+            metadata={},
+        )
+
+        result = run_stage1(scenario, seed=1, method="static_greedy")
+
+        self.assertEqual(result.stage1_method, "static_greedy")
+        self.assertFalse(result.timed_out)
+        self.assertEqual(result.generations, 0)
+        self.assertFalse(result.used_feedback)
+        self.assertTrue(result.best_feasible)
+        self.assertEqual(len(result.selected_plan), 1)
+        self.assertIsNotNone(result.selected_solution)
+        selected = result.selected_solution
+        assert selected is not None
+        self.assertTrue(selected.feasible)
+        self.assertEqual(selected.window_count, len(result.selected_plan))
+        self.assertEqual(selected.activation_count, 2 * len(result.selected_plan))
+        self.assertEqual(selected.accepted_order, tuple(window.window_id for window in result.selected_plan))
+        self.assertEqual(selected.chromosome, ("W1",))
+        self.assertTrue(result.baseline_summary)
+        self.assertIsNotNone(result.baseline_trace)
+
+    def test_stage1_static_greedy_stop_when_feasible_returns_sparser_plan(self) -> None:
+        scenario = Scenario(
+            node_domain={"A1": "A", "B1": "B"},
+            intra_links=[],
+            candidate_windows=[
+                CandidateWindow(window_id="W1", a="A1", b="B1", start=0.0, end=10.0),
+                CandidateWindow(window_id="W2", a="A1", b="B1", start=10.0, end=20.0),
+                CandidateWindow(window_id="W3", a="A1", b="B1", start=20.0, end=30.0),
+            ],
+            tasks=[
+                Task(
+                    task_id="T1",
+                    src="A1",
+                    dst="B1",
+                    arrival=0.0,
+                    deadline=30.0,
+                    data=50.0,
+                    weight=1.0,
+                    max_rate=10.0,
+                    task_type="reg",
+                )
+            ],
+            capacities=CapacityConfig(domain_a=10.0, domain_b=10.0, cross=10.0),
+            stage1=Stage1Config(
+                rho=0.0,
+                t_pre=0.0,
+                d_min=0.0,
+                theta_cap=0.0,
+                theta_hot=0.0,
+                q_eval=1,
+                elite_prune_count=0,
+                ga=GAConfig(population_size=4, max_generations=3, stall_generations=1, top_m=1),
+            ),
+            planning_end=30.0,
+            metadata={},
+        )
+
+        full_greedy = run_stage1(scenario, seed=1, method="static_greedy")
+        stop_when_feasible = run_stage1(scenario, seed=1, method="static_greedy_stop_when_feasible")
+
+        self.assertEqual(stop_when_feasible.stage1_method, "static_greedy_stop_when_feasible")
+        self.assertFalse(stop_when_feasible.timed_out)
+        self.assertEqual(stop_when_feasible.generations, 0)
+        self.assertTrue(stop_when_feasible.best_feasible)
+        self.assertIsNotNone(stop_when_feasible.selected_solution)
+        selected = stop_when_feasible.selected_solution
+        assert selected is not None
+        self.assertTrue(selected.feasible)
+        self.assertEqual(selected.window_count, len(stop_when_feasible.selected_plan))
+        self.assertEqual(selected.activation_count, 2 * len(stop_when_feasible.selected_plan))
+        self.assertTrue(stop_when_feasible.baseline_summary)
+        self.assertIsNotNone(stop_when_feasible.baseline_trace)
+        self.assertLess(selected.window_count, len(full_greedy.selected_plan))
+        self.assertEqual(tuple(window.window_id for window in stop_when_feasible.selected_plan), ("W1",))
+
+    def test_stage1_grasp_multi_start_returns_feasible_sparse_plan(self) -> None:
+        scenario = Scenario(
+            node_domain={"A1": "A", "B1": "B"},
+            intra_links=[],
+            candidate_windows=[
+                CandidateWindow(window_id="W1", a="A1", b="B1", start=0.0, end=10.0),
+                CandidateWindow(window_id="W2", a="A1", b="B1", start=10.0, end=20.0),
+                CandidateWindow(window_id="W3", a="A1", b="B1", start=20.0, end=30.0),
+            ],
+            tasks=[
+                Task(
+                    task_id="T1",
+                    src="A1",
+                    dst="B1",
+                    arrival=0.0,
+                    deadline=30.0,
+                    data=50.0,
+                    weight=1.0,
+                    max_rate=10.0,
+                    task_type="reg",
+                )
+            ],
+            capacities=CapacityConfig(domain_a=10.0, domain_b=10.0, cross=10.0),
+            stage1=Stage1Config(
+                rho=0.0,
+                t_pre=0.0,
+                d_min=0.0,
+                theta_cap=0.0,
+                theta_hot=0.0,
+                q_eval=1,
+                elite_prune_count=0,
+                grasp_iterations=4,
+                grasp_rcl_ratio=1.0,
+                grasp_seed=3,
+                ga=GAConfig(population_size=4, max_generations=3, stall_generations=1, top_m=1),
+            ),
+            planning_end=30.0,
+            metadata={},
+        )
+
+        full_greedy = run_stage1(scenario, seed=1, method="static_greedy")
+        result = run_stage1(scenario, seed=1, method="grasp_multi_start")
+
+        self.assertEqual(result.stage1_method, "grasp_multi_start")
+        self.assertFalse(result.timed_out)
+        self.assertEqual(result.generations, 4)
+        self.assertTrue(result.best_feasible)
+        self.assertIsNotNone(result.selected_solution)
+        selected = result.selected_solution
+        assert selected is not None
+        self.assertTrue(selected.feasible)
+        self.assertEqual(selected.window_count, len(result.selected_plan))
+        self.assertEqual(selected.activation_count, 2 * len(result.selected_plan))
+        self.assertEqual(selected.window_count, 1)
+        self.assertLess(selected.window_count, len(full_greedy.selected_plan))
+        self.assertTrue(result.baseline_summary)
+        self.assertIsNotNone(result.baseline_trace)
+
     def test_stage1_hotspot_coverage_remains_formal_feasibility_constraint(self) -> None:
         scenario = Scenario(
             node_domain={"A1": "A", "A2": "A", "B1": "B"},

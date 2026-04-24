@@ -1,0 +1,116 @@
+{
+  "light": {
+    "static_greedy": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\static_greedy_sparsity_compare\\light_static_greedy_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 176,
+      "activation_count": 352,
+      "avg_hot_coverage": 1.0,
+      "hotspot_coverage": 1.0,
+      "eta_cap": 0.0,
+      "runtime_seconds": 15.07856719999836,
+      "feasible": true
+    },
+    "static_greedy_stop_when_feasible": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\static_greedy_sparsity_compare\\light_static_greedy_stop_when_feasible_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 11,
+      "activation_count": 22,
+      "avg_hot_coverage": 0.8897911675466119,
+      "hotspot_coverage": 0.8897911675466119,
+      "eta_cap": 0.06516959741319976,
+      "runtime_seconds": 9.502924799999164,
+      "feasible": true
+    },
+    "ga_existing": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\light\\Light60_stage1_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 9,
+      "activation_count": 18,
+      "avg_hot_coverage": 0.8456341153083321,
+      "hotspot_coverage": 0.8456341153083321,
+      "eta_cap": 0.011375843445844077,
+      "runtime_seconds": 4619.3708825,
+      "feasible": true
+    }
+  },
+  "normal": {
+    "static_greedy": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\static_greedy_sparsity_compare\\normal_static_greedy_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 173,
+      "activation_count": 346,
+      "avg_hot_coverage": 1.0,
+      "hotspot_coverage": 1.0,
+      "eta_cap": 0.0,
+      "runtime_seconds": 16.50777889999881,
+      "feasible": true
+    },
+    "static_greedy_stop_when_feasible": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\static_greedy_sparsity_compare\\normal_static_greedy_stop_when_feasible_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 12,
+      "activation_count": 24,
+      "avg_hot_coverage": 0.8144932601205858,
+      "hotspot_coverage": 0.8144932601205858,
+      "eta_cap": 0.018327747800167604,
+      "runtime_seconds": 15.31278729999758,
+      "feasible": true
+    },
+    "ga_existing": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\normal\\normal_stage1_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 12,
+      "activation_count": 24,
+      "avg_hot_coverage": 0.8742561429295008,
+      "hotspot_coverage": 0.8742561429295008,
+      "eta_cap": 0.005865498850549789,
+      "runtime_seconds": 4059.3214158,
+      "feasible": true
+    }
+  },
+  "heavy": {
+    "static_greedy": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\static_greedy_sparsity_compare\\heavy_static_greedy_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 179,
+      "activation_count": 358,
+      "avg_hot_coverage": 1.0,
+      "hotspot_coverage": 1.0,
+      "eta_cap": 0.0,
+      "runtime_seconds": 17.826845999996294,
+      "feasible": true
+    },
+    "static_greedy_stop_when_feasible": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\static_greedy_sparsity_compare\\heavy_static_greedy_stop_when_feasible_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 16,
+      "activation_count": 32,
+      "avg_hot_coverage": 0.8098126256101061,
+      "hotspot_coverage": 0.8098126256101061,
+      "eta_cap": 0.011019350738322616,
+      "runtime_seconds": 35.265974000001734,
+      "feasible": true
+    },
+    "ga_existing": {
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\heavy\\Heavy84_stage1_result.json",
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 14,
+      "activation_count": 28,
+      "avg_hot_coverage": 0.8417596386253491,
+      "hotspot_coverage": 0.8417596386253491,
+      "eta_cap": 0.003914922875763473,
+      "runtime_seconds": 11620.281689200001,
+      "feasible": true
+    }
+  }
+}

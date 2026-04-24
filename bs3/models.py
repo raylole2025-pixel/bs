@@ -182,6 +182,10 @@ class Stage1Config:
     omega_cap: float = 3.0 / 9.0
     omega_hot: float = 2.0 / 9.0
     elite_prune_count: int = 6
+    grasp_iterations: int = 30
+    grasp_rcl_ratio: float = 0.10
+    grasp_seed: int | None = None
+    grasp_rcl_min_size: int | None = None
     completion_tolerance: float = 1e-6
     ga: GAConfig = field(default_factory=GAConfig)
 
@@ -282,6 +286,7 @@ class Stage1Result:
     selected_solution: Stage1Candidate | None = None
     baseline_summary: dict[str, Any] = field(default_factory=dict)
     baseline_trace: "Stage1BaselineTrace | None" = None
+    stage1_method: str = "ga"
     used_feedback: bool = True
     timed_out: bool = False
     elapsed_seconds: float | None = None

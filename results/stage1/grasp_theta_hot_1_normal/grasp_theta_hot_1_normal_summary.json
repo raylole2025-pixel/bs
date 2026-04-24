@@ -1,0 +1,37 @@
+{
+  "scenario_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\normal\\normal_scenario_weighted.json",
+  "rows": [
+    {
+      "label": "grasp_theta_hot_0.8",
+      "theta_hot": 0.8,
+      "stage1_method": "grasp_multi_start",
+      "grasp_iterations": 50,
+      "grasp_rcl_ratio": 0.1,
+      "grasp_seed": 7,
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 12,
+      "activation_count": 24,
+      "avg_hot_coverage": 0.9249095894343957,
+      "eta_cap": 0.0,
+      "runtime_seconds": 459.5430128000007,
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\grasp_sensitivity\\normal_grasp_it50_rcl0p10_result.json"
+    },
+    {
+      "label": "grasp_theta_hot_1.0",
+      "theta_hot": 1.0,
+      "stage1_method": "grasp_multi_start",
+      "grasp_iterations": 50,
+      "grasp_rcl_ratio": 0.1,
+      "grasp_seed": 7,
+      "fr": 1.0,
+      "mean_completion_ratio": 1.0,
+      "window_count": 14,
+      "activation_count": 28,
+      "avg_hot_coverage": 1.0,
+      "eta_cap": 0.006503986991018108,
+      "runtime_seconds": 2857.5992383999983,
+      "result_file": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\grasp_theta_hot_1_normal\\normal_grasp_theta_hot_1_result.json"
+    }
+  ]
+}

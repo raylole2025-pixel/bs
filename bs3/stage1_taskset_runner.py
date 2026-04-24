@@ -30,6 +30,7 @@ DEFAULT_CROSS_SUMMARY = DEFAULT_DISTANCE_ROOT / "crosslink_distance_20260323" / 
 @dataclass(frozen=True)
 class Stage1TasksetRunConfig:
     seed: int = 7
+    stage1_method: str = "ga"
     cap_a: float = 600.0
     cap_b: float = 2000.0
     cap_x: float = 1000.0
@@ -51,6 +52,10 @@ class Stage1TasksetRunConfig:
     omega_cap: float = 3.0 / 9.0
     omega_hot: float = 2.0 / 9.0
     elite_prune_count: int = 6
+    grasp_iterations: int = 30
+    grasp_rcl_ratio: float = 0.10
+    grasp_seed: int | None = None
+    grasp_rcl_min_size: int | None = None
     population_size: int = 60
     crossover_probability: float = 0.90
     mutation_probability: float = 0.20
@@ -184,6 +189,7 @@ def build_stage1_taskset_payload(
             "task_units": {"data": "Mb", "rate": "Mbps"},
             "runner": runner_name,
             "seed": config.seed,
+            "stage1_method": config.stage1_method,
         }
     )
     payload["capacities"] = {"A": config.cap_a, "B": config.cap_b, "X": config.cap_x}
@@ -206,6 +212,10 @@ def build_stage1_taskset_payload(
         "omega_cap": config.omega_cap,
         "omega_hot": config.omega_hot,
         "elite_prune_count": config.elite_prune_count,
+        "grasp_iterations": config.grasp_iterations,
+        "grasp_rcl_ratio": config.grasp_rcl_ratio,
+        "grasp_seed": config.grasp_seed,
+        "grasp_rcl_min_size": config.grasp_rcl_min_size,
         "completion_tolerance": config.completion_tolerance,
         "ga": {
             "population_size": config.population_size,
@@ -318,7 +328,7 @@ def run_stage1_on_taskset_json(
     write_json(annotated_scenario_path, json_ready_scenario_payload(scenario))
 
     started = time.perf_counter()
-    result = run_stage1(scenario, seed=config.seed)
+    result = run_stage1(scenario, seed=config.seed, method=config.stage1_method)
     elapsed = time.perf_counter() - started
 
     artifacts = {}
@@ -334,10 +344,13 @@ def run_stage1_on_taskset_json(
     result_payload = {
         "taskset_json": str(taskset_json_path.resolve()),
         "seed": config.seed,
+        "stage1_method": result.stage1_method,
         "runtime_seconds": elapsed,
         "generations": result.generations,
         "selected_plan": [asdict(window) for window in result.selected_plan],
         "selected_solution": candidate_to_dict(result.selected_solution) if result.selected_solution else None,
+        "best_feasible": [candidate_to_dict(candidate) for candidate in result.best_feasible],
+        "population_best": candidate_to_dict(result.population_best) if result.population_best else None,
         "baseline_summary": dict(result.baseline_summary),
         "baseline_trace_file": (baseline_trace_file.name if baseline_trace_file is not None else None),
         "baseline_trace": baseline_trace_payload,
@@ -358,6 +371,7 @@ def run_stage1_on_taskset_json(
         "taskset_json": str(taskset_json_path.resolve()),
         "run_dir": str(run_dir.resolve()),
         "seed": config.seed,
+        "stage1_method": result.stage1_method,
         "result_file": str(result_path.resolve()),
         "scenario_input_file": str(raw_scenario_path.resolve()),
         "scenario_weighted_file": str(weighted_scenario_path.resolve()) if weighted_scenario_path else None,
