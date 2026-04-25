@@ -44,6 +44,8 @@ class Stage1TasksetRunConfig:
     eta_x: float = 0.90
     static_value_snapshot_seconds: int = 600
     candidate_pool_base_size: int = 400
+    geo_pool_size: int | None = None
+    geo_max_windows: int = 12
     candidate_pool_hot_fraction: float = 0.30
     candidate_pool_min_per_coarse_segment: int = 3
     candidate_pool_max_additional: int = 150
@@ -204,6 +206,8 @@ def build_stage1_taskset_payload(
         "eta_x": config.eta_x,
         "static_value_snapshot_seconds": config.static_value_snapshot_seconds,
         "candidate_pool_base_size": config.candidate_pool_base_size,
+        "geo_pool_size": config.geo_pool_size,
+        "geo_max_windows": config.geo_max_windows,
         "candidate_pool_hot_fraction": config.candidate_pool_hot_fraction,
         "candidate_pool_min_per_coarse_segment": config.candidate_pool_min_per_coarse_segment,
         "candidate_pool_max_additional": config.candidate_pool_max_additional,
@@ -321,8 +325,11 @@ def run_stage1_on_taskset_json(
         weighted_scenario_path = run_dir / f"{taskset_json_path.stem}_scenario_weighted.json"
         write_json(weighted_scenario_path, json_ready_scenario_payload(scenario))
 
-    annotate_scenario_candidate_values(scenario, force=True)
-    screen_candidate_windows(scenario)
+    if config.stage1_method.strip().lower() == "geo_greedy":
+        scenario.metadata.setdefault("_runtime_cache", {})["raw_candidate_windows"] = list(scenario.candidate_windows)
+    else:
+        annotate_scenario_candidate_values(scenario, force=True)
+        screen_candidate_windows(scenario)
 
     annotated_scenario_path = run_dir / f"{taskset_json_path.stem}_scenario_annotated.json"
     write_json(annotated_scenario_path, json_ready_scenario_payload(scenario))
@@ -359,6 +366,7 @@ def run_stage1_on_taskset_json(
         "elapsed_seconds": result.elapsed_seconds,
         "task_stats": stats,
         "stage1_screening": scenario.metadata.get("stage1_screening", {}),
+        "stage1_geo_screening": scenario.metadata.get("stage1_geo_screening", {}),
         "distance_enrichment": enrich_stats,
         "artifacts": artifacts,
     }
@@ -383,6 +391,7 @@ def run_stage1_on_taskset_json(
         "feasible_count": len(result.best_feasible),
         "task_stats": stats,
         "stage1_screening": scenario.metadata.get("stage1_screening", {}),
+        "stage1_geo_screening": scenario.metadata.get("stage1_geo_screening", {}),
         "artifacts": artifacts,
         "best_summary": (
             {

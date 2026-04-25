@@ -244,6 +244,8 @@ def load_scenario(path: str | Path) -> Scenario:
         stage1_cfg.get("omega_cap", stage1_cfg.get("viol_weight_cap", 3.0 / 9.0)),
         stage1_cfg.get("omega_hot", stage1_cfg.get("viol_weight_hot", 2.0 / 9.0)),
     )
+    raw_geo_pool_size = stage1_cfg.get("geo_pool_size")
+    raw_geo_max_windows = stage1_cfg.get("geo_max_windows")
     stage1 = Stage1Config(
         rho=_float(_required(stage1_cfg, "rho"), "stage1.rho"),
         t_pre=_float(_required(stage1_cfg, "t_pre"), "stage1.t_pre"),
@@ -258,6 +260,12 @@ def load_scenario(path: str | Path) -> Scenario:
         eta_x=_float(stage1_cfg.get("eta_x", 0.90), "stage1.eta_x"),
         static_value_snapshot_seconds=int(stage1_cfg.get("static_value_snapshot_seconds", 600)),
         candidate_pool_base_size=max(int(stage1_cfg.get("candidate_pool_base_size", 400)), 1),
+        geo_pool_size=(
+            None
+            if raw_geo_pool_size in {None, ""}
+            else max(int(raw_geo_pool_size), 1)
+        ),
+        geo_max_windows=max(int(12 if raw_geo_max_windows in {None, ""} else raw_geo_max_windows), 1),
         candidate_pool_hot_fraction=min(
             max(_float(stage1_cfg.get("candidate_pool_hot_fraction", 0.30), "stage1.candidate_pool_hot_fraction"), 0.0),
             1.0,
@@ -750,6 +758,8 @@ def scenario_to_dict(scenario: Scenario) -> dict:
             "eta_x": scenario.stage1.eta_x,
             "static_value_snapshot_seconds": scenario.stage1.static_value_snapshot_seconds,
             "candidate_pool_base_size": scenario.stage1.candidate_pool_base_size,
+            "geo_pool_size": scenario.stage1.geo_pool_size,
+            "geo_max_windows": scenario.stage1.geo_max_windows,
             "candidate_pool_hot_fraction": scenario.stage1.candidate_pool_hot_fraction,
             "candidate_pool_min_per_coarse_segment": scenario.stage1.candidate_pool_min_per_coarse_segment,
             "candidate_pool_max_additional": scenario.stage1.candidate_pool_max_additional,

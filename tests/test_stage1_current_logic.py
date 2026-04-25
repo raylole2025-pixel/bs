@@ -4,7 +4,7 @@ import unittest
 
 from bs3.models import CapacityConfig, CandidateWindow, GAConfig, HotspotRegion, Scenario, ScheduledWindow, Stage1Config, Task, TemporalLink
 from bs3.stage1_screening import screen_candidate_windows
-from bs3.stage1 import RegularEvaluator, run_stage1
+from bs3.stage1 import RegularEvaluator, _rank_by_geo_link_quality, run_stage1
 from bs3.stage1_static_value import annotate_scenario_candidate_values, compute_candidate_static_values
 
 
@@ -355,6 +355,74 @@ class Stage1CurrentLogicTests(unittest.TestCase):
         self.assertLess(selected.window_count, len(full_greedy.selected_plan))
         self.assertTrue(result.baseline_summary)
         self.assertIsNotNone(result.baseline_trace)
+
+    def test_geo_greedy_ranking_ignores_value_and_missing_distance_is_conservative(self) -> None:
+        windows = [
+            CandidateWindow(window_id="W_value", a="A1", b="B1", start=0.0, end=10.0, value=1_000_000.0, distance_km=100.0),
+            CandidateWindow(window_id="W_geo", a="A1", b="B1", start=20.0, end=50.0, value=0.0, distance_km=10.0),
+            CandidateWindow(window_id="W_missing", a="A1", b="B1", start=60.0, end=80.0, value=500_000.0, distance_km=None),
+        ]
+
+        ranked = _rank_by_geo_link_quality(windows)
+
+        self.assertEqual([window.window_id for window in ranked], ["W_geo", "W_missing", "W_value"])
+
+    def test_stage1_geo_greedy_uses_raw_candidates_and_respects_window_cap(self) -> None:
+        scenario = Scenario(
+            node_domain={"A1": "A", "B1": "B"},
+            intra_links=[],
+            candidate_windows=[
+                CandidateWindow(window_id="W_value", a="A1", b="B1", start=0.0, end=10.0, value=1_000_000.0, distance_km=100.0),
+                CandidateWindow(window_id="W_geo", a="A1", b="B1", start=20.0, end=50.0, value=0.0, distance_km=10.0),
+            ],
+            tasks=[
+                Task(
+                    task_id="T1",
+                    src="A1",
+                    dst="B1",
+                    arrival=0.0,
+                    deadline=10.0,
+                    data=50.0,
+                    weight=1.0,
+                    max_rate=10.0,
+                    task_type="reg",
+                )
+            ],
+            capacities=CapacityConfig(domain_a=10.0, domain_b=10.0, cross=10.0),
+            stage1=Stage1Config(
+                rho=0.0,
+                t_pre=0.0,
+                d_min=0.0,
+                theta_cap=0.0,
+                theta_hot=0.0,
+                candidate_pool_base_size=1,
+                geo_pool_size=2,
+                geo_max_windows=1,
+                q_eval=1,
+                elite_prune_count=0,
+                ga=GAConfig(population_size=4, max_generations=3, stall_generations=1, top_m=1),
+            ),
+            planning_end=50.0,
+            metadata={},
+        )
+
+        annotate_scenario_candidate_values(scenario, force=True)
+        screen_candidate_windows(scenario)
+        self.assertEqual([window.window_id for window in scenario.candidate_windows], ["W_value"])
+
+        result = run_stage1(scenario, seed=1, method="geo_greedy")
+
+        self.assertEqual(result.stage1_method, "geo_greedy")
+        self.assertIsNotNone(result.selected_solution)
+        self.assertTrue(result.selected_plan)
+        selected = result.selected_solution
+        assert selected is not None
+        self.assertLessEqual(selected.window_count, 1)
+        self.assertEqual(selected.activation_count, 2 * selected.window_count)
+        self.assertEqual(tuple(window.window_id for window in result.selected_plan), ("W_geo",))
+        self.assertEqual(scenario.metadata["stage1_screening"]["candidate_window_count_raw"], 2)
+        self.assertEqual(scenario.metadata["stage1_screening"]["geo_pool_size"], 2)
+        self.assertFalse(scenario.metadata["stage1_screening"]["uses_value_screening"])
 
     def test_stage1_hotspot_coverage_remains_formal_feasibility_constraint(self) -> None:
         scenario = Scenario(

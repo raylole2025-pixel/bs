@@ -61,6 +61,7 @@ def screen_candidate_windows(
 
     raw_windows = list(scenario.candidate_windows)
     raw_count = len(raw_windows)
+    scenario.metadata.setdefault("_runtime_cache", {})["raw_candidate_windows"] = raw_windows
     if raw_count == 0:
         scenario.metadata["stage1_screening"] = {
             "candidate_window_count_raw": 0,

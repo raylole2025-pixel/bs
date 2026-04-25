@@ -141,6 +141,141 @@ def try_insert_window(
     )
 
 
+def _raw_candidate_windows(scenario: Scenario) -> list[CandidateWindow]:
+    runtime_cache = scenario.metadata.setdefault("_runtime_cache", {})
+    raw_windows = runtime_cache.get("raw_candidate_windows")
+    if raw_windows is not None:
+        return list(raw_windows)
+    return list(scenario.candidate_windows)
+
+
+def _geo_distance(window: CandidateWindow, fallback_distance: float) -> float:
+    distance = window.distance_km
+    if distance is None:
+        return fallback_distance
+    distance_value = float(distance)
+    if not math.isfinite(distance_value):
+        return fallback_distance
+    return distance_value
+
+
+def _geo_window_score(
+    window: CandidateWindow,
+    *,
+    duration_min: float,
+    duration_max: float,
+    distance_min: float,
+    distance_max: float,
+    fallback_distance: float,
+) -> float:
+    duration = float(window.end) - float(window.start)
+    duration_norm = 0.0 if duration_max - duration_min <= EPS else (duration - duration_min) / (duration_max - duration_min)
+    distance = _geo_distance(window, fallback_distance)
+    distance_norm = 0.0 if distance_max - distance_min <= EPS else (distance - distance_min) / (distance_max - distance_min)
+    return 0.6 * duration_norm + 0.4 * (1.0 - distance_norm)
+
+
+def _rank_by_geo_link_quality(windows: Iterable[CandidateWindow]) -> list[CandidateWindow]:
+    candidates = list(windows)
+    if not candidates:
+        return []
+
+    durations = [float(window.end) - float(window.start) for window in candidates]
+    present_distances = [
+        float(window.distance_km)
+        for window in candidates
+        if window.distance_km is not None and math.isfinite(float(window.distance_km))
+    ]
+    has_missing_distance = len(present_distances) < len(candidates)
+    if present_distances:
+        max_present_distance = max(present_distances)
+        fallback_distance = (
+            max_present_distance + max(abs(max_present_distance), 1.0)
+            if has_missing_distance
+            else max_present_distance
+        )
+    else:
+        fallback_distance = 1.0
+    effective_distances = [_geo_distance(window, fallback_distance) for window in candidates]
+
+    duration_min = min(durations)
+    duration_max = max(durations)
+    if present_distances:
+        distance_min = min(effective_distances)
+        distance_max = max(effective_distances)
+    else:
+        distance_min = 0.0
+        distance_max = fallback_distance
+
+    scores = {
+        window.window_id: _geo_window_score(
+            window,
+            duration_min=duration_min,
+            duration_max=duration_max,
+            distance_min=distance_min,
+            distance_max=distance_max,
+            fallback_distance=fallback_distance,
+        )
+        for window in candidates
+    }
+    distances = {window.window_id: _geo_distance(window, fallback_distance) for window in candidates}
+    return sorted(
+        candidates,
+        key=lambda item: (
+            -scores[item.window_id],
+            -float(item.duration),
+            distances[item.window_id],
+            float(item.start),
+            item.window_id,
+        ),
+    )
+
+
+def _select_geo_candidate_pool(
+    scenario: Scenario,
+    raw_windows: Iterable[CandidateWindow] | None = None,
+) -> list[CandidateWindow]:
+    candidates = list(_raw_candidate_windows(scenario) if raw_windows is None else raw_windows)
+    ranked = _rank_by_geo_link_quality(candidates)
+    configured_pool_size = scenario.stage1.geo_pool_size
+    pool_size = scenario.stage1.candidate_pool_base_size if configured_pool_size is None else configured_pool_size
+    k = min(max(int(pool_size), 1), len(ranked)) if ranked else 0
+    selected = ranked[:k]
+    screening = {
+        "candidate_window_count_raw": len(candidates),
+        "candidate_window_count_screened": len(selected),
+        "screen_pool_size": k,
+        "screen_block_seconds": None,
+        "screen_metric": "geo_lq_greedy",
+        "geo_pool_size": k,
+        "geo_pool_size_configured": int(pool_size),
+        "geo_max_windows": int(scenario.stage1.geo_max_windows),
+        "candidate_pool_base_size": int(scenario.stage1.candidate_pool_base_size),
+        "uses_value_screening": False,
+    }
+    scenario.metadata["stage1_screening"] = screening
+    scenario.metadata["stage1_geo_screening"] = dict(screening)
+    return selected
+
+
+def _run_geo_greedy(
+    scenario: Scenario,
+    ranked_pool: Iterable[CandidateWindow],
+    *,
+    max_geo_windows: int | None = None,
+) -> list[ScheduledWindow]:
+    calendar = ResourceCalendar(scenario.node_domain.keys())
+    plan: list[ScheduledWindow] = []
+    max_windows = max(int(scenario.stage1.geo_max_windows if max_geo_windows is None else max_geo_windows), 1)
+    for window in ranked_pool:
+        if len(plan) >= max_windows:
+            break
+        scheduled = try_insert_window(window, calendar, scenario.stage1.t_pre, scenario.stage1.d_min)
+        if scheduled is not None:
+            plan.append(scheduled)
+    return plan
+
+
 def plan_signature(plan: list[ScheduledWindow]) -> tuple[tuple[str, float, float], ...]:
     signature = [(window.window_id, round(window.on, 9), round(window.off, 9)) for window in plan]
     signature.sort()
@@ -2153,6 +2288,87 @@ class Stage1GA:
         )
 
 
+class Stage1GeoGreedy(Stage1GA):
+    def __init__(self, scenario: Scenario, seed: int | None = None, diagnostics: bool = False) -> None:
+        self.scenario = scenario
+        self.seed = seed
+        self.diagnostics = diagnostics
+        self.random = random.Random(seed)
+        self._started_at: float | None = None
+        self.raw_candidate_windows = _raw_candidate_windows(scenario)
+        self.geo_candidate_pool = _select_geo_candidate_pool(scenario, self.raw_candidate_windows)
+        self.windows_by_id = {window.window_id: window for window in self.raw_candidate_windows}
+        self.window_ids = [window.window_id for window in self.raw_candidate_windows]
+        self.evaluator = RegularEvaluator(scenario)
+        self.plan_analyzer = PlanAnalyzer(scenario)
+        self._decode_order_cache: dict[tuple[str, ...], list[ScheduledWindow]] = {}
+        self._decoded_acceptance_cache: dict[tuple[str, ...], tuple[str, ...]] = {}
+        self._order_state_cache: dict[tuple[str, ...], OrderState] = {}
+        self._candidate_cache: dict[tuple[tuple[str, ...], bool], Stage1Candidate] = {}
+        self._initial_population_summary: dict[str, Any] = {}
+
+    def _single_candidate_result(
+        self,
+        candidate: Stage1Candidate | None,
+        *,
+        started_at: float,
+        history: list[dict[str, Any]] | None = None,
+    ) -> Stage1Result:
+        baseline_trace = (
+            self.evaluator.baseline_trace(candidate.plan, rho=self.scenario.stage1.rho)
+            if candidate is not None
+            else None
+        )
+        return Stage1Result(
+            best_feasible=([candidate] if candidate is not None and candidate.feasible else []),
+            population_best=candidate,
+            generations=0,
+            selected_plan=(list(candidate.plan) if candidate is not None else []),
+            selected_solution=candidate,
+            baseline_summary=(dict(baseline_trace.summary) if baseline_trace is not None else {}),
+            baseline_trace=baseline_trace,
+            stage1_method="geo_greedy",
+            used_feedback=False,
+            timed_out=False,
+            elapsed_seconds=time.perf_counter() - started_at,
+            history=(history if history is not None else []),
+        )
+
+    def run(self) -> Stage1Result:
+        started_at = time.perf_counter()
+        self._started_at = started_at
+        self._log_screening_summary()
+
+        chromosome = tuple(window.window_id for window in self.geo_candidate_pool)
+        plan = _run_geo_greedy(self.scenario, self.geo_candidate_pool)
+        accepted_order = tuple(window.window_id for window in plan)
+        state = self._analyze_order(accepted_order)
+        candidate = self._candidate_from_state(
+            chromosome,
+            state,
+            apply_feedback=False,
+            accepted_order=accepted_order,
+        )
+        self._log_best_candidate_detail(0, candidate)
+        history = [
+            {
+                "iteration": 0,
+                "source": "geo_link_quality",
+                "raw_candidate_count": len(self.raw_candidate_windows),
+                "candidate_pool_size": len(self.geo_candidate_pool),
+                "geo_max_windows": int(self.scenario.stage1.geo_max_windows),
+                "accepted_window_count": len(accepted_order),
+                "window_count": candidate.window_count,
+                "activation_count": candidate.activation_count,
+                "fr": candidate.fr,
+                "eta_cap": candidate.eta_cap,
+                "eta_0": candidate.eta_0,
+                "hotspot_coverage": candidate.avg_hot_coverage,
+            }
+        ]
+        return self._single_candidate_result(candidate, started_at=started_at, history=history)
+
+
 class Stage1StaticGreedy(Stage1GA):
     def __init__(self, scenario: Scenario, seed: int | None = None, diagnostics: bool = False) -> None:
         annotate_scenario_candidate_values(scenario, force=True)
@@ -2370,6 +2586,15 @@ def run_stage1_grasp_multi_start(
     return Stage1GraspMultiStart(scenario, seed=seed, diagnostics=diagnostics).run()
 
 
+def run_stage1_geo_greedy(
+    scenario: Scenario,
+    seed: int | None = None,
+    diagnostics: bool = False,
+) -> Stage1Result:
+    scenario.metadata["stage1_method"] = "geo_greedy"
+    return Stage1GeoGreedy(scenario, seed=seed, diagnostics=diagnostics).run()
+
+
 def run_stage1(
     scenario: Scenario,
     seed: int | None = None,
@@ -2386,4 +2611,6 @@ def run_stage1(
         return run_stage1_static_greedy_stop_when_feasible(scenario, seed=seed, diagnostics=diagnostics)
     if normalized_method == "grasp_multi_start":
         return run_stage1_grasp_multi_start(scenario, seed=seed, diagnostics=diagnostics)
+    if normalized_method == "geo_greedy":
+        return run_stage1_geo_greedy(scenario, seed=seed, diagnostics=diagnostics)
     raise ValueError(f"Unsupported Stage1 method: {method}")

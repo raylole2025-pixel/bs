@@ -367,6 +367,106 @@ class Stage1JsonTasksetRunnerTests(unittest.TestCase):
             self.assertEqual(result_payload["selected_solution"]["window_count"], 1)
             self.assertEqual(len(result_payload["selected_plan"]), 1)
 
+    def test_json_taskset_runner_supports_geo_greedy_method(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmpdir = Path(tmp)
+            base_scenario = tmpdir / "base_scenario.json"
+            taskset_json = tmpdir / "tasks.json"
+            output_root = tmpdir / "outputs"
+
+            base_payload = {
+                "metadata": {"name": "unit-test-scenario"},
+                "planning_end": 50.0,
+                "nodes": {"A": ["A1"], "B": ["B1"]},
+                "capacities": {"A": 10.0, "B": 10.0, "X": 10.0},
+                "stage1": {
+                    "rho": 0.0,
+                    "t_pre": 0.0,
+                    "d_min": 0.0,
+                    "theta_cap": 0.0,
+                    "theta_hot": 0.0,
+                    "q_eval": 1,
+                    "elite_prune_count": 0,
+                    "ga": {
+                        "population_size": 4,
+                        "max_generations": 3,
+                        "stall_generations": 1,
+                        "top_m": 1,
+                    },
+                },
+                "intra_domain_links": [],
+                "candidate_windows": [
+                    {"id": "W_value", "a": "A1", "b": "B1", "start": 0.0, "end": 10.0, "value": 1000000.0, "distance_km": 100.0},
+                    {"id": "W_geo", "a": "A1", "b": "B1", "start": 20.0, "end": 50.0, "value": 0.0, "distance_km": 10.0},
+                ],
+                "tasks": [],
+            }
+            tasks_payload = [
+                {
+                    "id": "T1",
+                    "src": "A1",
+                    "dst": "B1",
+                    "arrival": 0.0,
+                    "deadline": 50.0,
+                    "data": 50.0,
+                    "weight": 1.0,
+                    "max_rate": 10.0,
+                    "type": "reg",
+                    "preemption_priority": 1.0,
+                }
+            ]
+
+            base_scenario.write_text(json.dumps(base_payload, ensure_ascii=False, indent=2), encoding="utf-8")
+            taskset_json.write_text(json.dumps(tasks_payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+            summary = run_stage1_on_taskset_json(
+                taskset_json,
+                base_scenario_path=base_scenario,
+                output_root=output_root,
+                config=Stage1TasksetRunConfig(
+                    seed=1,
+                    stage1_method="geo_greedy",
+                    geo_pool_size=2,
+                    geo_max_windows=1,
+                    disable_distance_enrichment=True,
+                    export_artifacts=False,
+                    theta_cap=0.0,
+                    theta_hot=0.0,
+                    rho=0.0,
+                    t_pre=0.0,
+                    d_min=0.0,
+                    q_eval=1,
+                    elite_prune_count=0,
+                    population_size=4,
+                    max_generations=3,
+                    stall_generations=1,
+                    top_m=1,
+                ),
+            )
+
+            self.assertEqual(summary["stage1_method"], "geo_greedy")
+            result_file = Path(summary["result_file"])
+            result_payload = json.loads(result_file.read_text(encoding="utf-8"))
+            self.assertEqual(result_payload["stage1_method"], "geo_greedy")
+            self.assertIn("selected_plan", result_payload)
+            self.assertIn("selected_solution", result_payload)
+            self.assertIn("best_feasible", result_payload)
+            self.assertIn("population_best", result_payload)
+            self.assertIn("baseline_summary", result_payload)
+            self.assertIn("baseline_trace", result_payload)
+            self.assertIn("elapsed_seconds", result_payload)
+            self.assertTrue(result_payload["selected_plan"])
+            self.assertEqual(result_payload["selected_plan"][0]["window_id"], "W_geo")
+            self.assertEqual(result_payload["selected_solution"]["window_count"], 1)
+            self.assertEqual(result_payload["selected_solution"]["activation_count"], 2)
+            for key in ("fr", "eta_cap", "eta_0", "hotspot_coverage", "activation_count", "unique_gateway_count"):
+                self.assertIn(key, result_payload["selected_solution"])
+            self.assertEqual(result_payload["stage1_screening"]["screen_metric"], "geo_lq_greedy")
+            self.assertEqual(result_payload["stage1_screening"]["candidate_window_count_raw"], 2)
+            self.assertEqual(result_payload["stage1_screening"]["geo_pool_size"], 2)
+            self.assertEqual(summary["best_summary"]["window_count"], 1)
+            self.assertEqual(summary["best_summary"]["activation_count"], 2)
+
 
 if __name__ == "__main__":
     unittest.main()

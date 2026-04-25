@@ -164,6 +164,8 @@ def _config_from_args(args: argparse.Namespace) -> Stage1TasksetRunConfig:
         eta_x=args.eta_x,
         static_value_snapshot_seconds=args.snapshot_seconds,
         candidate_pool_base_size=args.candidate_pool_base_size,
+        geo_pool_size=args.geo_pool_size,
+        geo_max_windows=args.geo_max_windows,
         candidate_pool_hot_fraction=args.candidate_pool_hot_fraction,
         candidate_pool_min_per_coarse_segment=args.candidate_pool_min_per_coarse_segment,
         candidate_pool_max_additional=args.candidate_pool_max_additional,
@@ -208,7 +210,7 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument(
         "--stage1-method",
-        choices=("ga", "static_greedy", "static_greedy_stop_when_feasible", "grasp_multi_start"),
+        choices=("ga", "static_greedy", "static_greedy_stop_when_feasible", "grasp_multi_start", "geo_greedy"),
         default="ga",
     )
     parser.add_argument("--sheets", nargs="*", default=["medium48", "stress96"])
@@ -225,6 +227,8 @@ def main() -> None:
     parser.add_argument("--eta-x", type=float, default=0.90)
     parser.add_argument("--snapshot-seconds", type=int, default=600)
     parser.add_argument("--candidate-pool-base-size", type=int, default=400)
+    parser.add_argument("--geo-pool-size", type=int, default=400)
+    parser.add_argument("--geo-max-windows", type=int, default=12)
     parser.add_argument("--candidate-pool-hot-fraction", type=float, default=0.30)
     parser.add_argument("--candidate-pool-min-per-coarse-segment", type=int, default=3)
     parser.add_argument("--candidate-pool-max-additional", type=int, default=150)
@@ -322,8 +326,11 @@ def main() -> None:
             weighted_scenario_path = set_dir / f"{sheet_name}_scenario_weighted.json"
             write_json(weighted_scenario_path, json_ready_scenario_payload(scenario))
 
-        annotate_scenario_candidate_values(scenario, force=True)
-        screen_candidate_windows(scenario)
+        if config.stage1_method.strip().lower() == "geo_greedy":
+            scenario.metadata.setdefault("_runtime_cache", {})["raw_candidate_windows"] = list(scenario.candidate_windows)
+        else:
+            annotate_scenario_candidate_values(scenario, force=True)
+            screen_candidate_windows(scenario)
 
         annotated_scenario_path = set_dir / f"{sheet_name}_scenario_annotated.json"
         write_json(annotated_scenario_path, json_ready_scenario_payload(scenario))
@@ -360,6 +367,7 @@ def main() -> None:
             "elapsed_seconds": result.elapsed_seconds,
             "task_stats": stats,
             "stage1_screening": scenario.metadata.get("stage1_screening", {}),
+            "stage1_geo_screening": scenario.metadata.get("stage1_geo_screening", {}),
             "distance_enrichment": enrich_stats,
             "artifacts": artifacts,
         }
@@ -378,6 +386,7 @@ def main() -> None:
             "generations": result.generations,
             "feasible_count": len(result.best_feasible),
             "stage1_screening": scenario.metadata.get("stage1_screening", {}),
+            "stage1_geo_screening": scenario.metadata.get("stage1_geo_screening", {}),
             "distance_enrichment": enrich_stats,
             "artifacts": artifacts,
             "best_summary": (

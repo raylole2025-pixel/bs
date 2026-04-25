@@ -122,6 +122,8 @@ def build_stage1_scenario_template(
         "eta_x": float((stage1_config or {}).get("eta_x", 0.90)),
         "static_value_snapshot_seconds": int((stage1_config or {}).get("static_value_snapshot_seconds", 600)),
         "candidate_pool_base_size": int((stage1_config or {}).get("candidate_pool_base_size", 400)),
+        "geo_pool_size": (stage1_config or {}).get("geo_pool_size", 400),
+        "geo_max_windows": int((stage1_config or {}).get("geo_max_windows", 12)),
         "candidate_pool_hot_fraction": float((stage1_config or {}).get("candidate_pool_hot_fraction", 0.30)),
         "candidate_pool_min_per_coarse_segment": int((stage1_config or {}).get("candidate_pool_min_per_coarse_segment", 3)),
         "candidate_pool_max_additional": int((stage1_config or {}).get("candidate_pool_max_additional", 150)),

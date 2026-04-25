@@ -171,6 +171,9 @@ class Stage1Config:
     static_value_snapshot_seconds: int = 600
     # candidate pool 主池规模
     candidate_pool_base_size: int = 400
+    # Geo-LQ Greedy candidate pool size. None falls back to candidate_pool_base_size.
+    geo_pool_size: int | None = None
+    geo_max_windows: int = 12
     # 主池中热点价值通道的占比；剩余部分走常态任务价值通道
     candidate_pool_hot_fraction: float = 0.30
     # 每个有需求粗分段至少保留的代表窗口数量

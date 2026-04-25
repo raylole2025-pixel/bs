@@ -9,8 +9,7 @@ from .regular_routing_common import clamp01, cross_link_from_edges, post_allocat
 from .scenario import active_cross_links, active_intra_links, build_segments, generate_candidate_paths
 
 EPS = 1e-9
-CAPACITY_TIER_RESERVED_ONLY = "reserved_only"
-CAPACITY_TIER_BORROW_UNUSED_REGULAR_SHARE = "borrow_unused_regular_share"
+CAPACITY_TIER_DIRECT_FREE = "direct_free"
 CAPACITY_TIER_PREEMPTED = "preempted"
 CAPACITY_TIER_BLOCKED = "blocked"
 PREEMPTION_WEIGHT_COEFF = 0.35
@@ -477,6 +476,7 @@ class TwoPhaseEventDrivenScheduler:
                 "emergency_insertions": insertion_events,
                 "emergency_task_count": len([task for task in self.scenario.tasks if task.task_type == "emg"]),
                 "emergency_insertions_count": len(insertion_events),
+                "emergency_capacity_tier_counts": self._capacity_tier_counts(insertion_events),
                 "emergency_insertions_used_preemption_count": sum(
                     1 for item in insertion_events if bool(item.get("used_preemption"))
                 ),
@@ -649,6 +649,8 @@ class TwoPhaseEventDrivenScheduler:
         return {
             "stage2_role": "emergency_event_insert_only",
             "solver_mode": self._solver_mode_label(),
+            "emergency_capacity_policy": "real_time_remaining_capacity",
+            "emergency_non_preempted_capacity_tier": CAPACITY_TIER_DIRECT_FREE,
             "event_segment_count": int(event_segment_count),
             "event_segment_count_raw": int(event_segment_count_raw),
             "regular_task_count": int(regular_task_count),
@@ -678,7 +680,7 @@ class TwoPhaseEventDrivenScheduler:
     def _plan_capacity_tier(task_plan: _TaskPlan | None) -> str:
         if task_plan is None:
             return CAPACITY_TIER_BLOCKED
-        return CAPACITY_TIER_BORROW_UNUSED_REGULAR_SHARE if int(task_plan.tier_cost) > 0 else CAPACITY_TIER_RESERVED_ONLY
+        return CAPACITY_TIER_DIRECT_FREE
 
     def _task_plan_label(self, task_plan: _TaskPlan | None) -> _PlanLabel:
         if task_plan is None:
@@ -833,6 +835,15 @@ class TwoPhaseEventDrivenScheduler:
             "reclaimed_recovery_segment_indices": [int(index) for index in reclaimed_recovery_segment_indices],
             "reclaimed_recovery_allocation_count": int(reclaimed_recovery_allocation_count),
             "reclaimed_recovery_delivery": float(reclaimed_recovery_delivery),
+        }
+
+    @staticmethod
+    def _capacity_tier_counts(events: list[dict[str, object]]) -> dict[str, int]:
+        tiers = {CAPACITY_TIER_DIRECT_FREE, CAPACITY_TIER_PREEMPTED, CAPACITY_TIER_BLOCKED}
+        tiers.update(str(event.get("capacity_tier")) for event in events if event.get("capacity_tier") is not None)
+        return {
+            tier: sum(1 for event in events if str(event.get("capacity_tier")) == tier)
+            for tier in sorted(tiers)
         }
 
     def _insert_emergency_task(
@@ -2437,7 +2448,7 @@ class TwoPhaseEventDrivenScheduler:
         if objective == "baseline":
             return (label.load_cost, float(label.switches), finish_time, float(label.idle_steps))
         if objective == "emergency":
-            return (float(label.tier_cost), finish_time, float(label.switches), label.load_cost, float(label.idle_steps))
+            return (finish_time, float(label.switches), label.load_cost, float(label.idle_steps))
         if objective in {"recovery", "recovery_strict"}:
             return (label.load_cost, float(label.switches), float(label.idle_steps), finish_time)
         return (float(label.deviations), label.load_cost, float(label.switches), finish_time, float(label.idle_steps))
@@ -2447,7 +2458,7 @@ class TwoPhaseEventDrivenScheduler:
         if objective == "baseline":
             return (remaining, label.load_cost, float(label.switches), float(label.idle_steps))
         if objective == "emergency":
-            return (remaining, float(label.tier_cost), float(label.switches), label.load_cost, float(label.idle_steps))
+            return (remaining, float(label.switches), label.load_cost, float(label.idle_steps))
         if objective in {"recovery", "recovery_strict"}:
             return (remaining, label.load_cost, float(label.switches), float(label.idle_steps))
         return (remaining, float(label.deviations), label.load_cost, float(label.switches), float(label.idle_steps))
@@ -2558,20 +2569,16 @@ class TwoPhaseEventDrivenScheduler:
         if not path.edge_ids:
             return float("inf"), float("inf")
         total_bottleneck = float("inf")
-        reserved_bottleneck = float("inf")
         for edge_id in path.edge_ids:
             total_available = state.total_free.get(edge_id)
             if total_available is None:
                 return 0.0, 0.0
             if task.task_type == "reg" and state.edge_kind.get(edge_id) == "X" and objective != "recovery":
                 total_available = min(total_available, state.regular_cross_free.get(edge_id, 0.0))
+            elif task.task_type == "emg" and state.edge_kind.get(edge_id) == "X":
+                total_available = self._free_cross_capacity(edge_id, state)
             total_bottleneck = min(total_bottleneck, total_available)
-
-            reserved_available = total_available
-            if task.task_type == "emg" and state.edge_kind.get(edge_id) == "X":
-                reserved_available = min(total_available, self._reserve_free(edge_id, state))
-            reserved_bottleneck = min(reserved_bottleneck, reserved_available)
-        return total_bottleneck, reserved_bottleneck
+        return total_bottleneck, total_bottleneck
 
     def _path_rate_and_tier(
         self,
@@ -2582,23 +2589,21 @@ class TwoPhaseEventDrivenScheduler:
         segment_duration: float,
         objective: str = "default",
     ) -> tuple[float, int] | None:
-        total_bottleneck, reserved_bottleneck = self._path_bottleneck_bounds(task, path, state, objective=objective)
+        total_bottleneck, _ = self._path_bottleneck_bounds(task, path, state, objective=objective)
         if total_bottleneck <= self.numeric_tolerance or segment_duration <= self.numeric_tolerance:
             return None
         rate = min(float(task.max_rate), float(total_bottleneck), max(float(remaining_data), 0.0) / segment_duration)
         if rate <= self.numeric_tolerance:
             return None
-        tier = 0
-        if task.task_type == "emg" and rate > reserved_bottleneck + self.numeric_tolerance:
-            tier = 1
-        return rate, tier
+        return rate, 0
 
-    def _reserve_free(self, edge_id: str, state: _CapacityState) -> float:
+    def _free_cross_capacity(self, edge_id: str, state: _CapacityState) -> float:
         capacity = float(state.capacity.get(edge_id, 0.0))
         if capacity <= self.numeric_tolerance:
             return 0.0
+        used_regular = float(state.used_regular_cross.get(edge_id, 0.0))
         used_emergency = float(state.used_emergency_cross.get(edge_id, 0.0))
-        return max(float(self.scenario.stage1.rho) * capacity - used_emergency, 0.0)
+        return max(capacity - used_regular - used_emergency, 0.0)
 
     def _path_load_cost(
         self,

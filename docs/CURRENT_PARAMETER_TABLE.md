@@ -51,7 +51,7 @@ Stored under `stage1` in the scenario JSON and parsed by `bs3/scenario.py`.
 
 | Parameter | Current Default | Meaning |
 | --- | --- | --- |
-| `rho` | `0.20` | Reserved fraction of cross-domain capacity for emergency tasks. Stage1 regular tasks use `(1-rho)C_X`. |
+| `rho` | `0.20` | Stage1 offline planning margin: regular tasks may use at most `(1-rho)C_X`. Stage2 emergency routing uses real-time remaining cross capacity. |
 | `t_pre` | `1800` | Preheat / preparation time before a cross-domain window becomes active. |
 | `d_min` | `600` | Minimum effective build duration required to accept a candidate window. |
 | `theta_cap` | `0.08` | Maximum acceptable cross-capacity shortfall ratio. |
