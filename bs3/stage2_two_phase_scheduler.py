@@ -726,16 +726,12 @@ class TwoPhaseEventDrivenScheduler:
         lhs_key = (
             self._remaining_key(lhs_label.remaining_data),
             float(lhs_label.tier_cost),
-            float(lhs_label.switches),
             lhs_label.load_cost,
-            float(lhs_label.idle_steps),
         )
         rhs_key = (
             self._remaining_key(rhs_label.remaining_data),
             float(rhs_label.tier_cost),
-            float(rhs_label.switches),
             rhs_label.load_cost,
-            float(rhs_label.idle_steps),
         )
         return lhs_key < rhs_key
 
@@ -2423,18 +2419,12 @@ class TwoPhaseEventDrivenScheduler:
         no_worse = (
             lhs_remaining <= rhs_remaining + self.numeric_tolerance
             and lhs.tier_cost <= rhs.tier_cost
-            and lhs.switches <= rhs.switches
-            and lhs.deviations <= rhs.deviations
             and lhs.load_cost <= rhs.load_cost + self.numeric_tolerance
-            and lhs.idle_steps <= rhs.idle_steps
         )
         strictly_better = (
             lhs_remaining < rhs_remaining - self.numeric_tolerance
             or lhs.tier_cost < rhs.tier_cost
-            or lhs.switches < rhs.switches
-            or lhs.deviations < rhs.deviations
             or lhs.load_cost < rhs.load_cost - self.numeric_tolerance
-            or lhs.idle_steps < rhs.idle_steps
         )
         return no_worse and strictly_better
 
@@ -2446,22 +2436,22 @@ class TwoPhaseEventDrivenScheduler:
     def _terminal_key(self, label: _PlanLabel, objective: str) -> tuple[float, ...]:
         finish_time = label.finish_time if label.finish_time is not None else float("inf")
         if objective == "baseline":
-            return (label.load_cost, float(label.switches), finish_time, float(label.idle_steps))
+            return (label.load_cost, finish_time)
         if objective == "emergency":
-            return (finish_time, float(label.switches), label.load_cost, float(label.idle_steps))
+            return (finish_time, label.load_cost)
         if objective in {"recovery", "recovery_strict"}:
-            return (label.load_cost, float(label.switches), float(label.idle_steps), finish_time)
-        return (float(label.deviations), label.load_cost, float(label.switches), finish_time, float(label.idle_steps))
+            return (label.load_cost, finish_time)
+        return (float(label.deviations), label.load_cost, finish_time)
 
     def _partial_key(self, label: _PlanLabel, objective: str) -> tuple[float, ...]:
         remaining = self._remaining_key(label.remaining_data)
         if objective == "baseline":
-            return (remaining, label.load_cost, float(label.switches), float(label.idle_steps))
+            return (remaining, label.load_cost)
         if objective == "emergency":
-            return (remaining, float(label.switches), label.load_cost, float(label.idle_steps))
+            return (remaining, label.load_cost)
         if objective in {"recovery", "recovery_strict"}:
-            return (remaining, label.load_cost, float(label.switches), float(label.idle_steps))
-        return (remaining, float(label.deviations), label.load_cost, float(label.switches), float(label.idle_steps))
+            return (remaining, label.load_cost)
+        return (remaining, float(label.deviations), label.load_cost)
 
     def _build_capacity_state(self, plan: list[ScheduledWindow], segment: Segment) -> _CapacityState:
         capacity: dict[str, float] = {}
