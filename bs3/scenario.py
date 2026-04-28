@@ -66,6 +66,21 @@ def _normalized_stage1_weights(
     return tuple(value / total for value in values)
 
 
+def _bool(value: object, default: bool = False) -> bool:
+    if value is None:
+        return default
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return bool(value)
+    text = str(value).strip().lower()
+    if text in {"1", "true", "yes", "y", "on"}:
+        return True
+    if text in {"0", "false", "no", "n", "off"}:
+        return False
+    return default
+
+
 def _load_hotspots_a(payload: dict, node_domain: dict[str, str]) -> list[HotspotRegion]:
     hotspots_cfg = payload.get("hotspots")
     if not isinstance(hotspots_cfg, dict):
@@ -270,6 +285,7 @@ def load_scenario(path: str | Path) -> Scenario:
             max(_float(stage1_cfg.get("candidate_pool_hot_fraction", 0.30), "stage1.candidate_pool_hot_fraction"), 0.0),
             1.0,
         ),
+        enable_hotspot_metrics=_bool(stage1_cfg.get("enable_hotspot_metrics"), True),
         candidate_pool_min_per_coarse_segment=max(int(stage1_cfg.get("candidate_pool_min_per_coarse_segment", 3)), 0),
         candidate_pool_max_additional=max(int(stage1_cfg.get("candidate_pool_max_additional", 150)), 0),
         q_eval=int(stage1_cfg.get("q_eval", 4)),
@@ -761,6 +777,7 @@ def scenario_to_dict(scenario: Scenario) -> dict:
             "geo_pool_size": scenario.stage1.geo_pool_size,
             "geo_max_windows": scenario.stage1.geo_max_windows,
             "candidate_pool_hot_fraction": scenario.stage1.candidate_pool_hot_fraction,
+            "enable_hotspot_metrics": scenario.stage1.enable_hotspot_metrics,
             "candidate_pool_min_per_coarse_segment": scenario.stage1.candidate_pool_min_per_coarse_segment,
             "candidate_pool_max_additional": scenario.stage1.candidate_pool_max_additional,
             "q_eval": scenario.stage1.q_eval,

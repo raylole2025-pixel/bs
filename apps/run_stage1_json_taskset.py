@@ -49,6 +49,11 @@ def main() -> None:
     parser.add_argument("--geo-pool-size", type=int, default=400)
     parser.add_argument("--geo-max-windows", type=int, default=12)
     parser.add_argument("--candidate-pool-hot-fraction", type=float, default=0.30)
+    parser.add_argument(
+        "--disable-hotspot-metrics",
+        action="store_true",
+        help="Skip hotspot static-value and coverage metrics for pure no-hotspot ablation.",
+    )
     parser.add_argument("--candidate-pool-min-per-coarse-segment", type=int, default=3)
     parser.add_argument("--candidate-pool-max-additional", type=int, default=150)
     parser.add_argument("--q-eval", type=int, default=4)
@@ -103,6 +108,7 @@ def main() -> None:
         geo_pool_size=args.geo_pool_size,
         geo_max_windows=args.geo_max_windows,
         candidate_pool_hot_fraction=args.candidate_pool_hot_fraction,
+        enable_hotspot_metrics=not args.disable_hotspot_metrics,
         candidate_pool_min_per_coarse_segment=args.candidate_pool_min_per_coarse_segment,
         candidate_pool_max_additional=args.candidate_pool_max_additional,
         q_eval=args.q_eval,

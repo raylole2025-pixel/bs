@@ -100,12 +100,14 @@ def compute_candidate_static_details(
     reg_values = {window.window_id: 0.0 for window in windows}
     hot_values = {window.window_id: 0.0 for window in windows}
     if not windows:
+        hotspot_enabled = bool(scenario.stage1.enable_hotspot_metrics)
         scenario.metadata.setdefault("stage1_static_value", {})
         scenario.metadata["stage1_static_value"].update(
             {
                 "mode": "not_used",
                 "window_value_field": "V_reg",
-                "hotspot_channel_enabled": bool(scenario.hotspots_a),
+                "hotspot_metrics_enabled": hotspot_enabled,
+                "hotspot_channel_enabled": hotspot_enabled and bool(scenario.hotspots_a),
                 "segment_count": 0,
             }
         )
@@ -128,7 +130,8 @@ def compute_candidate_static_details(
     reg_segment_scores: dict[str, list[tuple[int, float]]] = defaultdict(list)
     hotspot_reach_cache: dict[tuple[float, tuple[str, ...], int], frozenset[str]] = {}
     hop_limit = int(scenario.stage1.hot_hop_limit)
-    hotspots: list[HotspotRegion] = list(scenario.hotspots_a)
+    hotspot_enabled = bool(scenario.stage1.enable_hotspot_metrics)
+    hotspots: list[HotspotRegion] = list(scenario.hotspots_a) if hotspot_enabled else []
 
     for segment in fine_segments:
         overlaps = {
@@ -279,6 +282,7 @@ def compute_candidate_static_details(
             "snapshot_seconds": snapshot_seconds,
             "segment_count": len(fine_segments),
             "coarse_segment_count": len(coarse_segments),
+            "hotspot_metrics_enabled": hotspot_enabled,
             "hotspot_channel_enabled": bool(hotspots),
             "window_value_field": "V_reg",
         }

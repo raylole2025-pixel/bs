@@ -47,6 +47,7 @@ class Stage1TasksetRunConfig:
     geo_pool_size: int | None = None
     geo_max_windows: int = 12
     candidate_pool_hot_fraction: float = 0.30
+    enable_hotspot_metrics: bool = True
     candidate_pool_min_per_coarse_segment: int = 3
     candidate_pool_max_additional: int = 150
     q_eval: int = 4
@@ -209,6 +210,7 @@ def build_stage1_taskset_payload(
         "geo_pool_size": config.geo_pool_size,
         "geo_max_windows": config.geo_max_windows,
         "candidate_pool_hot_fraction": config.candidate_pool_hot_fraction,
+        "enable_hotspot_metrics": config.enable_hotspot_metrics,
         "candidate_pool_min_per_coarse_segment": config.candidate_pool_min_per_coarse_segment,
         "candidate_pool_max_additional": config.candidate_pool_max_additional,
         "q_eval": config.q_eval,

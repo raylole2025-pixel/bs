@@ -1190,6 +1190,8 @@ class PlanAnalyzer:
         return numerator / (denominator + EPS) if denominator > EPS else 0.0
 
     def _hot_metrics(self, plan: list[ScheduledWindow]) -> tuple[float, float]:
+        if not self.scenario.stage1.enable_hotspot_metrics:
+            return 1.0, 0.0
         hotspots: list[HotspotRegion] = self.scenario.hotspots_a
         if not hotspots:
             return 1.0, 0.0

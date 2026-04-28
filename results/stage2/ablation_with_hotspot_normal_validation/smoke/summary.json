@@ -1,0 +1,4655 @@
+{
+  "suite_name": "smoke",
+  "run_name": "smoke",
+  "scenario_path": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\normal\\normal_scenario_annotated.json",
+  "stage1_result_path": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\normal\\normal_stage1_result.json",
+  "run_dir": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage2\\ablation_with_hotspot_normal_validation\\smoke",
+  "generated_at": "2026-04-28 00:47:57",
+  "case_count": 1,
+  "rho_values": [
+    {
+      "label": "default",
+      "value": 0.2,
+      "is_default": true
+    }
+  ],
+  "aggregates": {
+    "by_case_type": {
+      "file_json": {
+        "case_count": 1,
+        "mean_cr_reg_before": 1.0,
+        "mean_cr_reg_after": 0.9866666666666667,
+        "mean_cr_emg": 0.875,
+        "mean_n_preemptions": 5.0,
+        "mean_elapsed_seconds": 23.157981199998176,
+        "mean_emergency_success_rate": 0.875,
+        "regular_degradation_case_count": 1
+      }
+    },
+    "by_rho": {
+      "default": {
+        "case_count": 1,
+        "mean_cr_reg_before": 1.0,
+        "mean_cr_reg_after": 0.9866666666666667,
+        "mean_cr_emg": 0.875,
+        "mean_n_preemptions": 5.0,
+        "mean_elapsed_seconds": 23.157981199998176,
+        "mean_emergency_success_rate": 0.875,
+        "regular_degradation_case_count": 1
+      }
+    }
+  },
+  "findings": {
+    "empty_cases_degenerate_to_baseline": {
+      "all_cases": false,
+      "case_ids": [],
+      "failed_case_ids": []
+    },
+    "hotspot_insertability": {
+      "assessment": "insufficient_data",
+      "hotspot_mean_cr_emg": 0.0,
+      "non_hotspot_mean_cr_emg": 0.875,
+      "delta": -0.875
+    },
+    "rho_groups": {
+      "default": {
+        "case_count": 1,
+        "mean_cr_reg_before": 1.0,
+        "mean_cr_reg_after": 0.9866666666666667,
+        "mean_cr_emg": 0.875,
+        "mean_n_preemptions": 5.0,
+        "mean_elapsed_seconds": 23.157981199998176,
+        "mean_emergency_success_rate": 0.875,
+        "regular_degradation_case_count": 1
+      }
+    },
+    "controlled_preemption_case_ids": [
+      "smoke__default"
+    ],
+    "preemption_still_insufficient_case_ids": [
+      "smoke__default"
+    ],
+    "stage2_behavior_style": {
+      "assessment": "balanced_tradeoff",
+      "mean_non_empty_cr_emg": 0.875,
+      "regular_completion_drop_case_ratio": 1.0
+    }
+  },
+  "cases": [
+    {
+      "case_id": "smoke__default",
+      "case_name": "smoke",
+      "case_type": "file_json",
+      "description": "Emergency tasks loaded from JSON.",
+      "scenario_path": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\normal\\normal_scenario_annotated.json",
+      "stage1_result_path": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage1\\normal\\normal_stage1_result.json",
+      "case_dir": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage2\\ablation_with_hotspot_normal_validation\\smoke\\smoke__default",
+      "seed": 7,
+      "rho": 0.2,
+      "rho_label": "default",
+      "selected_solution": {
+        "window_count": 12,
+        "gateway_count": 24,
+        "activation_count": 24,
+        "fr": 1.0,
+        "mean_completion_ratio": 1.0,
+        "eta_cap": 0.005865498850549789,
+        "eta_0": 0.005438195803617558,
+        "hotspot_coverage": 0.8742561429295008,
+        "hotspot_max_gap": 385.9449999999997,
+        "max_cross_gap": 1432.198,
+        "cross_active_fraction": 0.9537466898148149
+      },
+      "emergency_task_set": {
+        "source_mode": "json",
+        "summary": {
+          "count": 8,
+          "count_emg": 8,
+          "total_data_Mb": 2636000.0,
+          "mean_data_Mb": 329500.0,
+          "mean_weight": 5.0,
+          "arrival_min": 480.0,
+          "arrival_max": 42120.0,
+          "deadline_min": 2580.0,
+          "deadline_max": 43020.0,
+          "mean_window_s": 1155.0,
+          "peak_overlap": 2
+        },
+        "task_ids": [
+          "EMG_MIX_SMO_001",
+          "EMG_MIX_SMO_002",
+          "EMG_MIX_SMO_003",
+          "EMG_MIX_SMO_004",
+          "EMG_MIX_SMO_005",
+          "EMG_MIX_SMO_006",
+          "EMG_MIX_SMO_007",
+          "EMG_MIX_SMO_008"
+        ]
+      },
+      "baseline": {
+        "baseline_source": "stage1_result",
+        "stage2_reported_baseline_source": "stage1_result",
+        "selected_plan_scale": {
+          "window_count": 12,
+          "gateway_count": 24,
+          "activation_count": 24
+        },
+        "baseline_summary": {
+          "baseline_regular_task_count": 72,
+          "completed_baseline_regular_task_count": 72,
+          "incomplete_baseline_regular_task_count": 0,
+          "stage1_metric_regular_task_count": 72,
+          "completed_stage1_metric_regular_task_count": 72,
+          "segment_count": 684,
+          "allocation_count": 2881,
+          "window_count": 12,
+          "mean_completion_ratio": 1.0,
+          "fr": 1.0,
+          "eta_cap": 0.005865498850549789,
+          "eta_0": 0.005438195803617558,
+          "max_cross_rate_used": 1600.0,
+          "max_cross_window_util": 1.0
+        }
+      },
+      "stage2": {
+        "solver_mode": "stage2_emergency_insert",
+        "cr_reg": 0.9866666666666667,
+        "cr_emg": 0.875,
+        "n_preemptions": 5,
+        "u_cross": 0.6378874057736755,
+        "u_all": 0.017355836869108913,
+        "elapsed_seconds": 23.157981199998176
+      },
+      "diagnostics": {
+        "emergency_total": 8,
+        "emergency_success_count": 7,
+        "emergency_unfinished_count": 1,
+        "controlled_preemption_count": 4,
+        "affected_regular_task_count": 4,
+        "affected_regular_task_ids": [
+          "N72X_002",
+          "N72X_029",
+          "N72X_063",
+          "N72X_066"
+        ],
+        "regular_completion_rate_dropped": true,
+        "direct_success_task_ids": [
+          "EMG_MIX_SMO_001",
+          "EMG_MIX_SMO_003",
+          "EMG_MIX_SMO_004"
+        ],
+        "preemption_success_task_ids": [
+          "EMG_MIX_SMO_002",
+          "EMG_MIX_SMO_006",
+          "EMG_MIX_SMO_007"
+        ],
+        "failed_emergency_task_ids": [
+          "EMG_MIX_SMO_008"
+        ],
+        "insertion_events": [
+          {
+            "task_id": "EMG_MIX_SMO_001",
+            "arrival": 480.0,
+            "deadline": 2580.0,
+            "data": 180000.0,
+            "weight": 5.0,
+            "segment_index": 6,
+            "preemptions_added": 0,
+            "strategy": "direct_insert",
+            "completed": true,
+            "capacity_tier": "direct_free",
+            "used_preemption": false,
+            "preemptions": 0,
+            "preempted_task_id": null,
+            "released_segments": [],
+            "released_edge_ids": [],
+            "released_cross_window_ids": [],
+            "preemption_score": null,
+            "emergency_gain": 0.0,
+            "emergency_gain_ratio": 0.0,
+            "preemption_accepted_by_gain_gate": false,
+            "preemption_rejected_reason": null,
+            "horizon_segment_indices": [
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39
+            ],
+            "planned_delivery": 180000.0,
+            "direct_plan_delivery": 180000.0,
+            "victim_original_finish_time": null,
+            "victim_recovery_start_time": null,
+            "victim_recovery_basis": null,
+            "last_released_segment_end": null,
+            "repaired_emergency_finish_time": null,
+            "victim_recovery_candidate_path_count": null,
+            "victim_recovery_cross_windows_considered": [],
+            "victim_recovery_objective": null,
+            "victim_recovery_best_path_cross_window_id": null,
+            "victim_recovery_delivery": null,
+            "victim_recovery_completed": null,
+            "best_effort_source": null,
+            "additional_preempted_task_ids": [],
+            "all_preempted_task_ids": [],
+            "victim_recoveries": [],
+            "used_recovery_reclaim": false,
+            "reclaimed_recovery_task_ids": [],
+            "reclaimed_recovery_segment_indices": [],
+            "reclaimed_recovery_allocation_count": 0,
+            "reclaimed_recovery_delivery": 0.0
+          },
+          {
+            "task_id": "EMG_MIX_SMO_002",
+            "arrival": 1920.0,
+            "deadline": 3120.0,
+            "data": 300000.0,
+            "weight": 5.0,
+            "segment_index": 29,
+            "preemptions_added": 1,
+            "strategy": "controlled_preemption",
+            "completed": true,
+            "capacity_tier": "preempted",
+            "used_preemption": true,
+            "preemptions": 1,
+            "preempted_task_id": "N72X_002",
+            "released_segments": [
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49
+            ],
+            "released_edge_ids": [
+              "A_ISL_000007",
+              "A_ISL_000009",
+              "A_ISL_000011",
+              "A_ISL_000014",
+              "A_ISL_000026",
+              "A_ISL_000028",
+              "A_ISL_000030",
+              "A_ISL_000077",
+              "A_ISL_000078",
+              "A_ISL_000089",
+              "A_ISL_000091",
+              "B_ISL_000092",
+              "B_ISL_000094",
+              "B_ISL_000095",
+              "B_ISL_000112",
+              "B_ISL_000128",
+              "B_ISL_000130",
+              "B_ISL_000131",
+              "B_ISL_000133",
+              "B_ISL_000144",
+              "B_ISL_000145",
+              "B_ISL_000166",
+              "B_ISL_000185",
+              "B_ISL_000189",
+              "B_ISL_000217",
+              "B_ISL_000221",
+              "B_ISL_000241",
+              "B_ISL_000274",
+              "B_ISL_000278",
+              "X008117",
+              "X019903"
+            ],
+            "released_cross_window_ids": [
+              "X008117",
+              "X019903"
+            ],
+            "preemption_score": 0.9177340442516879,
+            "emergency_gain": 138371.48000000004,
+            "emergency_gain_ratio": 0.4612382666666668,
+            "preemption_accepted_by_gain_gate": true,
+            "preemption_rejected_reason": null,
+            "horizon_segment_indices": [
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49
+            ],
+            "planned_delivery": 300000.0,
+            "direct_plan_delivery": 161628.51999999996,
+            "victim_original_finish_time": 3600.0,
+            "victim_recovery_start_time": 3120.0,
+            "victim_recovery_basis": "last_released_segment_end",
+            "last_released_segment_end": 3120.0,
+            "repaired_emergency_finish_time": 2820.0,
+            "victim_recovery_candidate_path_count": 806,
+            "victim_recovery_cross_windows_considered": [
+              "X008117",
+              "X019903"
+            ],
+            "victim_recovery_objective": "recovery",
+            "victim_recovery_best_path_cross_window_id": "X019903",
+            "victim_recovery_delivery": 463396.2320000001,
+            "victim_recovery_completed": true,
+            "best_effort_source": null,
+            "additional_preempted_task_ids": [],
+            "all_preempted_task_ids": [
+              "N72X_002"
+            ],
+            "victim_recoveries": [
+              {
+                "task_id": "N72X_002",
+                "delivery": 463396.2320000001,
+                "completed": true,
+                "candidate_path_count": 806,
+                "cross_windows_considered": [
+                  "X008117",
+                  "X019903"
+                ],
+                "objective": "recovery",
+                "best_path_cross_window_id": "X019903",
+                "replan_count": 0
+              }
+            ],
+            "used_recovery_reclaim": false,
+            "reclaimed_recovery_task_ids": [],
+            "reclaimed_recovery_segment_indices": [],
+            "reclaimed_recovery_allocation_count": 0,
+            "reclaimed_recovery_delivery": 0.0
+          },
+          {
+            "task_id": "EMG_MIX_SMO_003",
+            "arrival": 6840.0,
+            "deadline": 7200.0,
+            "data": 120000.0,
+            "weight": 5.0,
+            "segment_index": 106,
+            "preemptions_added": 0,
+            "strategy": "direct_insert",
+            "completed": true,
+            "capacity_tier": "direct_free",
+            "used_preemption": false,
+            "preemptions": 0,
+            "preempted_task_id": null,
+            "released_segments": [],
+            "released_edge_ids": [],
+            "released_cross_window_ids": [],
+            "preemption_score": null,
+            "emergency_gain": 0.0,
+            "emergency_gain_ratio": 0.0,
+            "preemption_accepted_by_gain_gate": false,
+            "preemption_rejected_reason": null,
+            "horizon_segment_indices": [
+              106,
+              107,
+              108,
+              109,
+              110,
+              111
+            ],
+            "planned_delivery": 120000.0,
+            "direct_plan_delivery": 120000.0,
+            "victim_original_finish_time": null,
+            "victim_recovery_start_time": null,
+            "victim_recovery_basis": null,
+            "last_released_segment_end": null,
+            "repaired_emergency_finish_time": null,
+            "victim_recovery_candidate_path_count": null,
+            "victim_recovery_cross_windows_considered": [],
+            "victim_recovery_objective": null,
+            "victim_recovery_best_path_cross_window_id": null,
+            "victim_recovery_delivery": null,
+            "victim_recovery_completed": null,
+            "best_effort_source": null,
+            "additional_preempted_task_ids": [],
+            "all_preempted_task_ids": [],
+            "victim_recoveries": [],
+            "used_recovery_reclaim": false,
+            "reclaimed_recovery_task_ids": [],
+            "reclaimed_recovery_segment_indices": [],
+            "reclaimed_recovery_allocation_count": 0,
+            "reclaimed_recovery_delivery": 0.0
+          },
+          {
+            "task_id": "EMG_MIX_SMO_004",
+            "arrival": 8700.0,
+            "deadline": 9720.0,
+            "data": 336000.0,
+            "weight": 5.0,
+            "segment_index": 138,
+            "preemptions_added": 0,
+            "strategy": "direct_insert",
+            "completed": true,
+            "capacity_tier": "direct_free",
+            "used_preemption": false,
+            "preemptions": 0,
+            "preempted_task_id": null,
+            "released_segments": [],
+            "released_edge_ids": [],
+            "released_cross_window_ids": [],
+            "preemption_score": null,
+            "emergency_gain": 0.0,
+            "emergency_gain_ratio": 0.0,
+            "preemption_accepted_by_gain_gate": false,
+            "preemption_rejected_reason": null,
+            "horizon_segment_indices": [
+              138,
+              139,
+              140,
+              141,
+              142,
+              143,
+              144,
+              145,
+              146,
+              147,
+              148,
+              149,
+              150,
+              151,
+              152
+            ],
+            "planned_delivery": 336000.0,
+            "direct_plan_delivery": 336000.0,
+            "victim_original_finish_time": null,
+            "victim_recovery_start_time": null,
+            "victim_recovery_basis": null,
+            "last_released_segment_end": null,
+            "repaired_emergency_finish_time": null,
+            "victim_recovery_candidate_path_count": null,
+            "victim_recovery_cross_windows_considered": [],
+            "victim_recovery_objective": null,
+            "victim_recovery_best_path_cross_window_id": null,
+            "victim_recovery_delivery": null,
+            "victim_recovery_completed": null,
+            "best_effort_source": null,
+            "additional_preempted_task_ids": [],
+            "all_preempted_task_ids": [],
+            "victim_recoveries": [],
+            "used_recovery_reclaim": false,
+            "reclaimed_recovery_task_ids": [],
+            "reclaimed_recovery_segment_indices": [],
+            "reclaimed_recovery_allocation_count": 0,
+            "reclaimed_recovery_delivery": 0.0
+          },
+          {
+            "task_id": "EMG_MIX_SMO_005",
+            "arrival": 17160.0,
+            "deadline": 18060.0,
+            "data": 420000.0,
+            "weight": 5.0,
+            "segment_index": 267,
+            "preemptions_added": 2,
+            "strategy": "controlled_preemption_two_victim",
+            "completed": true,
+            "capacity_tier": "preempted",
+            "used_preemption": true,
+            "preemptions": 2,
+            "preempted_task_id": "N72X_029",
+            "released_segments": [
+              267,
+              268,
+              269,
+              270,
+              271,
+              272,
+              273,
+              274,
+              275,
+              276,
+              277,
+              278,
+              279,
+              280
+            ],
+            "released_edge_ids": [
+              "A_ISL_000057",
+              "A_ISL_000058",
+              "A_ISL_000061",
+              "A_ISL_000070",
+              "A_ISL_000071",
+              "A_ISL_000072",
+              "A_ISL_000077",
+              "A_ISL_000078",
+              "A_ISL_000079",
+              "A_ISL_000080",
+              "A_ISL_000081",
+              "B_ISL_000123",
+              "B_ISL_000124",
+              "B_ISL_000126",
+              "B_ISL_000128",
+              "B_ISL_000130",
+              "B_ISL_000131",
+              "B_ISL_000146",
+              "B_ISL_000147",
+              "B_ISL_000148",
+              "B_ISL_000149",
+              "B_ISL_000150",
+              "B_ISL_000858",
+              "B_ISL_000885",
+              "B_ISL_000886",
+              "X014864",
+              "X020959"
+            ],
+            "released_cross_window_ids": [
+              "X014864",
+              "X020959"
+            ],
+            "preemption_score": 2.3467028063771527,
+            "emergency_gain": 181182.0,
+            "emergency_gain_ratio": 0.43138571428571426,
+            "preemption_accepted_by_gain_gate": true,
+            "preemption_rejected_reason": null,
+            "horizon_segment_indices": [
+              267,
+              268,
+              269,
+              270,
+              271,
+              272,
+              273,
+              274,
+              275,
+              276,
+              277,
+              278,
+              279,
+              280
+            ],
+            "planned_delivery": 420000.0,
+            "direct_plan_delivery": 238818.0,
+            "victim_original_finish_time": 19860.0,
+            "victim_recovery_start_time": 18060.0,
+            "victim_recovery_basis": "last_released_segment_end",
+            "last_released_segment_end": 18060.0,
+            "repaired_emergency_finish_time": 17940.0,
+            "victim_recovery_candidate_path_count": 645,
+            "victim_recovery_cross_windows_considered": [
+              "X014864",
+              "X015364",
+              "X020959"
+            ],
+            "victim_recovery_objective": "recovery",
+            "victim_recovery_best_path_cross_window_id": "X014864",
+            "victim_recovery_delivery": 311609.8784000001,
+            "victim_recovery_completed": false,
+            "best_effort_source": null,
+            "additional_preempted_task_ids": [
+              "N72X_030"
+            ],
+            "all_preempted_task_ids": [
+              "N72X_029",
+              "N72X_030"
+            ],
+            "victim_recoveries": [
+              {
+                "task_id": "N72X_030",
+                "delivery": 442535.99999999994,
+                "completed": true,
+                "candidate_path_count": 1075,
+                "cross_windows_considered": [
+                  "X014864",
+                  "X015364",
+                  "X020959"
+                ],
+                "objective": "recovery",
+                "best_path_cross_window_id": "X014864",
+                "replan_count": 0
+              },
+              {
+                "task_id": "N72X_029",
+                "delivery": 311609.8784000001,
+                "completed": false,
+                "candidate_path_count": 645,
+                "cross_windows_considered": [
+                  "X014864",
+                  "X015364",
+                  "X020959"
+                ],
+                "objective": "recovery",
+                "best_path_cross_window_id": "X014864",
+                "replan_count": 0
+              }
+            ],
+            "used_recovery_reclaim": false,
+            "reclaimed_recovery_task_ids": [],
+            "reclaimed_recovery_segment_indices": [],
+            "reclaimed_recovery_allocation_count": 0,
+            "reclaimed_recovery_delivery": 0.0
+          },
+          {
+            "task_id": "EMG_MIX_SMO_006",
+            "arrival": 38280.0,
+            "deadline": 39960.0,
+            "data": 420000.0,
+            "weight": 5.0,
+            "segment_index": 605,
+            "preemptions_added": 1,
+            "strategy": "controlled_preemption",
+            "completed": true,
+            "capacity_tier": "preempted",
+            "used_preemption": true,
+            "preemptions": 1,
+            "preempted_task_id": "N72X_063",
+            "released_segments": [
+              605,
+              606,
+              607,
+              608,
+              609,
+              610,
+              611,
+              612,
+              613,
+              614,
+              615
+            ],
+            "released_edge_ids": [
+              "A_ISL_000032",
+              "B_ISL_000090",
+              "B_ISL_000092",
+              "B_ISL_000108",
+              "B_ISL_000110",
+              "B_ISL_001789",
+              "B_ISL_001861",
+              "B_ISL_001873",
+              "X008665"
+            ],
+            "released_cross_window_ids": [
+              "X008665"
+            ],
+            "preemption_score": 0.9581672396050489,
+            "emergency_gain": 10013.999999999942,
+            "emergency_gain_ratio": 0.023842857142857003,
+            "preemption_accepted_by_gain_gate": true,
+            "preemption_rejected_reason": null,
+            "horizon_segment_indices": [
+              605,
+              606,
+              607,
+              608,
+              609,
+              610,
+              611,
+              612,
+              613,
+              614,
+              615,
+              616,
+              617,
+              618,
+              619,
+              620,
+              621,
+              622,
+              623,
+              624,
+              625,
+              626,
+              627,
+              628,
+              629,
+              630
+            ],
+            "planned_delivery": 420000.0,
+            "direct_plan_delivery": 409986.00000000006,
+            "victim_original_finish_time": 39000.0,
+            "victim_recovery_start_time": 39000.0,
+            "victim_recovery_basis": "last_released_segment_end",
+            "last_released_segment_end": 39000.0,
+            "repaired_emergency_finish_time": 39600.0,
+            "victim_recovery_candidate_path_count": 1150,
+            "victim_recovery_cross_windows_considered": [
+              "X008665",
+              "X011342"
+            ],
+            "victim_recovery_objective": "recovery",
+            "victim_recovery_best_path_cross_window_id": "X008665",
+            "victim_recovery_delivery": 219167.99999999997,
+            "victim_recovery_completed": true,
+            "best_effort_source": null,
+            "additional_preempted_task_ids": [],
+            "all_preempted_task_ids": [
+              "N72X_063"
+            ],
+            "victim_recoveries": [
+              {
+                "task_id": "N72X_063",
+                "delivery": 219167.99999999997,
+                "completed": true,
+                "candidate_path_count": 1150,
+                "cross_windows_considered": [
+                  "X008665",
+                  "X011342"
+                ],
+                "objective": "recovery",
+                "best_path_cross_window_id": "X008665",
+                "replan_count": 0
+              }
+            ],
+            "used_recovery_reclaim": false,
+            "reclaimed_recovery_task_ids": [],
+            "reclaimed_recovery_segment_indices": [],
+            "reclaimed_recovery_allocation_count": 0,
+            "reclaimed_recovery_delivery": 0.0
+          },
+          {
+            "task_id": "EMG_MIX_SMO_007",
+            "arrival": 38880.0,
+            "deadline": 39960.0,
+            "data": 360000.0,
+            "weight": 5.0,
+            "segment_index": 614,
+            "preemptions_added": 1,
+            "strategy": "controlled_preemption",
+            "completed": true,
+            "capacity_tier": "preempted",
+            "used_preemption": true,
+            "preemptions": 1,
+            "preempted_task_id": "N72X_066",
+            "released_segments": [
+              614,
+              615,
+              616,
+              617,
+              618,
+              619,
+              620,
+              621,
+              622,
+              623,
+              624,
+              625,
+              626,
+              627,
+              628,
+              629,
+              630
+            ],
+            "released_edge_ids": [
+              "A_ISL_000035",
+              "A_ISL_000044",
+              "A_ISL_000046",
+              "A_ISL_000048",
+              "A_ISL_000050",
+              "B_ISL_000092",
+              "B_ISL_000104",
+              "B_ISL_000123",
+              "B_ISL_000124",
+              "B_ISL_000126",
+              "B_ISL_000128",
+              "B_ISL_000130",
+              "B_ISL_001841",
+              "B_ISL_001869",
+              "B_ISL_001870",
+              "B_ISL_001873",
+              "B_ISL_001897",
+              "B_ISL_001901",
+              "X008665",
+              "X011342"
+            ],
+            "released_cross_window_ids": [
+              "X008665",
+              "X011342"
+            ],
+            "preemption_score": 0.787038974078328,
+            "emergency_gain": 74490.0,
+            "emergency_gain_ratio": 0.20691666666666667,
+            "preemption_accepted_by_gain_gate": true,
+            "preemption_rejected_reason": null,
+            "horizon_segment_indices": [
+              614,
+              615,
+              616,
+              617,
+              618,
+              619,
+              620,
+              621,
+              622,
+              623,
+              624,
+              625,
+              626,
+              627,
+              628,
+              629,
+              630
+            ],
+            "planned_delivery": 360000.0,
+            "direct_plan_delivery": 285510.0,
+            "victim_original_finish_time": 40260.0,
+            "victim_recovery_start_time": 39960.0,
+            "victim_recovery_basis": "last_released_segment_end",
+            "last_released_segment_end": 39960.0,
+            "repaired_emergency_finish_time": 39900.0,
+            "victim_recovery_candidate_path_count": 925,
+            "victim_recovery_cross_windows_considered": [
+              "X008665",
+              "X011342"
+            ],
+            "victim_recovery_objective": "recovery",
+            "victim_recovery_best_path_cross_window_id": "X011342",
+            "victim_recovery_delivery": 318636.0,
+            "victim_recovery_completed": true,
+            "best_effort_source": null,
+            "additional_preempted_task_ids": [],
+            "all_preempted_task_ids": [
+              "N72X_066"
+            ],
+            "victim_recoveries": [
+              {
+                "task_id": "N72X_066",
+                "delivery": 318636.0,
+                "completed": true,
+                "candidate_path_count": 925,
+                "cross_windows_considered": [
+                  "X008665",
+                  "X011342"
+                ],
+                "objective": "recovery",
+                "best_path_cross_window_id": "X011342",
+                "replan_count": 0
+              }
+            ],
+            "used_recovery_reclaim": false,
+            "reclaimed_recovery_task_ids": [],
+            "reclaimed_recovery_segment_indices": [],
+            "reclaimed_recovery_allocation_count": 0,
+            "reclaimed_recovery_delivery": 0.0
+          },
+          {
+            "task_id": "EMG_MIX_SMO_008",
+            "arrival": 42120.0,
+            "deadline": 43020.0,
+            "data": 500000.0,
+            "weight": 5.0,
+            "segment_index": 667,
+            "preemptions_added": 0,
+            "strategy": "direct_insert_best_effort",
+            "completed": false,
+            "capacity_tier": "direct_free",
+            "used_preemption": false,
+            "preemptions": 0,
+            "preempted_task_id": null,
+            "released_segments": [],
+            "released_edge_ids": [],
+            "released_cross_window_ids": [],
+            "preemption_score": null,
+            "emergency_gain": 0.0,
+            "emergency_gain_ratio": 0.0,
+            "preemption_accepted_by_gain_gate": false,
+            "preemption_rejected_reason": null,
+            "horizon_segment_indices": [
+              667,
+              668,
+              669,
+              670,
+              671,
+              672,
+              673,
+              674,
+              675,
+              676,
+              677,
+              678,
+              679,
+              680,
+              681,
+              682
+            ],
+            "planned_delivery": 308433.0000000002,
+            "direct_plan_delivery": 308433.0000000002,
+            "victim_original_finish_time": null,
+            "victim_recovery_start_time": null,
+            "victim_recovery_basis": null,
+            "last_released_segment_end": null,
+            "repaired_emergency_finish_time": null,
+            "victim_recovery_candidate_path_count": null,
+            "victim_recovery_cross_windows_considered": [],
+            "victim_recovery_objective": null,
+            "victim_recovery_best_path_cross_window_id": null,
+            "victim_recovery_delivery": null,
+            "victim_recovery_completed": null,
+            "best_effort_source": "direct",
+            "additional_preempted_task_ids": [],
+            "all_preempted_task_ids": [],
+            "victim_recoveries": [],
+            "used_recovery_reclaim": false,
+            "reclaimed_recovery_task_ids": [],
+            "reclaimed_recovery_segment_indices": [],
+            "reclaimed_recovery_allocation_count": 0,
+            "reclaimed_recovery_delivery": 0.0
+          }
+        ]
+      },
+      "baseline_impact": {
+        "cr_reg_before": 1.0,
+        "cr_reg_after": 0.9866666666666667,
+        "cr_emg": 0.875,
+        "regular_task_degradation": [
+          "N72X_029"
+        ],
+        "cross_window_usage_delta_by_segment": {
+          "21": {
+            "X008117": 260.0
+          },
+          "22": {
+            "X008117": 200.0
+          },
+          "23": {
+            "X008117": 200.0
+          },
+          "24": {
+            "X008117": 200.0
+          },
+          "25": {
+            "X008117": 200.0
+          },
+          "26": {
+            "X008117": 200.0
+          },
+          "27": {
+            "X008117": 200.0
+          },
+          "28": {
+            "X008117": 200.0
+          },
+          "29": {
+            "X008117": 200.0
+          },
+          "30": {
+            "X008117": 200.0
+          },
+          "31": {
+            "X008117": 200.0
+          },
+          "32": {
+            "X008117": 200.0
+          },
+          "33": {
+            "X008117": 200.0
+          },
+          "34": {
+            "X008117": 200.0
+          },
+          "35": {
+            "X008117": 200.0
+          },
+          "36": {
+            "X008117": 103.5
+          },
+          "37": {
+            "X008117": 103.5
+          },
+          "38": {
+            "X008117": 103.5
+          },
+          "39": {
+            "X008117": 103.5
+          },
+          "40": {
+            "X008117": 103.5
+          },
+          "41": {
+            "X008117": 103.5
+          },
+          "42": {
+            "X008117": 103.5
+          },
+          "43": {
+            "X008117": 36.29133333333402
+          },
+          "44": {
+            "X008117": -284.0
+          },
+          "45": {
+            "X008117": -284.0
+          },
+          "46": {
+            "X008117": -284.0
+          },
+          "47": {
+            "X019903": -284.0
+          },
+          "48": {
+            "X019903": -284.0
+          },
+          "49": {
+            "X019903": -284.0
+          },
+          "50": {
+            "X008117": 200.0,
+            "X019903": -284.0
+          },
+          "51": {
+            "X008117": 200.0,
+            "X019903": -284.0
+          },
+          "52": {
+            "X008117": 200.0,
+            "X019903": -284.0
+          },
+          "53": {
+            "X019903": -8.700000000000045
+          },
+          "54": {
+            "X019903": -8.700000000000045
+          },
+          "55": {
+            "X019903": -8.700000000000045
+          },
+          "56": {
+            "X008117": 284.0,
+            "X019903": -169.8705333333346
+          },
+          "57": {
+            "X008117": 284.0
+          },
+          "58": {
+            "X008117": 284.0
+          },
+          "59": {
+            "X019903": 284.0
+          },
+          "60": {
+            "X019903": 284.0
+          },
+          "61": {
+            "X019903": 284.0
+          },
+          "62": {
+            "X019903": 216.39999999999998
+          },
+          "63": {
+            "X019903": 216.39999999999998
+          },
+          "64": {
+            "X019903": 216.39999999999998
+          },
+          "65": {
+            "X019903": 216.39999999999998
+          },
+          "66": {
+            "X019903": 216.39999999999998
+          },
+          "67": {
+            "X019903": 216.39999999999998
+          },
+          "68": {
+            "X008117": 200.0
+          },
+          "69": {
+            "X008117": 200.0
+          },
+          "70": {
+            "X008117": 200.0
+          },
+          "71": {
+            "X008117": 200.0
+          },
+          "72": {
+            "X008117": 200.0
+          },
+          "73": {
+            "X008117": 200.0
+          },
+          "74": {
+            "X019903": 203.95637833333353
+          },
+          "75": {
+            "X008117": 284.0
+          },
+          "76": {
+            "X008117": 284.0
+          },
+          "77": {
+            "X008117": 284.0
+          },
+          "78": {
+            "X008117": 222.614155000001
+          },
+          "106": {
+            "X019903": 414.1
+          },
+          "107": {
+            "X019903": 516.7
+          },
+          "108": {
+            "X019903": 516.7
+          },
+          "109": {
+            "X019903": 516.7
+          },
+          "110": {
+            "X019903": 35.799999999999955
+          },
+          "118": {
+            "X019903": 18.0
+          },
+          "119": {
+            "X019903": 180.5
+          },
+          "125": {
+            "X020430": -307.2
+          },
+          "126": {
+            "X015855": -307.2,
+            "X020430": 307.2
+          },
+          "134": {
+            "X015855": 9.0,
+            "X020430": -307.2
+          },
+          "137": {
+            "X015855": -57.0,
+            "X020430": -298.2
+          },
+          "138": {
+            "X020430": 394.6
+          },
+          "139": {
+            "X020430": 394.6
+          },
+          "140": {
+            "X015855": 260.4,
+            "X020430": 250.2
+          },
+          "141": {
+            "X020430": 510.59999999999997
+          },
+          "142": {
+            "X020430": 510.59999999999997
+          },
+          "143": {
+            "X020430": 261.69999999999993
+          },
+          "144": {
+            "X020430": 351.0999999999999
+          },
+          "145": {
+            "X020430": 155.19999999999993
+          },
+          "146": {
+            "X015855": 301.80000000000007
+          },
+          "147": {
+            "X015855": 301.80000000000007
+          },
+          "148": {
+            "X015855": 301.80000000000007
+          },
+          "149": {
+            "X015855": 299.1
+          },
+          "152": {
+            "X015855": -194.60000000000002
+          },
+          "158": {
+            "X015855": 131.5,
+            "X020430": 113.0
+          },
+          "159": {
+            "X015855": 130.89999999999998,
+            "X020430": -49.799999999999955
+          },
+          "160": {
+            "X015855": -112.10000000000002
+          },
+          "161": {
+            "X015855": -40.75,
+            "X020430": 115.69999999999993
+          },
+          "162": {
+            "X015855": -21.25,
+            "X020430": 30.600000000000023
+          },
+          "165": {
+            "X015855": 61.60000000000002,
+            "X020430": -86.70000000000005
+          },
+          "168": {
+            "X015855": -149.89999999999998,
+            "X020430": -19.899999999999864
+          },
+          "171": {
+            "X020430": -102.90000000000009
+          },
+          "172": {
+            "X020430": 42.200000000000045
+          },
+          "173": {
+            "X015855": 99.79999999999995,
+            "X020430": -42.200000000000045
+          },
+          "175": {
+            "X015855": 64.65000000000009,
+            "X020430": 9.700000000000045
+          },
+          "176": {
+            "X015855": -34.049999999999955,
+            "X020430": 16.200000000000045
+          },
+          "177": {
+            "X015855": -16.399999999999977,
+            "X020430": 192.80000000000007
+          },
+          "178": {
+            "X015855": 63.0
+          },
+          "184": {
+            "X015855": 41.700000000000045,
+            "X020430": -41.69999999999993
+          },
+          "189": {
+            "X015855": -23.399999999999977,
+            "X020430": 38.799999999999955
+          },
+          "190": {
+            "X015855": 38.90000000000009,
+            "X020430": 139.40000000000003
+          },
+          "191": {
+            "X015855": 24.200000000000045
+          },
+          "198": {
+            "X015855": 76.65000000000003
+          },
+          "199": {
+            "X015855": 101.55000000000007
+          },
+          "201": {
+            "X015855": 15.799999999999955,
+            "X020430": 192.8,
+            "X020959": -208.6
+          },
+          "205": {
+            "X015855": 143.70000000000002
+          },
+          "206": {
+            "X015855": 49.099999999999994
+          },
+          "207": {
+            "X015855": -97.19999999999999,
+            "X020430": 252.0,
+            "X020959": -154.79999999999998
+          },
+          "210": {
+            "X020959": 31.299999999999955
+          },
+          "211": {
+            "X020959": 123.50000000000003
+          },
+          "215": {
+            "X015855": 252.0,
+            "X020959": -252.00000000000003
+          },
+          "218": {
+            "X020959": 252.00000000000003
+          },
+          "230": {
+            "X020959": 20.799999999999983
+          },
+          "231": {
+            "X020959": 187.8
+          },
+          "237": {
+            "X014864": -336.4
+          },
+          "244": {
+            "X014864": 9.799999999999955,
+            "X020959": -336.4
+          },
+          "247": {
+            "X014864": -336.4,
+            "X020959": -52.60000000000002
+          },
+          "253": {
+            "X020959": -272.6
+          },
+          "256": {
+            "X020959": -138.39999999999998
+          },
+          "257": {
+            "X014864": -137.0,
+            "X020959": 138.39999999999998
+          },
+          "258": {
+            "X014864": 137.0,
+            "X020959": -138.39999999999998
+          },
+          "260": {
+            "X014864": -137.0,
+            "X020959": 138.39999999999998
+          },
+          "261": {
+            "X014864": 137.0,
+            "X020959": -138.39999999999998
+          },
+          "262": {
+            "X014864": -137.0,
+            "X020959": 138.39999999999998
+          },
+          "263": {
+            "X020959": -138.39999999999998
+          },
+          "267": {
+            "X014864": 126.60000000000002
+          },
+          "268": {
+            "X014864": 126.60000000000002
+          },
+          "269": {
+            "X014864": 337.80000000000007
+          },
+          "270": {
+            "X014864": 337.80000000000007,
+            "X020959": -295.6
+          },
+          "271": {
+            "X014864": 126.70000000000005,
+            "X020959": -295.6
+          },
+          "272": {
+            "X014864": -262.19999999999993,
+            "X020959": 200.0
+          },
+          "273": {
+            "X014864": -136.79999999999995,
+            "X020959": 231.10000000000002
+          },
+          "274": {
+            "X014864": -88.80000000000007,
+            "X020959": 99.20000000000005
+          },
+          "275": {
+            "X014864": -295.6,
+            "X020959": 288.1
+          },
+          "276": {
+            "X014864": -244.19999999999993,
+            "X020959": 236.69999999999993
+          },
+          "277": {
+            "X014864": -262.2,
+            "X020959": 236.69999999999993
+          },
+          "278": {
+            "X014864": -295.6000000000001,
+            "X020959": -17.899999999999864
+          },
+          "279": {
+            "X014864": -295.6000000000001,
+            "X020959": -262.19999999999993
+          },
+          "280": {
+            "X014864": -295.6000000000001,
+            "X020959": -262.19999999999993
+          },
+          "281": {
+            "X014864": -33.40000000000009,
+            "X020959": -105.0999999999998
+          },
+          "282": {
+            "X014864": 221.29999999999995,
+            "X020959": -262.19999999999993
+          },
+          "283": {
+            "X014864": 221.29999999999995,
+            "X020959": -262.19999999999993
+          },
+          "284": {
+            "X014864": 166.60000000000002,
+            "X020959": -262.20000000000005
+          },
+          "285": {
+            "X014864": -33.40000000000009,
+            "X020959": -62.200000000000045
+          },
+          "286": {
+            "X014864": -33.40000000000009,
+            "X020959": -62.19999999999993
+          },
+          "287": {
+            "X014864": -33.40000000000009,
+            "X020959": 737.8
+          },
+          "288": {
+            "X014864": -62.200000000000045
+          },
+          "289": {
+            "X014864": -62.200000000000045
+          },
+          "290": {
+            "X014864": -62.200000000000045
+          },
+          "291": {
+            "X014864": -62.200000000000045
+          },
+          "292": {
+            "X014864": 142.9999999999999
+          },
+          "293": {
+            "X014864": 142.9999999999999
+          },
+          "294": {
+            "X014864": 142.9999999999999
+          },
+          "295": {
+            "X014864": 200.0
+          },
+          "296": {
+            "X014864": 142.9999999999999
+          },
+          "297": {
+            "X014864": 200.0
+          },
+          "298": {
+            "X014864": 142.9999999999999
+          },
+          "299": {
+            "X014864": 200.0
+          },
+          "300": {
+            "X014864": 142.9999999999999
+          },
+          "301": {
+            "X014864": 200.0
+          },
+          "302": {
+            "X014864": 142.9999999999999
+          },
+          "303": {
+            "X014864": 200.0
+          },
+          "304": {
+            "X014864": -62.19999999999993
+          },
+          "305": {
+            "X014864": 166.60000000000002
+          },
+          "306": {
+            "X014864": 142.9999999999999
+          },
+          "307": {
+            "X014864": 142.9999999999999
+          },
+          "308": {
+            "X014864": 142.9999999999999
+          },
+          "309": {
+            "X014864": -7.399999999999977
+          },
+          "310": {
+            "X014864": 200.0
+          },
+          "311": {
+            "X014864": 199.9999999999999
+          },
+          "312": {
+            "X014864": 199.9999999999999
+          },
+          "313": {
+            "X014864": 199.9999999999999
+          },
+          "314": {
+            "X014864": 406.89999999999986,
+            "X015364": -487.1
+          },
+          "315": {
+            "X015364": 262.19999999999993
+          },
+          "316": {
+            "X014864": -32.39999999999998,
+            "X015364": 303.69999999999993
+          },
+          "317": {
+            "X015364": 262.19999999999993
+          },
+          "318": {
+            "X015364": 262.19999999999993
+          },
+          "319": {
+            "X014864": 16.399999999999977,
+            "X015364": 236.69999999999993
+          },
+          "320": {
+            "X015364": 262.19999999999993
+          },
+          "321": {
+            "X015364": 262.19999999999993
+          },
+          "322": {
+            "X015364": 262.19999999999993
+          },
+          "323": {
+            "X015364": 262.19999999999993
+          },
+          "324": {
+            "X014864": 16.0,
+            "X015364": 246.19999999999993
+          },
+          "326": {
+            "X014864": 593.1,
+            "X015364": -312.9
+          },
+          "340": {
+            "X015364": 102.68200333332686
+          },
+          "341": {
+            "X015364": 88.217996666673
+          },
+          "346": {
+            "X015364": 25.200000000000045
+          },
+          "347": {
+            "X015364": 203.2
+          },
+          "351": {
+            "X015364": -324.2354099999987
+          },
+          "352": {
+            "X015364": 190.13540999999873
+          },
+          "356": {
+            "X015364": 138.51209333332952
+          },
+          "357": {
+            "X015364": 31.08790666667045
+          },
+          "358": {
+            "X015364": -335.2
+          },
+          "361": {
+            "X015364": -119.60000000000002
+          },
+          "366": {
+            "X015364": 400.8,
+            "X017339": -680.4
+          },
+          "369": {
+            "X015364": -279.8999999999999
+          },
+          "372": {
+            "X015364": -120.90000000000009
+          },
+          "373": {
+            "X015364": 120.90000000000009,
+            "X017339": -119.60000000000002
+          },
+          "374": {
+            "X015364": -120.90000000000009,
+            "X017339": 119.60000000000002
+          },
+          "375": {
+            "X015364": 120.90000000000009,
+            "X017339": -119.60000000000002
+          },
+          "376": {
+            "X015364": -120.90000000000009,
+            "X017339": 119.60000000000002
+          },
+          "377": {
+            "X015364": 120.90000000000009,
+            "X017339": -119.60000000000002
+          },
+          "378": {
+            "X015364": -120.90000000000009
+          },
+          "386": {
+            "X017339": 168.20000000000005
+          },
+          "388": {
+            "X017339": -168.19999999999993
+          },
+          "389": {
+            "X015364": 69.40000000000009,
+            "X017339": 49.10000000000002
+          },
+          "390": {
+            "X015364": -18.0,
+            "X017339": -14.699999999999932
+          },
+          "392": {
+            "X015364": -51.40000000000009
+          },
+          "395": {
+            "X015364": 51.39999999999998,
+            "X017339": -34.40000000000009
+          },
+          "396": {
+            "X015364": -51.40000000000009,
+            "X017339": 34.40000000000009
+          },
+          "397": {
+            "X015364": 51.39999999999998,
+            "X017339": -34.40000000000009
+          },
+          "399": {
+            "X015364": -51.40000000000009,
+            "X017339": 34.40000000000009
+          },
+          "400": {
+            "X017339": -34.40000000000009
+          },
+          "405": {
+            "X015364": 39.500000000000114
+          },
+          "406": {
+            "X015364": -26.399999999999864
+          },
+          "407": {
+            "X015364": 786.9
+          },
+          "447": {
+            "X017339": 174.89999999999998,
+            "X017841": -483.5
+          },
+          "448": {
+            "X017339": 234.5,
+            "X017841": 48.69999999999999
+          },
+          "456": {
+            "X017841": 74.92366421960321
+          },
+          "457": {
+            "X017339": 390.6,
+            "X017841": -265.2236642196031
+          },
+          "462": {
+            "X017841": 27.000000000000114
+          },
+          "463": {
+            "X017841": 207.5
+          },
+          "465": {
+            "X012828": -216.7,
+            "X017841": 216.70000000000002
+          },
+          "468": {
+            "X012828": -116.69999999999999,
+            "X017841": -216.70000000000002
+          },
+          "469": {
+            "X017841": 73.45610500000043
+          },
+          "470": {
+            "X017841": 143.24389499999958
+          },
+          "473": {
+            "X017841": 69.39340484983023
+          },
+          "474": {
+            "X017841": -219.36737999999994
+          },
+          "477": {
+            "X012828": -52.200000000000045,
+            "X017841": -333.40000000000003
+          },
+          "484": {
+            "X012828": -266.6
+          },
+          "486": {
+            "X012828": 6.7000000000000455,
+            "X017841": -142.79999999999995
+          },
+          "487": {
+            "X012828": -154.5,
+            "X017841": 142.79999999999995
+          },
+          "488": {
+            "X012828": 154.5,
+            "X017841": -142.79999999999995
+          },
+          "489": {
+            "X012828": -154.5,
+            "X017841": 142.79999999999995
+          },
+          "490": {
+            "X012828": 154.5,
+            "X017841": -142.79999999999995
+          },
+          "491": {
+            "X012828": -154.5,
+            "X017841": 142.79999999999995
+          },
+          "492": {
+            "X017841": -142.79999999999995
+          },
+          "500": {
+            "X012828": 0.10000000000002274,
+            "X017841": 216.29999999999995
+          },
+          "502": {
+            "X017841": -209.29999999999995
+          },
+          "503": {
+            "X012828": 37.69999999999993,
+            "X017841": 43.25
+          },
+          "504": {
+            "X012828": 56.5,
+            "X017841": -7.149999999999977
+          },
+          "507": {
+            "X012828": -33.09999999999991,
+            "X017841": 33.10000000000002
+          },
+          "510": {
+            "X017841": -76.20000000000005
+          },
+          "513": {
+            "X012828": -61.200000000000045
+          },
+          "517": {
+            "X012828": 65.29999999999995
+          },
+          "518": {
+            "X012828": -25.399999999999977
+          },
+          "519": {
+            "X012828": 61.700000000000045,
+            "X017841": 94.29999999999995
+          },
+          "520": {
+            "X012828": -44.39999999999998,
+            "X017841": -79.59999999999991
+          },
+          "522": {
+            "X012828": 15.799999999999955,
+            "X017841": -14.700000000000045
+          },
+          "523": {
+            "X012828": -15.799999999999955,
+            "X017841": 14.700000000000045
+          },
+          "524": {
+            "X012828": 98.19999999999993,
+            "X017841": 113.0
+          },
+          "525": {
+            "X012828": 7.500000000000114,
+            "X017841": 15.799999999999955
+          },
+          "535": {
+            "X012828": 1.8999999999999773,
+            "X017841": 136.70000000000005
+          },
+          "536": {
+            "X012828": 152.3,
+            "X017841": -68.30000000000007
+          },
+          "537": {
+            "X012828": -317.09999999999997,
+            "X017841": 588.1
+          },
+          "550": {
+            "X008665": -629.3,
+            "X012828": 358.29999999999995
+          },
+          "551": {
+            "X008665": -170.70000000000005,
+            "X012828": 441.70000000000005
+          },
+          "563": {
+            "X008665": 48.831999999983736
+          },
+          "564": {
+            "X008665": 481.6284000000116
+          },
+          "565": {
+            "X008665": 43.03960000000467
+          },
+          "571": {
+            "X008665": -216.0
+          },
+          "575": {
+            "X008665": 24.999999999999034
+          },
+          "576": {
+            "X008665": 201.50000000000097
+          },
+          "578": {
+            "X008665": -178.8
+          },
+          "581": {
+            "X008665": -263.2
+          },
+          "583": {
+            "X008665": -142.0
+          },
+          "584": {
+            "X008665": 405.2,
+            "X011342": -428.4
+          },
+          "588": {
+            "X008665": -76.80000000000001,
+            "X011342": -178.80000000000007
+          },
+          "591": {
+            "X008665": -227.60000000000002,
+            "X011342": -192.79999999999984
+          },
+          "598": {
+            "X008665": -100.79999999999995
+          },
+          "605": {
+            "X008665": 83.10000000000014
+          },
+          "606": {
+            "X008665": 83.10000000000014
+          },
+          "607": {
+            "X008665": 83.10000000000014
+          },
+          "608": {
+            "X008665": 83.10000000000002
+          },
+          "609": {
+            "X008665": 83.10000000000014
+          },
+          "610": {
+            "X008665": 83.10000000000014
+          },
+          "611": {
+            "X008665": 83.10000000000002
+          },
+          "612": {
+            "X008665": 83.10000000000002
+          },
+          "613": {
+            "X008665": 83.10000000000014
+          },
+          "614": {
+            "X008665": 83.10000000000002,
+            "X011342": 200.0
+          },
+          "615": {
+            "X008665": 83.10000000000002,
+            "X011342": 189.79999999999995
+          },
+          "616": {
+            "X008665": 200.0,
+            "X011342": 199.99999999999977
+          },
+          "617": {
+            "X008665": 200.0,
+            "X011342": 199.99999999999977
+          },
+          "618": {
+            "X008665": 200.0,
+            "X011342": 199.99999999999977
+          },
+          "619": {
+            "X008665": 234.79999999999995,
+            "X011342": 199.99999999999977
+          },
+          "620": {
+            "X008665": 268.1999999999998,
+            "X011342": 398.19999999999993
+          },
+          "621": {
+            "X008665": 268.20000000000005,
+            "X011342": 398.20000000000005
+          },
+          "622": {
+            "X008665": 268.20000000000005,
+            "X011342": 398.20000000000005
+          },
+          "623": {
+            "X008665": 398.20000000000005,
+            "X011342": 268.20000000000005
+          },
+          "624": {
+            "X008665": 398.20000000000005,
+            "X011342": 268.20000000000005
+          },
+          "625": {
+            "X008665": 278.29999999999995,
+            "X011342": 268.20000000000005
+          },
+          "626": {
+            "X008665": 155.20000000000005,
+            "X011342": 268.20000000000005
+          },
+          "627": {
+            "X008665": 22.5,
+            "X011342": 268.20000000000005
+          },
+          "628": {
+            "X008665": 75.70000000000005,
+            "X011342": -2.7000000000000455
+          },
+          "629": {
+            "X008665": 241.79999999999995,
+            "X011342": 201.14999999999986
+          },
+          "630": {
+            "X008665": 42.09999999999991,
+            "X011342": 30.899999999999864
+          },
+          "631": {
+            "X008665": 12.400000000000091,
+            "X011342": 110.0
+          },
+          "632": {
+            "X008665": 29.0,
+            "X011342": 262.6999999999998
+          },
+          "633": {
+            "X008665": -213.60000000000025,
+            "X011342": 231.39999999999986
+          },
+          "634": {
+            "X008665": -219.80000000000007,
+            "X011342": 231.39999999999986
+          },
+          "635": {
+            "X008665": -132.7,
+            "X011342": 364.0999999999999
+          },
+          "636": {
+            "X008665": 472.3,
+            "X011342": -19.40000000000009
+          },
+          "637": {
+            "X011342": 200.0
+          },
+          "638": {
+            "X011342": 200.0
+          },
+          "639": {
+            "X011342": 331.1
+          },
+          "640": {
+            "X011342": 388.4000000000001
+          },
+          "641": {
+            "X011342": 292.59999999999997
+          },
+          "642": {
+            "X011342": 231.40000000000015
+          },
+          "643": {
+            "X011342": 231.40000000000015
+          },
+          "644": {
+            "X011342": 231.40000000000015
+          },
+          "645": {
+            "X011342": 231.40000000000015
+          },
+          "646": {
+            "X011342": 231.40000000000015
+          },
+          "647": {
+            "X011342": 231.40000000000015
+          },
+          "648": {
+            "X011342": 231.40000000000015
+          },
+          "649": {
+            "X011342": 231.40000000000015
+          },
+          "650": {
+            "X011342": 231.40000000000015
+          },
+          "651": {
+            "X011342": 231.40000000000015
+          },
+          "652": {
+            "X011342": 231.40000000000015
+          },
+          "653": {
+            "X011342": 115.60381333332526
+          },
+          "654": {
+            "X011342": 280.9961866666747
+          },
+          "659": {
+            "X011342": 103.33376999999797
+          },
+          "660": {
+            "X011342": 49.46623000000204
+          },
+          "661": {
+            "X011342": 185.10994000000113
+          },
+          "667": {
+            "X011342": 645.4000000000001
+          },
+          "668": {
+            "X011342": 687.3
+          },
+          "669": {
+            "X011342": 600.0
+          },
+          "670": {
+            "X011342": 600.0
+          },
+          "671": {
+            "X011342": 600.0
+          },
+          "672": {
+            "X011342": 600.0
+          },
+          "673": {
+            "X011342": 600.0
+          },
+          "674": {
+            "X011342": 600.0
+          },
+          "675": {
+            "X011342": 600.0
+          }
+        },
+        "regular_success_rate_before": 1.0,
+        "regular_success_rate_after": 0.9861111111111112,
+        "degenerates_to_baseline": false
+      },
+      "task_outcomes": {
+        "baseline": {
+          "summary": {
+            "baseline_regular_task_count": 72,
+            "completed_baseline_regular_task_count": 72,
+            "incomplete_baseline_regular_task_count": 0,
+            "stage1_metric_regular_task_count": 72,
+            "completed_stage1_metric_regular_task_count": 72,
+            "segment_count": 684,
+            "allocation_count": 2881,
+            "window_count": 12,
+            "mean_completion_ratio": 1.0,
+            "fr": 1.0,
+            "eta_cap": 0.005865498850549789,
+            "eta_0": 0.005438195803617558,
+            "max_cross_rate_used": 1600.0,
+            "max_cross_window_util": 1.0
+          },
+          "reg": {
+            "count": 72,
+            "success_count": 72,
+            "failure_count": 0,
+            "success_rate": 1.0,
+            "weighted_true_completion": 1.0,
+            "mean_completion_ratio": 1.0,
+            "failed_task_ids": [],
+            "completion_by_task": [
+              {
+                "task_id": "N72X_001",
+                "task_type": "reg",
+                "data": 535092.0,
+                "weight": 3.0,
+                "delivered": 535092.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_002",
+                "task_type": "reg",
+                "data": 553800.0,
+                "weight": 3.0,
+                "delivered": 553800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_003",
+                "task_type": "reg",
+                "data": 507300.0,
+                "weight": 3.0,
+                "delivered": 507300.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_004",
+                "task_type": "reg",
+                "data": 449280.0,
+                "weight": 2.0,
+                "delivered": 449280.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_005",
+                "task_type": "reg",
+                "data": 511200.0,
+                "weight": 2.0,
+                "delivered": 511200.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_006",
+                "task_type": "reg",
+                "data": 446490.0,
+                "weight": 2.0,
+                "delivered": 446490.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_007",
+                "task_type": "reg",
+                "data": 524160.0,
+                "weight": 2.0,
+                "delivered": 524160.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_008",
+                "task_type": "reg",
+                "data": 550800.0,
+                "weight": 1.0,
+                "delivered": 550800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_009",
+                "task_type": "reg",
+                "data": 401718.0,
+                "weight": 1.0,
+                "delivered": 401718.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_010",
+                "task_type": "reg",
+                "data": 393120.0,
+                "weight": 1.0,
+                "delivered": 393120.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_011",
+                "task_type": "reg",
+                "data": 720000.0,
+                "weight": 3.0,
+                "delivered": 720000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_012",
+                "task_type": "reg",
+                "data": 689700.0,
+                "weight": 2.0,
+                "delivered": 689700.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_013",
+                "task_type": "reg",
+                "data": 562176.0,
+                "weight": 3.0,
+                "delivered": 562176.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_014",
+                "task_type": "reg",
+                "data": 581490.0,
+                "weight": 3.0,
+                "delivered": 581490.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_015",
+                "task_type": "reg",
+                "data": 532800.0,
+                "weight": 3.0,
+                "delivered": 532800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_016",
+                "task_type": "reg",
+                "data": 471600.0,
+                "weight": 2.0,
+                "delivered": 471600.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_017",
+                "task_type": "reg",
+                "data": 536760.0,
+                "weight": 2.0,
+                "delivered": 536760.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_018",
+                "task_type": "reg",
+                "data": 468930.0,
+                "weight": 2.0,
+                "delivered": 468930.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_019",
+                "task_type": "reg",
+                "data": 550560.0,
+                "weight": 2.0,
+                "delivered": 550560.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_020",
+                "task_type": "reg",
+                "data": 578340.0,
+                "weight": 1.0,
+                "delivered": 578340.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_021",
+                "task_type": "reg",
+                "data": 421740.0,
+                "weight": 1.0,
+                "delivered": 421740.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_022",
+                "task_type": "reg",
+                "data": 412800.0,
+                "weight": 1.0,
+                "delivered": 412800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_023",
+                "task_type": "reg",
+                "data": 756000.0,
+                "weight": 3.0,
+                "delivered": 756000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_024",
+                "task_type": "reg",
+                "data": 724680.0,
+                "weight": 2.0,
+                "delivered": 724680.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_025",
+                "task_type": "reg",
+                "data": 615612.0,
+                "weight": 3.0,
+                "delivered": 615612.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_026",
+                "task_type": "reg",
+                "data": 636870.0,
+                "weight": 3.0,
+                "delivered": 636870.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_027",
+                "task_type": "reg",
+                "data": 583500.0,
+                "weight": 3.0,
+                "delivered": 583500.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_028",
+                "task_type": "reg",
+                "data": 516600.0,
+                "weight": 2.0,
+                "delivered": 516600.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_029",
+                "task_type": "reg",
+                "data": 587880.0,
+                "weight": 2.0,
+                "delivered": 587880.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_030",
+                "task_type": "reg",
+                "data": 513480.0,
+                "weight": 2.0,
+                "delivered": 513480.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_031",
+                "task_type": "reg",
+                "data": 602880.0,
+                "weight": 2.0,
+                "delivered": 602880.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_032",
+                "task_type": "reg",
+                "data": 633420.0,
+                "weight": 1.0,
+                "delivered": 633420.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_033",
+                "task_type": "reg",
+                "data": 461784.0,
+                "weight": 1.0,
+                "delivered": 461784.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_034",
+                "task_type": "reg",
+                "data": 452160.0,
+                "weight": 1.0,
+                "delivered": 452160.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_035",
+                "task_type": "reg",
+                "data": 828000.0,
+                "weight": 3.0,
+                "delivered": 828000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_036",
+                "task_type": "reg",
+                "data": 793320.0,
+                "weight": 2.0,
+                "delivered": 793320.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_037",
+                "task_type": "reg",
+                "data": 631716.0,
+                "weight": 3.0,
+                "delivered": 631716.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_038",
+                "task_type": "reg",
+                "data": 653640.0,
+                "weight": 3.0,
+                "delivered": 653640.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_039",
+                "task_type": "reg",
+                "data": 598800.0,
+                "weight": 3.0,
+                "delivered": 598800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_040",
+                "task_type": "reg",
+                "data": 530280.0,
+                "weight": 2.0,
+                "delivered": 530280.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_041",
+                "task_type": "reg",
+                "data": 603216.0,
+                "weight": 2.0,
+                "delivered": 603216.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_042",
+                "task_type": "reg",
+                "data": 527010.0,
+                "weight": 2.0,
+                "delivered": 527010.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_043",
+                "task_type": "reg",
+                "data": 618720.0,
+                "weight": 2.0,
+                "delivered": 618720.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_044",
+                "task_type": "reg",
+                "data": 535680.0,
+                "weight": 1.0,
+                "delivered": 535680.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_045",
+                "task_type": "reg",
+                "data": 474138.0,
+                "weight": 1.0,
+                "delivered": 474138.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_046",
+                "task_type": "reg",
+                "data": 443520.0,
+                "weight": 1.0,
+                "delivered": 443520.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_047",
+                "task_type": "reg",
+                "data": 849600.0,
+                "weight": 3.0,
+                "delivered": 849600.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_048",
+                "task_type": "reg",
+                "data": 814440.0,
+                "weight": 2.0,
+                "delivered": 814440.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_049",
+                "task_type": "reg",
+                "data": 610122.0,
+                "weight": 3.0,
+                "delivered": 610122.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_050",
+                "task_type": "reg",
+                "data": 631410.0,
+                "weight": 3.0,
+                "delivered": 631410.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_051",
+                "task_type": "reg",
+                "data": 578400.0,
+                "weight": 3.0,
+                "delivered": 578400.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_052",
+                "task_type": "reg",
+                "data": 512280.0,
+                "weight": 2.0,
+                "delivered": 512280.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_053",
+                "task_type": "reg",
+                "data": 582768.0,
+                "weight": 2.0,
+                "delivered": 582767.9999999999,
+                "remaining": 1.1641532182693481e-10,
+                "completion_ratio": 0.9999999999999998,
+                "success": true
+              },
+              {
+                "task_id": "N72X_054",
+                "task_type": "reg",
+                "data": 508860.0,
+                "weight": 2.0,
+                "delivered": 508860.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_055",
+                "task_type": "reg",
+                "data": 597600.0,
+                "weight": 2.0,
+                "delivered": 597600.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_056",
+                "task_type": "reg",
+                "data": 628020.0,
+                "weight": 1.0,
+                "delivered": 628020.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_057",
+                "task_type": "reg",
+                "data": 457950.0,
+                "weight": 1.0,
+                "delivered": 457950.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_058",
+                "task_type": "reg",
+                "data": 448320.0,
+                "weight": 1.0,
+                "delivered": 448320.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_059",
+                "task_type": "reg",
+                "data": 820800.0,
+                "weight": 3.0,
+                "delivered": 820800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_060",
+                "task_type": "reg",
+                "data": 786720.0,
+                "weight": 2.0,
+                "delivered": 786720.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_061",
+                "task_type": "reg",
+                "data": 481656.0,
+                "weight": 3.0,
+                "delivered": 481656.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_062",
+                "task_type": "reg",
+                "data": 498420.0,
+                "weight": 3.0,
+                "delivered": 498420.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_063",
+                "task_type": "reg",
+                "data": 456600.0,
+                "weight": 3.0,
+                "delivered": 456600.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_064",
+                "task_type": "reg",
+                "data": 404280.0,
+                "weight": 2.0,
+                "delivered": 404280.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_065",
+                "task_type": "reg",
+                "data": 460080.0,
+                "weight": 2.0,
+                "delivered": 460080.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_066",
+                "task_type": "reg",
+                "data": 401940.0,
+                "weight": 2.0,
+                "delivered": 401940.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_067",
+                "task_type": "reg",
+                "data": 471840.0,
+                "weight": 2.0,
+                "delivered": 471840.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_068",
+                "task_type": "reg",
+                "data": 495720.0,
+                "weight": 1.0,
+                "delivered": 495720.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_069",
+                "task_type": "reg",
+                "data": 361674.0,
+                "weight": 1.0,
+                "delivered": 361674.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_070",
+                "task_type": "reg",
+                "data": 331680.0,
+                "weight": 1.0,
+                "delivered": 331679.99999999994,
+                "remaining": 5.820766091346741e-11,
+                "completion_ratio": 0.9999999999999998,
+                "success": true
+              },
+              {
+                "task_id": "N72X_071",
+                "task_type": "reg",
+                "data": 648000.0,
+                "weight": 3.0,
+                "delivered": 648000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_072",
+                "task_type": "reg",
+                "data": 554400.0,
+                "weight": 2.0,
+                "delivered": 554400.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              }
+            ]
+          },
+          "completed": {
+            "N72X_001": true,
+            "N72X_002": true,
+            "N72X_003": true,
+            "N72X_004": true,
+            "N72X_005": true,
+            "N72X_006": true,
+            "N72X_007": true,
+            "N72X_008": true,
+            "N72X_009": true,
+            "N72X_010": true,
+            "N72X_011": true,
+            "N72X_012": true,
+            "N72X_013": true,
+            "N72X_014": true,
+            "N72X_015": true,
+            "N72X_016": true,
+            "N72X_017": true,
+            "N72X_018": true,
+            "N72X_019": true,
+            "N72X_020": true,
+            "N72X_021": true,
+            "N72X_022": true,
+            "N72X_023": true,
+            "N72X_024": true,
+            "N72X_025": true,
+            "N72X_026": true,
+            "N72X_027": true,
+            "N72X_028": true,
+            "N72X_029": true,
+            "N72X_030": true,
+            "N72X_031": true,
+            "N72X_032": true,
+            "N72X_033": true,
+            "N72X_034": true,
+            "N72X_035": true,
+            "N72X_036": true,
+            "N72X_037": true,
+            "N72X_038": true,
+            "N72X_039": true,
+            "N72X_040": true,
+            "N72X_041": true,
+            "N72X_042": true,
+            "N72X_043": true,
+            "N72X_044": true,
+            "N72X_045": true,
+            "N72X_046": true,
+            "N72X_047": true,
+            "N72X_048": true,
+            "N72X_049": true,
+            "N72X_050": true,
+            "N72X_051": true,
+            "N72X_052": true,
+            "N72X_053": true,
+            "N72X_054": true,
+            "N72X_055": true,
+            "N72X_056": true,
+            "N72X_057": true,
+            "N72X_058": true,
+            "N72X_059": true,
+            "N72X_060": true,
+            "N72X_061": true,
+            "N72X_062": true,
+            "N72X_063": true,
+            "N72X_064": true,
+            "N72X_065": true,
+            "N72X_066": true,
+            "N72X_067": true,
+            "N72X_068": true,
+            "N72X_069": true,
+            "N72X_070": true,
+            "N72X_071": true,
+            "N72X_072": true
+          },
+          "remaining_end": {
+            "N72X_001": 0.0,
+            "N72X_002": 0.0,
+            "N72X_003": 0.0,
+            "N72X_004": 0.0,
+            "N72X_005": 0.0,
+            "N72X_006": 0.0,
+            "N72X_007": 0.0,
+            "N72X_008": 0.0,
+            "N72X_009": 0.0,
+            "N72X_010": 0.0,
+            "N72X_011": 0.0,
+            "N72X_012": 0.0,
+            "N72X_013": 0.0,
+            "N72X_014": 0.0,
+            "N72X_015": 0.0,
+            "N72X_016": 0.0,
+            "N72X_017": 0.0,
+            "N72X_018": 0.0,
+            "N72X_019": 0.0,
+            "N72X_020": 0.0,
+            "N72X_021": 0.0,
+            "N72X_022": 0.0,
+            "N72X_023": 0.0,
+            "N72X_024": 0.0,
+            "N72X_025": 0.0,
+            "N72X_026": 0.0,
+            "N72X_027": 0.0,
+            "N72X_028": 0.0,
+            "N72X_029": 0.0,
+            "N72X_030": 0.0,
+            "N72X_031": 0.0,
+            "N72X_032": 0.0,
+            "N72X_033": 0.0,
+            "N72X_034": 0.0,
+            "N72X_035": 0.0,
+            "N72X_036": 0.0,
+            "N72X_037": 0.0,
+            "N72X_038": 0.0,
+            "N72X_039": 0.0,
+            "N72X_040": 0.0,
+            "N72X_041": 0.0,
+            "N72X_042": 0.0,
+            "N72X_043": 0.0,
+            "N72X_044": 0.0,
+            "N72X_045": 0.0,
+            "N72X_046": 0.0,
+            "N72X_047": 0.0,
+            "N72X_048": 0.0,
+            "N72X_049": 0.0,
+            "N72X_050": 0.0,
+            "N72X_051": 0.0,
+            "N72X_052": 0.0,
+            "N72X_053": 0.0,
+            "N72X_054": 0.0,
+            "N72X_055": 0.0,
+            "N72X_056": 0.0,
+            "N72X_057": 0.0,
+            "N72X_058": 0.0,
+            "N72X_059": 2.9103830456733704e-11,
+            "N72X_060": 0.0,
+            "N72X_061": 0.0,
+            "N72X_062": 0.0,
+            "N72X_063": 0.0,
+            "N72X_064": 0.0,
+            "N72X_065": 0.0,
+            "N72X_066": 0.0,
+            "N72X_067": 0.0,
+            "N72X_068": 0.0,
+            "N72X_069": 0.0,
+            "N72X_070": 0.0,
+            "N72X_071": 0.0,
+            "N72X_072": 0.0
+          }
+        },
+        "stage2": {
+          "overall": {
+            "count": 80,
+            "success_count": 78,
+            "failure_count": 2,
+            "success_rate": 0.975,
+            "weighted_true_completion": 0.9631578947368421,
+            "mean_completion_ratio": 0.992057755461999,
+            "failed_task_ids": [
+              "N72X_029",
+              "EMG_MIX_SMO_008"
+            ],
+            "completion_by_task": [
+              {
+                "task_id": "N72X_001",
+                "task_type": "reg",
+                "data": 535092.0,
+                "weight": 3.0,
+                "delivered": 535092.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_002",
+                "task_type": "reg",
+                "data": 553800.0,
+                "weight": 3.0,
+                "delivered": 553800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_003",
+                "task_type": "reg",
+                "data": 507300.0,
+                "weight": 3.0,
+                "delivered": 507300.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_004",
+                "task_type": "reg",
+                "data": 449280.0,
+                "weight": 2.0,
+                "delivered": 449280.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_005",
+                "task_type": "reg",
+                "data": 511200.0,
+                "weight": 2.0,
+                "delivered": 511200.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_006",
+                "task_type": "reg",
+                "data": 446490.0,
+                "weight": 2.0,
+                "delivered": 446490.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_007",
+                "task_type": "reg",
+                "data": 524160.0,
+                "weight": 2.0,
+                "delivered": 524160.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_008",
+                "task_type": "reg",
+                "data": 550800.0,
+                "weight": 1.0,
+                "delivered": 550800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_009",
+                "task_type": "reg",
+                "data": 401718.0,
+                "weight": 1.0,
+                "delivered": 401718.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_010",
+                "task_type": "reg",
+                "data": 393120.0,
+                "weight": 1.0,
+                "delivered": 393120.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_011",
+                "task_type": "reg",
+                "data": 720000.0,
+                "weight": 3.0,
+                "delivered": 720000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_012",
+                "task_type": "reg",
+                "data": 689700.0,
+                "weight": 2.0,
+                "delivered": 689700.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_013",
+                "task_type": "reg",
+                "data": 562176.0,
+                "weight": 3.0,
+                "delivered": 562176.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_014",
+                "task_type": "reg",
+                "data": 581490.0,
+                "weight": 3.0,
+                "delivered": 581490.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_015",
+                "task_type": "reg",
+                "data": 532800.0,
+                "weight": 3.0,
+                "delivered": 532800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_016",
+                "task_type": "reg",
+                "data": 471600.0,
+                "weight": 2.0,
+                "delivered": 471600.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_017",
+                "task_type": "reg",
+                "data": 536760.0,
+                "weight": 2.0,
+                "delivered": 536760.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_018",
+                "task_type": "reg",
+                "data": 468930.0,
+                "weight": 2.0,
+                "delivered": 468930.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_019",
+                "task_type": "reg",
+                "data": 550560.0,
+                "weight": 2.0,
+                "delivered": 550560.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_020",
+                "task_type": "reg",
+                "data": 578340.0,
+                "weight": 1.0,
+                "delivered": 578340.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_021",
+                "task_type": "reg",
+                "data": 421740.0,
+                "weight": 1.0,
+                "delivered": 421740.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_022",
+                "task_type": "reg",
+                "data": 412800.0,
+                "weight": 1.0,
+                "delivered": 412800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_023",
+                "task_type": "reg",
+                "data": 756000.0,
+                "weight": 3.0,
+                "delivered": 756000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_024",
+                "task_type": "reg",
+                "data": 724680.0,
+                "weight": 2.0,
+                "delivered": 724680.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_025",
+                "task_type": "reg",
+                "data": 615612.0,
+                "weight": 3.0,
+                "delivered": 615612.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_026",
+                "task_type": "reg",
+                "data": 636870.0,
+                "weight": 3.0,
+                "delivered": 636870.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_027",
+                "task_type": "reg",
+                "data": 583500.0,
+                "weight": 3.0,
+                "delivered": 583500.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_028",
+                "task_type": "reg",
+                "data": 516600.0,
+                "weight": 2.0,
+                "delivered": 516600.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_029",
+                "task_type": "reg",
+                "data": 587880.0,
+                "weight": 2.0,
+                "delivered": 439589.87840000016,
+                "remaining": 148290.12159999984,
+                "completion_ratio": 0.747754436959924,
+                "success": false
+              },
+              {
+                "task_id": "N72X_030",
+                "task_type": "reg",
+                "data": 513480.0,
+                "weight": 2.0,
+                "delivered": 513480.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_031",
+                "task_type": "reg",
+                "data": 602880.0,
+                "weight": 2.0,
+                "delivered": 602880.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_032",
+                "task_type": "reg",
+                "data": 633420.0,
+                "weight": 1.0,
+                "delivered": 633420.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_033",
+                "task_type": "reg",
+                "data": 461784.0,
+                "weight": 1.0,
+                "delivered": 461784.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_034",
+                "task_type": "reg",
+                "data": 452160.0,
+                "weight": 1.0,
+                "delivered": 452160.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_035",
+                "task_type": "reg",
+                "data": 828000.0,
+                "weight": 3.0,
+                "delivered": 828000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_036",
+                "task_type": "reg",
+                "data": 793320.0,
+                "weight": 2.0,
+                "delivered": 793320.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_037",
+                "task_type": "reg",
+                "data": 631716.0,
+                "weight": 3.0,
+                "delivered": 631716.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_038",
+                "task_type": "reg",
+                "data": 653640.0,
+                "weight": 3.0,
+                "delivered": 653640.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_039",
+                "task_type": "reg",
+                "data": 598800.0,
+                "weight": 3.0,
+                "delivered": 598800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_040",
+                "task_type": "reg",
+                "data": 530280.0,
+                "weight": 2.0,
+                "delivered": 530280.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_041",
+                "task_type": "reg",
+                "data": 603216.0,
+                "weight": 2.0,
+                "delivered": 603216.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_042",
+                "task_type": "reg",
+                "data": 527010.0,
+                "weight": 2.0,
+                "delivered": 527010.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_043",
+                "task_type": "reg",
+                "data": 618720.0,
+                "weight": 2.0,
+                "delivered": 618720.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_044",
+                "task_type": "reg",
+                "data": 535680.0,
+                "weight": 1.0,
+                "delivered": 535680.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_045",
+                "task_type": "reg",
+                "data": 474138.0,
+                "weight": 1.0,
+                "delivered": 474138.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_046",
+                "task_type": "reg",
+                "data": 443520.0,
+                "weight": 1.0,
+                "delivered": 443520.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_047",
+                "task_type": "reg",
+                "data": 849600.0,
+                "weight": 3.0,
+                "delivered": 849600.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_048",
+                "task_type": "reg",
+                "data": 814440.0,
+                "weight": 2.0,
+                "delivered": 814440.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_049",
+                "task_type": "reg",
+                "data": 610122.0,
+                "weight": 3.0,
+                "delivered": 610122.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_050",
+                "task_type": "reg",
+                "data": 631410.0,
+                "weight": 3.0,
+                "delivered": 631410.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_051",
+                "task_type": "reg",
+                "data": 578400.0,
+                "weight": 3.0,
+                "delivered": 578400.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_052",
+                "task_type": "reg",
+                "data": 512280.0,
+                "weight": 2.0,
+                "delivered": 512280.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_053",
+                "task_type": "reg",
+                "data": 582768.0,
+                "weight": 2.0,
+                "delivered": 582767.9999999999,
+                "remaining": 1.1641532182693481e-10,
+                "completion_ratio": 0.9999999999999998,
+                "success": true
+              },
+              {
+                "task_id": "N72X_054",
+                "task_type": "reg",
+                "data": 508860.0,
+                "weight": 2.0,
+                "delivered": 508860.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_055",
+                "task_type": "reg",
+                "data": 597600.0,
+                "weight": 2.0,
+                "delivered": 597600.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_056",
+                "task_type": "reg",
+                "data": 628020.0,
+                "weight": 1.0,
+                "delivered": 628020.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_057",
+                "task_type": "reg",
+                "data": 457950.0,
+                "weight": 1.0,
+                "delivered": 457950.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_058",
+                "task_type": "reg",
+                "data": 448320.0,
+                "weight": 1.0,
+                "delivered": 448320.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_059",
+                "task_type": "reg",
+                "data": 820800.0,
+                "weight": 3.0,
+                "delivered": 820800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_060",
+                "task_type": "reg",
+                "data": 786720.0,
+                "weight": 2.0,
+                "delivered": 786720.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_061",
+                "task_type": "reg",
+                "data": 481656.0,
+                "weight": 3.0,
+                "delivered": 481656.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_062",
+                "task_type": "reg",
+                "data": 498420.0,
+                "weight": 3.0,
+                "delivered": 498420.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_063",
+                "task_type": "reg",
+                "data": 456600.0,
+                "weight": 3.0,
+                "delivered": 456600.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_064",
+                "task_type": "reg",
+                "data": 404280.0,
+                "weight": 2.0,
+                "delivered": 404280.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_065",
+                "task_type": "reg",
+                "data": 460080.0,
+                "weight": 2.0,
+                "delivered": 460080.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_066",
+                "task_type": "reg",
+                "data": 401940.0,
+                "weight": 2.0,
+                "delivered": 401940.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_067",
+                "task_type": "reg",
+                "data": 471840.0,
+                "weight": 2.0,
+                "delivered": 471840.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_068",
+                "task_type": "reg",
+                "data": 495720.0,
+                "weight": 1.0,
+                "delivered": 495720.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_069",
+                "task_type": "reg",
+                "data": 361674.0,
+                "weight": 1.0,
+                "delivered": 361674.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_070",
+                "task_type": "reg",
+                "data": 331680.0,
+                "weight": 1.0,
+                "delivered": 331679.99999999994,
+                "remaining": 5.820766091346741e-11,
+                "completion_ratio": 0.9999999999999998,
+                "success": true
+              },
+              {
+                "task_id": "N72X_071",
+                "task_type": "reg",
+                "data": 648000.0,
+                "weight": 3.0,
+                "delivered": 648000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_072",
+                "task_type": "reg",
+                "data": 554400.0,
+                "weight": 2.0,
+                "delivered": 554400.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "EMG_MIX_SMO_001",
+                "task_type": "emg",
+                "data": 180000.0,
+                "weight": 5.0,
+                "delivered": 180000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "EMG_MIX_SMO_002",
+                "task_type": "emg",
+                "data": 300000.0,
+                "weight": 5.0,
+                "delivered": 300000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "EMG_MIX_SMO_003",
+                "task_type": "emg",
+                "data": 120000.0,
+                "weight": 5.0,
+                "delivered": 120000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "EMG_MIX_SMO_004",
+                "task_type": "emg",
+                "data": 336000.0,
+                "weight": 5.0,
+                "delivered": 336000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "EMG_MIX_SMO_005",
+                "task_type": "emg",
+                "data": 420000.0,
+                "weight": 5.0,
+                "delivered": 420000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "EMG_MIX_SMO_006",
+                "task_type": "emg",
+                "data": 420000.0,
+                "weight": 5.0,
+                "delivered": 420000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "EMG_MIX_SMO_007",
+                "task_type": "emg",
+                "data": 360000.0,
+                "weight": 5.0,
+                "delivered": 360000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "EMG_MIX_SMO_008",
+                "task_type": "emg",
+                "data": 500000.0,
+                "weight": 5.0,
+                "delivered": 308433.0000000002,
+                "remaining": 191566.99999999983,
+                "completion_ratio": 0.6168660000000004,
+                "success": false
+              }
+            ]
+          },
+          "reg": {
+            "count": 72,
+            "success_count": 71,
+            "failure_count": 1,
+            "success_rate": 0.9861111111111112,
+            "weighted_true_completion": 0.9866666666666667,
+            "mean_completion_ratio": 0.9964965894022212,
+            "failed_task_ids": [
+              "N72X_029"
+            ],
+            "completion_by_task": [
+              {
+                "task_id": "N72X_001",
+                "task_type": "reg",
+                "data": 535092.0,
+                "weight": 3.0,
+                "delivered": 535092.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_002",
+                "task_type": "reg",
+                "data": 553800.0,
+                "weight": 3.0,
+                "delivered": 553800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_003",
+                "task_type": "reg",
+                "data": 507300.0,
+                "weight": 3.0,
+                "delivered": 507300.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_004",
+                "task_type": "reg",
+                "data": 449280.0,
+                "weight": 2.0,
+                "delivered": 449280.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_005",
+                "task_type": "reg",
+                "data": 511200.0,
+                "weight": 2.0,
+                "delivered": 511200.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_006",
+                "task_type": "reg",
+                "data": 446490.0,
+                "weight": 2.0,
+                "delivered": 446490.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_007",
+                "task_type": "reg",
+                "data": 524160.0,
+                "weight": 2.0,
+                "delivered": 524160.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_008",
+                "task_type": "reg",
+                "data": 550800.0,
+                "weight": 1.0,
+                "delivered": 550800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_009",
+                "task_type": "reg",
+                "data": 401718.0,
+                "weight": 1.0,
+                "delivered": 401718.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_010",
+                "task_type": "reg",
+                "data": 393120.0,
+                "weight": 1.0,
+                "delivered": 393120.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_011",
+                "task_type": "reg",
+                "data": 720000.0,
+                "weight": 3.0,
+                "delivered": 720000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_012",
+                "task_type": "reg",
+                "data": 689700.0,
+                "weight": 2.0,
+                "delivered": 689700.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_013",
+                "task_type": "reg",
+                "data": 562176.0,
+                "weight": 3.0,
+                "delivered": 562176.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_014",
+                "task_type": "reg",
+                "data": 581490.0,
+                "weight": 3.0,
+                "delivered": 581490.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_015",
+                "task_type": "reg",
+                "data": 532800.0,
+                "weight": 3.0,
+                "delivered": 532800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_016",
+                "task_type": "reg",
+                "data": 471600.0,
+                "weight": 2.0,
+                "delivered": 471600.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_017",
+                "task_type": "reg",
+                "data": 536760.0,
+                "weight": 2.0,
+                "delivered": 536760.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_018",
+                "task_type": "reg",
+                "data": 468930.0,
+                "weight": 2.0,
+                "delivered": 468930.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_019",
+                "task_type": "reg",
+                "data": 550560.0,
+                "weight": 2.0,
+                "delivered": 550560.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_020",
+                "task_type": "reg",
+                "data": 578340.0,
+                "weight": 1.0,
+                "delivered": 578340.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_021",
+                "task_type": "reg",
+                "data": 421740.0,
+                "weight": 1.0,
+                "delivered": 421740.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_022",
+                "task_type": "reg",
+                "data": 412800.0,
+                "weight": 1.0,
+                "delivered": 412800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_023",
+                "task_type": "reg",
+                "data": 756000.0,
+                "weight": 3.0,
+                "delivered": 756000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_024",
+                "task_type": "reg",
+                "data": 724680.0,
+                "weight": 2.0,
+                "delivered": 724680.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_025",
+                "task_type": "reg",
+                "data": 615612.0,
+                "weight": 3.0,
+                "delivered": 615612.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_026",
+                "task_type": "reg",
+                "data": 636870.0,
+                "weight": 3.0,
+                "delivered": 636870.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_027",
+                "task_type": "reg",
+                "data": 583500.0,
+                "weight": 3.0,
+                "delivered": 583500.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_028",
+                "task_type": "reg",
+                "data": 516600.0,
+                "weight": 2.0,
+                "delivered": 516600.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_029",
+                "task_type": "reg",
+                "data": 587880.0,
+                "weight": 2.0,
+                "delivered": 439589.87840000016,
+                "remaining": 148290.12159999984,
+                "completion_ratio": 0.747754436959924,
+                "success": false
+              },
+              {
+                "task_id": "N72X_030",
+                "task_type": "reg",
+                "data": 513480.0,
+                "weight": 2.0,
+                "delivered": 513480.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_031",
+                "task_type": "reg",
+                "data": 602880.0,
+                "weight": 2.0,
+                "delivered": 602880.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_032",
+                "task_type": "reg",
+                "data": 633420.0,
+                "weight": 1.0,
+                "delivered": 633420.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_033",
+                "task_type": "reg",
+                "data": 461784.0,
+                "weight": 1.0,
+                "delivered": 461784.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_034",
+                "task_type": "reg",
+                "data": 452160.0,
+                "weight": 1.0,
+                "delivered": 452160.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_035",
+                "task_type": "reg",
+                "data": 828000.0,
+                "weight": 3.0,
+                "delivered": 828000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_036",
+                "task_type": "reg",
+                "data": 793320.0,
+                "weight": 2.0,
+                "delivered": 793320.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_037",
+                "task_type": "reg",
+                "data": 631716.0,
+                "weight": 3.0,
+                "delivered": 631716.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_038",
+                "task_type": "reg",
+                "data": 653640.0,
+                "weight": 3.0,
+                "delivered": 653640.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_039",
+                "task_type": "reg",
+                "data": 598800.0,
+                "weight": 3.0,
+                "delivered": 598800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_040",
+                "task_type": "reg",
+                "data": 530280.0,
+                "weight": 2.0,
+                "delivered": 530280.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_041",
+                "task_type": "reg",
+                "data": 603216.0,
+                "weight": 2.0,
+                "delivered": 603216.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_042",
+                "task_type": "reg",
+                "data": 527010.0,
+                "weight": 2.0,
+                "delivered": 527010.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_043",
+                "task_type": "reg",
+                "data": 618720.0,
+                "weight": 2.0,
+                "delivered": 618720.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_044",
+                "task_type": "reg",
+                "data": 535680.0,
+                "weight": 1.0,
+                "delivered": 535680.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_045",
+                "task_type": "reg",
+                "data": 474138.0,
+                "weight": 1.0,
+                "delivered": 474138.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_046",
+                "task_type": "reg",
+                "data": 443520.0,
+                "weight": 1.0,
+                "delivered": 443520.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_047",
+                "task_type": "reg",
+                "data": 849600.0,
+                "weight": 3.0,
+                "delivered": 849600.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_048",
+                "task_type": "reg",
+                "data": 814440.0,
+                "weight": 2.0,
+                "delivered": 814440.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_049",
+                "task_type": "reg",
+                "data": 610122.0,
+                "weight": 3.0,
+                "delivered": 610122.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_050",
+                "task_type": "reg",
+                "data": 631410.0,
+                "weight": 3.0,
+                "delivered": 631410.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_051",
+                "task_type": "reg",
+                "data": 578400.0,
+                "weight": 3.0,
+                "delivered": 578400.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_052",
+                "task_type": "reg",
+                "data": 512280.0,
+                "weight": 2.0,
+                "delivered": 512280.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_053",
+                "task_type": "reg",
+                "data": 582768.0,
+                "weight": 2.0,
+                "delivered": 582767.9999999999,
+                "remaining": 1.1641532182693481e-10,
+                "completion_ratio": 0.9999999999999998,
+                "success": true
+              },
+              {
+                "task_id": "N72X_054",
+                "task_type": "reg",
+                "data": 508860.0,
+                "weight": 2.0,
+                "delivered": 508860.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_055",
+                "task_type": "reg",
+                "data": 597600.0,
+                "weight": 2.0,
+                "delivered": 597600.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_056",
+                "task_type": "reg",
+                "data": 628020.0,
+                "weight": 1.0,
+                "delivered": 628020.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_057",
+                "task_type": "reg",
+                "data": 457950.0,
+                "weight": 1.0,
+                "delivered": 457950.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_058",
+                "task_type": "reg",
+                "data": 448320.0,
+                "weight": 1.0,
+                "delivered": 448320.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_059",
+                "task_type": "reg",
+                "data": 820800.0,
+                "weight": 3.0,
+                "delivered": 820800.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_060",
+                "task_type": "reg",
+                "data": 786720.0,
+                "weight": 2.0,
+                "delivered": 786720.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_061",
+                "task_type": "reg",
+                "data": 481656.0,
+                "weight": 3.0,
+                "delivered": 481656.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_062",
+                "task_type": "reg",
+                "data": 498420.0,
+                "weight": 3.0,
+                "delivered": 498420.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_063",
+                "task_type": "reg",
+                "data": 456600.0,
+                "weight": 3.0,
+                "delivered": 456600.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_064",
+                "task_type": "reg",
+                "data": 404280.0,
+                "weight": 2.0,
+                "delivered": 404280.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_065",
+                "task_type": "reg",
+                "data": 460080.0,
+                "weight": 2.0,
+                "delivered": 460080.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_066",
+                "task_type": "reg",
+                "data": 401940.0,
+                "weight": 2.0,
+                "delivered": 401940.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_067",
+                "task_type": "reg",
+                "data": 471840.0,
+                "weight": 2.0,
+                "delivered": 471840.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_068",
+                "task_type": "reg",
+                "data": 495720.0,
+                "weight": 1.0,
+                "delivered": 495720.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_069",
+                "task_type": "reg",
+                "data": 361674.0,
+                "weight": 1.0,
+                "delivered": 361674.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_070",
+                "task_type": "reg",
+                "data": 331680.0,
+                "weight": 1.0,
+                "delivered": 331679.99999999994,
+                "remaining": 5.820766091346741e-11,
+                "completion_ratio": 0.9999999999999998,
+                "success": true
+              },
+              {
+                "task_id": "N72X_071",
+                "task_type": "reg",
+                "data": 648000.0,
+                "weight": 3.0,
+                "delivered": 648000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "N72X_072",
+                "task_type": "reg",
+                "data": 554400.0,
+                "weight": 2.0,
+                "delivered": 554400.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              }
+            ]
+          },
+          "emg": {
+            "count": 8,
+            "success_count": 7,
+            "failure_count": 1,
+            "success_rate": 0.875,
+            "weighted_true_completion": 0.875,
+            "mean_completion_ratio": 0.95210825,
+            "failed_task_ids": [
+              "EMG_MIX_SMO_008"
+            ],
+            "completion_by_task": [
+              {
+                "task_id": "EMG_MIX_SMO_001",
+                "task_type": "emg",
+                "data": 180000.0,
+                "weight": 5.0,
+                "delivered": 180000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "EMG_MIX_SMO_002",
+                "task_type": "emg",
+                "data": 300000.0,
+                "weight": 5.0,
+                "delivered": 300000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "EMG_MIX_SMO_003",
+                "task_type": "emg",
+                "data": 120000.0,
+                "weight": 5.0,
+                "delivered": 120000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "EMG_MIX_SMO_004",
+                "task_type": "emg",
+                "data": 336000.0,
+                "weight": 5.0,
+                "delivered": 336000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "EMG_MIX_SMO_005",
+                "task_type": "emg",
+                "data": 420000.0,
+                "weight": 5.0,
+                "delivered": 420000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "EMG_MIX_SMO_006",
+                "task_type": "emg",
+                "data": 420000.0,
+                "weight": 5.0,
+                "delivered": 420000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "EMG_MIX_SMO_007",
+                "task_type": "emg",
+                "data": 360000.0,
+                "weight": 5.0,
+                "delivered": 360000.0,
+                "remaining": 0.0,
+                "completion_ratio": 1.0,
+                "success": true
+              },
+              {
+                "task_id": "EMG_MIX_SMO_008",
+                "task_type": "emg",
+                "data": 500000.0,
+                "weight": 5.0,
+                "delivered": 308433.0000000002,
+                "remaining": 191566.99999999983,
+                "completion_ratio": 0.6168660000000004,
+                "success": false
+              }
+            ]
+          }
+        }
+      },
+      "paths": {
+        "effective_scenario": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage2\\ablation_with_hotspot_normal_validation\\smoke\\smoke__default\\effective_scenario.json",
+        "emergency_tasks": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage2\\ablation_with_hotspot_normal_validation\\smoke\\smoke__default\\emergency_tasks.json",
+        "stage2_result": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage2\\ablation_with_hotspot_normal_validation\\smoke\\smoke__default\\stage2_result.json",
+        "summary_json": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage2\\ablation_with_hotspot_normal_validation\\smoke\\smoke__default\\case_summary.json",
+        "summary_md": "D:\\Codex_Project\\bs_1.0_4.22\\results\\stage2\\ablation_with_hotspot_normal_validation\\smoke\\smoke__default\\case_summary.md"
+      }
+    }
+  ]
+}

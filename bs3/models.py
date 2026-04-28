@@ -176,6 +176,7 @@ class Stage1Config:
     geo_max_windows: int = 12
     # 主池中热点价值通道的占比；剩余部分走常态任务价值通道
     candidate_pool_hot_fraction: float = 0.30
+    enable_hotspot_metrics: bool = True
     # 每个有需求粗分段至少保留的代表窗口数量
     candidate_pool_min_per_coarse_segment: int = 3
     # 分段保底补充窗口的总上限
