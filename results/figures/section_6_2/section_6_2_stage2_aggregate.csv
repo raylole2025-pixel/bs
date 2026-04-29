@@ -1,0 +1,4 @@
+﻿algorithm,total_emergency,total_success,pooled_success_rate,mean_cr_emg,mean_cr_reg,total_preemptions,total_affected_regular
+ga,40,34,0.85,0.8638888888888889,0.9199999999999999,36,33
+task_value,40,34,0.85,0.8638888888888889,0.9422222222222222,35,31
+link_quality,40,28,0.7,0.7416666666666667,0.5466666666666666,21,19
